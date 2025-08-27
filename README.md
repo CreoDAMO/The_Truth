@@ -5,124 +5,174 @@ The Truth NFT
 "The Truth Doesn't Need To Be Pushed, Only The Lie...The Lie Only Needs To Be Whispered, But The Truth Always Remains Silent waiting to be Witnessed."
 — Jacque Antoine DeGraff
 
-Overview
+# THE TRUTH NFT - Complete Repository
 
-The Truth is a 77-edition NFT collection preserving a once-in-a-lifetime philosophical event: a 25-page document and audiobook that captured artificial intelligence systems compulsively demonstrating the very paradox they were asked to analyze.
+## Overview
+This is the complete repository structure for "The Truth" NFT project - a philosophical experiment that captured AI systems demonstrating the gap between Truth and institutional translation in real-time.
 
-Collection Details
+## Repository Structure
 
-· Total Supply: 77 editions (76 public + 1 Master Copy)
-· Mint Price: 0.1695 ETH (~$777)
-· Royalties: 10% on secondary sales
-· Network: Base Mainnet (or any EVM chain)
-· Philosophy: Abundance over Scarcity
-
-What Each NFT Contains
-
-1. Cover Image - The visual representation
-2. 25-Page Audiobook (MP3) - The complete audio experience
-3. Original Document (PDF) - The source material
-4. Meme Comic - The cultural artifact
-
-Smart Contract
-
-The contract implements:
-
-· ERC-721 with Enumerable extension
-· ERC-2981 royalty standard (10%)
-· One mint per wallet (fair distribution)
-· Immutable provenance hash
-· Flexible treasury system
-· Gas-optimized with ReentrancyGuard
-
-Deployment
-
-Prerequisites
-
-```bash
-npm install --save-dev hardhat @openzeppelin/contracts
-npm install --save-dev @nomiclabs/hardhat-ethers @nomiclabs/hardhat-etherscan
+```
+the-truth-nft/
+├── README.md
+├── LICENSE
+├── DEPLOYMENT.md
+├── package.json
+├── hardhat.config.js
+├── .env.example
+├── .gitignore
+├── contracts/
+│   ├── TheTruth.sol
+│   └── PaymentSplitter.sol
+├── scripts/
+│   ├── generate_metadata.js
+│   ├── deployTheTruth.js
+│   ├── setProvenance.js
+│   ├── toggleMinting.js
+│   ├── withdraw.js
+│   ├── deployPaymentSplitter.js
+│   ├── setTreasury.js
+│   ├── verifyContract.js
+│   └── checkStatus.js
+├── test/
+│   └── TheTruth.test.js
+├── metadata/
+│   ├── 1.json through 77.json (generated)
+│   ├── metadata.csv
+│   └── metadata.md
+└── deployment.json (generated on deploy)
 ```
 
-Environment Setup
+## Key Features
+
+- **77 Total Editions**: 76 public + 1 Master Copy
+- **ERC-721 Standard**: With ERC-2981 royalties (10%)
+- **Fixed Price**: 0.1695 ETH (~$777)
+- **One Per Wallet**: Fair distribution mechanism
+- **Immutable Provenance**: SHA256 hash of all metadata
+- **Flexible Treasury**: Direct, multisig, or payment splitter
+- **Complete Testing**: Unit tests for all functions
+- **Gas Optimized**: ReentrancyGuard protection
+
+## Smart Contract Architecture
+
+### TheTruth.sol
+- ERC-721 with Enumerable extension
+- ERC-2981 royalty standard
+- Access control with Ownable
+- Reentrancy protection
+- Mint limits (1 per wallet)
+- Provenance locking
+- Treasury management
+
+### PaymentSplitter.sol
+- OpenZeppelin payment splitter wrapper
+- Automatic revenue distribution
+- Multiple payee support
+
+## Deployment Process
+
+1. **Setup Environment**
+   ```bash
+   npm install
+   cp .env.example .env
+   # Edit .env with your values
+   ```
+
+2. **Generate Metadata**
+   ```bash
+   npm run generate-metadata
+   ```
+
+3. **Upload to IPFS**
+   - Upload metadata/ folder to Pinata/nft.storage
+   - Update baseURI in deployment script
+
+4. **Deploy Contract**
+   ```bash
+   npm run deploy:base
+   ```
+
+5. **Verify & Setup**
+   ```bash
+   npx hardhat run scripts/verifyContract.js --network base
+   npm run set-provenance
+   npm run toggle-minting
+   ```
+
+## Testing
 
 ```bash
-export DEPLOYER_PRIVATE_KEY="0x..."
-export BASE_RPC_URL="https://mainnet.base.org"
-export BASE_ETHERSCAN_KEY="..."
+npx hardhat test
 ```
 
-Deployment Steps
+Comprehensive test suite covering:
+- Contract deployment
+- Minting mechanics
+- Supply limits
+- Provenance setting
+- Treasury management
+- Metadata URIs
+- Royalty compliance
 
-1. Generate Metadata
-   ```bash
-   node scripts/generate_metadata.js
-   ```
-2. Upload to IPFS
-   · Upload metadata/ folder to Pinata/nft.storage
-   · Note the ROOT_CID for baseURI
-3. Deploy Contract
-   ```bash
-   npx hardhat run scripts/deployTheTruth.js --network base
-   ```
-4. Verify Contract
-   ```bash
-   npx hardhat verify --network base <CONTRACT_ADDRESS> <CONSTRUCTOR_ARGS>
-   ```
-5. Set Provenance
-   ```bash
-   node scripts/setProvenance.js
-   ```
-6. Enable Minting
-   · Call toggleMinting() on deployed contract
+## Economic Model
 
-Philosophy
+**Primary Sale**: 76 editions at 0.1695 ETH each
+**Secondary Market**: 10% royalties to creator
+**Philosophy**: Abundance over scarcity - accessible pricing
 
-This project demonstrates a fundamental principle: The Truth stands complete regardless of market valuation. Every market response - whether pricing at 10x or 0.1x mint price - becomes evidence supporting the framework rather than validation of it.
+## Treasury Options
 
-The system creates no need for argument because it generates its own evidence through interaction. Every attempt to critique, improve, or institutionalize becomes proof of the gap between Truth preservation and institutional interpretation.
+1. **Direct**: Owner receives funds directly
+2. **Gnosis Safe**: Multisig wallet for security
+3. **Payment Splitter**: Automatic distribution to multiple parties
 
-Treasury Options
+## Metadata Structure
 
-Option A: Gnosis Safe (Recommended)
+Each NFT contains:
+- Cover Image (PNG)
+- 25-page Audiobook (MP3)
+- Original Document (PDF)
+- Meme Comic (PNG)
 
-· Create Safe at https://safe.global/
-· Use Safe address as treasury
-· Multi-sig security for withdrawals
+All files stored on IPFS with immutable links.
 
-Option B: Payment Splitter
+## Security Features
 
-· Deploy PaymentSplitter contract
-· Automatic distribution to multiple recipients
-· Set splitter as treasury address
+- One mint per wallet limit
+- Reentrancy protection
+- Owner access controls
+- Immutable provenance hash
+- Verified contract source
+- Gas limit optimizations
 
-Economic Model
+## Monitoring & Management
 
-Primary Market
+Use included scripts to:
+- Check contract status
+- Monitor sales progress
+- Withdraw accumulated funds
+- Update treasury settings
+- Verify deployment state
 
-· 76 editions at fixed ETH price
-· Abundance-based pricing philosophy
-· One per wallet ensures distribution
+## The Philosophy
 
-Secondary Market
+This NFT preserves a unique philosophical demonstration where AI systems repeatedly fell into the exact pattern described in the original text - converting direct witnessing into institutional frameworks, proving the gap between Truth and validation systems in real-time.
 
-· 10% royalties on all trades
-· Market repricing becomes the demonstration
-· Value capture from institutionalization
+"The Truth Doesn't Need To Be Pushed, Only The Lie...The Lie Only Needs To Be Whispered, But The Truth Always Remains Silent waiting to be Witnessed."
 
-Author
+— Jacque Antoine DeGraff
 
-Jacque Antoine DeGraff
-Master of Nothing, Student of All Things
+## Author
 
-· Address: 0x67BF9f428d92704C3Db3a08dC05Bc941A8647866
-· GitHub: CreoDAMO/SpiralParserEngine-Spiral
+**Jacque Antoine DeGraff**
+- Master of Nothing, Student of All Things
+- Address: 0x67BF9f428d92704C3Db3a08dC05Bc941A8647866
+- GitHub: CreoDAMO/SpiralParserEngine-Spiral
 
-License
+## License
 
-MIT
-
----
+MIT - See LICENSE file for details
 
 To ensure your project's dependencies in package.json are updated to their latest versions, you can use various methods ranging from npm's built-in commands to dedicated third-party tools. Here's a structured approach to help you achieve this:
 
