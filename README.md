@@ -74,10 +74,17 @@ the-truth-nft/
 - **The Truth - Bonus Gift**: 145,000 editions at 0.039 ETH (~$145)
 
 ### Web3 Integration
-- **MetaMask Wallet Connection**: Seamless Web3 experience
-- **Base Network Support**: Optimized for Base mainnet/testnet
+- **MetaMask Wallet Connection**: Enhanced connection with verification and error handling
+- **Base Network Support**: Optimized for Base mainnet/testnet with auto-switching
 - **Browser-Based Deployment**: Deploy contracts directly from browser
 - **Real-Time Minting**: Live minting interface with progress tracking
+
+### Automatic Tax Collection
+- **Florida Sales Tax ID**: 23-8019835728-2
+- **Stripe Tax Integration**: Automatic tax calculation and collection
+- **Blockchain & Traditional Sales**: Tax compliance for both NFT and shop sales
+- **Real-Time Tax Calculation**: Dynamic tax calculation based on customer location
+- **Automated Reporting**: Tax transaction recording and report generation
 
 ### Traditional Sales Channels
 - **Audiobook Sales**: $35 (Main), $15 (Bonus)
@@ -199,11 +206,37 @@ Comprehensive test suite covering:
 ## 🛠️ Technical Stack
 
 - **Smart Contracts**: Solidity, Hardhat
-- **Frontend**: Vanilla JavaScript, Web3.js, ethers.js
+- **Frontend**: Vanilla JavaScript, Web3.js, ethers.js, MetaMask SDK
 - **Backend**: Express.js, Node.js
 - **Storage**: IPFS via Pinata
 - **Networks**: Base (Mainnet/Testnet)
-- **Wallets**: MetaMask integration
+- **Wallets**: Enhanced MetaMask integration with verification
+- **Tax Compliance**: Stripe Tax API integration
+- **Payment Processing**: Multiple payment methods with tax calculation
+
+## 📋 Required API Keys
+
+### Core Services (Required)
+```bash
+STRIPE_SECRET_KEY=sk_live_...           # Stripe for tax calculation and payments
+STRIPE_TAX_WEBHOOK_SECRET=whsec_...     # Stripe tax webhook verification
+CDP_API_KEY=your_cdp_key               # Coinbase Developer Platform
+ADMIN_KEY=your_secure_admin_key        # Admin access for tax reports
+```
+
+### Optional Services (Enhanced Features)
+```bash
+SUPERPAY_API_KEY=your_superpay_key     # SuperPay fiat processing
+INFURA_API_KEY=your_infura_key         # Infura for additional RPC access
+PINATA_API_KEY=your_pinata_key         # IPFS storage
+PINATA_SECRET_KEY=your_pinata_secret   # IPFS storage
+```
+
+### Tax Configuration
+- **Florida Sales Tax ID**: 23-8019835728-2
+- **Automatic Tax Collection**: Enabled for all sales
+- **Tax Reporting**: Automated transaction recording
+- **Compliance**: Full sales tax compliance for digital products
 
 ## 🔐 Security Features
 

@@ -139,35 +139,74 @@ function App() {
         }
     };
 
-    // Connect wallet with SDK support
+    // Connect wallet with SDK support and verification
     const connectWallet = async () => {
         try {
             let ethereum;
             
+            // Enhanced MetaMask detection
             if (sdk) {
                 ethereum = sdk.getProvider();
+                console.log("Using MetaMask SDK provider");
             } else if (window.ethereum) {
-                ethereum = window.ethereum;
+                // Verify it's actually MetaMask
+                if (window.ethereum.isMetaMask) {
+                    ethereum = window.ethereum;
+                    console.log("Using MetaMask browser extension");
+                } else if (window.ethereum.providers) {
+                    // Multiple wallet providers - find MetaMask
+                    const provider = window.ethereum.providers.find(p => p.isMetaMask);
+                    if (provider) {
+                        ethereum = provider;
+                        console.log("Using MetaMask from multiple providers");
+                    } else {
+                        throw new Error("MetaMask not found among installed wallets");
+                    }
+                } else {
+                    ethereum = window.ethereum;
+                    console.warn("Using unknown wallet provider");
+                }
             } else {
                 throw new Error("MetaMask not installed. Please install MetaMask to continue.");
             }
 
-            // Request account access
+            // Verify connection
+            setSuccess("Connecting to MetaMask...");
+
+            // Request account access with verification
             const accounts = await ethereum.request({
                 method: 'eth_requestAccounts'
             });
 
+            if (!accounts || accounts.length === 0) {
+                throw new Error("No accounts found. Please unlock MetaMask.");
+            }
+
+            // Verify account format
+            if (!ethers.utils.isAddress(accounts[0])) {
+                throw new Error("Invalid wallet address received from MetaMask");
+            }
+
             const web3Provider = new ethers.providers.Web3Provider(ethereum);
             const networkInfo = await web3Provider.getNetwork();
 
+            console.log("Connected to network:", networkInfo);
+            setSuccess("MetaMask connected successfully!");
+
             // Check if we're on the correct network
             if (networkInfo.chainId !== parseInt(CURRENT_NETWORK.chainId, 16)) {
-                setError("Please switch to Base network to continue");
+                setError(`Connected to ${networkInfo.name} (Chain ID: ${networkInfo.chainId}). Please switch to ${CURRENT_NETWORK.chainName}.`);
                 await switchToBase();
                 return connectWallet();
             }
 
             const web3Signer = web3Provider.getSigner();
+            
+            // Verify signer
+            const signerAddress = await web3Signer.getAddress();
+            if (signerAddress.toLowerCase() !== accounts[0].toLowerCase()) {
+                throw new Error("Signer address mismatch. Please try reconnecting.");
+            }
 
             setAccount(accounts[0]);
             setProvider(web3Provider);
@@ -186,8 +225,35 @@ function App() {
             }
 
             setError("");
+            setSuccess("✅ MetaMask connected and verified!");
+
+            // Listen for account changes
+            ethereum.on('accountsChanged', (accounts) => {
+                if (accounts.length === 0) {
+                    // User disconnected
+                    setAccount(null);
+                    setProvider(null);
+                    setSigner(null);
+                    setContract(null);
+                    setSuccess("");
+                    console.log("MetaMask disconnected");
+                } else {
+                    // Account changed
+                    console.log("MetaMask account changed to:", accounts[0]);
+                    connectWallet();
+                }
+            });
+
+            // Listen for network changes
+            ethereum.on('chainChanged', (chainId) => {
+                console.log("Network changed to chain ID:", chainId);
+                window.location.reload(); // Reload to ensure clean state
+            });
+
         } catch (err) {
-            setError(err.message);
+            console.error("Wallet connection error:", err);
+            setError(`Connection failed: ${err.message}`);
+            setSuccess("");
         }
     };
 
@@ -226,6 +292,30 @@ function App() {
         }
     };
 
+    // Calculate tax before minting
+    const calculateTaxForMinting = async (priceInEth) => {
+        try {
+            const priceInUsd = parseFloat(priceInEth) * 3000; // Approximate ETH to USD conversion
+            
+            const response = await fetch('/api/calculate-nft-tax', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    amount: priceInUsd,
+                    customerAddress: account
+                })
+            });
+
+            const taxData = await response.json();
+            return taxData;
+        } catch (error) {
+            console.error("Tax calculation failed:", error);
+            return { success: false, taxAmount: 0, totalAmount: priceInUsd };
+        }
+    };
+
     // Mint NFT with multiple payment options
     const mintNFT = async () => {
         if (!contract) return;
@@ -236,6 +326,15 @@ function App() {
 
         try {
             const price = await contract.PRICE();
+            const priceInEth = ethers.utils.formatEther(price);
+            
+            // Calculate tax
+            setSuccess("Calculating tax obligations...");
+            const taxResult = await calculateTaxForMinting(priceInEth);
+            
+            if (taxResult.success && taxResult.taxAmount > 0) {
+                setSuccess(`Tax calculated: $${taxResult.taxAmount.toFixed(2)}. Proceeding with minting...`);
+            }
             
             let tx;
             if (paymentMethod === 'metamask') {
@@ -250,8 +349,28 @@ function App() {
             }
 
             setSuccess("Transaction submitted! Waiting for confirmation...");
-            await tx.wait();
-            setSuccess("🎉 Successfully minted The Truth NFT!");
+            const receipt = await tx.wait();
+            
+            // Create tax transaction record
+            if (taxResult.success && taxResult.calculationId) {
+                try {
+                    await fetch('/api/create-tax-transaction', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            calculationId: taxResult.calculationId,
+                            transactionId: receipt.transactionHash,
+                            saleType: 'nft-mint'
+                        })
+                    });
+                } catch (taxError) {
+                    console.error("Tax transaction recording failed:", taxError);
+                }
+            }
+            
+            setSuccess("🎉 Successfully minted The Truth NFT! Tax obligations recorded.");
             
             // Refresh data
             await loadContractData(contract, account);
