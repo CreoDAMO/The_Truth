@@ -1,0 +1,145 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.27;
+
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/token/common/ERC2981.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
+
+contract TheTruth is ERC721, ERC721Enumerable, ERC2981, Ownable, ReentrancyGuard {
+    // Collection constants
+    uint256 public constant MAX_SUPPLY = 77;
+    uint256 public constant PUBLIC_SUPPLY = 76;
+    uint256 public constant MASTER_COPY_ID = 77;
+    uint256 public constant PRICE = 169548481700983700; // ~0.16954848 ETH ($777)
+    
+    // Collection state
+    uint256 private _tokenIdCounter = 1;
+    string private _baseTokenURI;
+    bool public mintingEnabled = false;
+    
+    // Minting limits
+    mapping(address => bool) public hasMinted;
+    
+    // Provenance
+    string public provenance;
+    bool private provenanceLocked = false;
+    
+    // Treasury
+    address public treasury;
+    bool public treasuryIsMultisig = false;
+    
+    // Events
+    event MintingToggled(bool enabled);
+    event BaseURIUpdated(string newBaseURI);
+    event TruthMinted(address indexed to, uint256 indexed tokenId);
+    event ProvenanceSet(string provenance);
+    event TreasuryUpdated(address treasury, bool multisig);
+    
+    constructor(
+        address initialOwner,
+        string memory baseURI,
+        address initialTreasury
+    ) ERC721("The Truth", "TRUTH") Ownable(initialOwner) {
+        _baseTokenURI = baseURI;
+        _setDefaultRoyalty(initialOwner, 1000); // 10%
+        treasury = initialTreasury;
+        
+        // Mint master copy #77 to owner
+        _safeMint(initialOwner, MASTER_COPY_ID);
+        emit TruthMinted(initialOwner, MASTER_COPY_ID);
+    }
+    
+    // Public minting function
+    function mintTruth() external payable nonReentrant {
+        require(mintingEnabled, "Minting not enabled");
+        require(_tokenIdCounter <= PUBLIC_SUPPLY, "Public supply exhausted");
+        require(msg.value >= PRICE, "Insufficient payment");
+        require(!hasMinted[msg.sender], "Already minted");
+        
+        uint256 tokenId = _tokenIdCounter;
+        _tokenIdCounter++;
+        
+        _safeMint(msg.sender, tokenId);
+        hasMinted[msg.sender] = true;
+        
+        // Refund excess payment
+        if (msg.value > PRICE) {
+            payable(msg.sender).transfer(msg.value - PRICE);
+        }
+        
+        emit TruthMinted(msg.sender, tokenId);
+    }
+    
+    // Owner functions
+    function toggleMinting() external onlyOwner {
+        mintingEnabled = !mintingEnabled;
+        emit MintingToggled(mintingEnabled);
+    }
+    
+    function setBaseURI(string calldata newBaseURI) external onlyOwner {
+        _baseTokenURI = newBaseURI;
+        emit BaseURIUpdated(newBaseURI);
+    }
+    
+    function setProvenance(string calldata prov) external onlyOwner {
+        require(!provenanceLocked, "Provenance locked");
+        provenance = prov;
+        provenanceLocked = true;
+        emit ProvenanceSet(prov);
+    }
+    
+    function setTreasury(address _treasury, bool _isMultisig) external onlyOwner {
+        require(_treasury != address(0), "Zero address");
+        treasury = _treasury;
+        treasuryIsMultisig = _isMultisig;
+        emit TreasuryUpdated(_treasury, _isMultisig);
+    }
+    
+    function withdraw() external onlyOwner {
+        uint256 balance = address(this).balance;
+        require(balance > 0, "No funds to withdraw");
+        address payable dest = payable(treasury == address(0) ? owner() : treasury);
+        (bool success, ) = dest.call{value: balance}("");
+        require(success, "Withdrawal failed");
+    }
+    
+    // View functions
+    function totalMinted() external view returns (uint256) {
+        return _tokenIdCounter - 1;
+    }
+    
+    function publicMinted() external view returns (uint256) {
+        uint256 total = _tokenIdCounter - 1;
+        return total > 0 ? total - 1 : 0;
+    }
+    
+    function remainingSupply() external view returns (uint256) {
+        if (_tokenIdCounter > PUBLIC_SUPPLY) return 0;
+        return PUBLIC_SUPPLY - (_tokenIdCounter - 1);
+    }
+    
+    function tokenURI(uint256 tokenId) public view override returns (string memory) {
+        require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
+        return string(abi.encodePacked(_baseTokenURI, Strings.toString(tokenId), ".json"));
+    }
+    
+    // Required overrides
+    function _beforeTokenTransfer(address from, address to, uint256 tokenId)
+        internal
+        override(ERC721, ERC721Enumerable)
+    {
+        super._beforeTokenTransfer(from, to, tokenId);
+    }
+    
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721, ERC721Enumerable, ERC2981)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
+    }
+}
