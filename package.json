@@ -1,6 +1,36 @@
-{ "name": "the-truth-nft", "version": "1.0.0", "description": "The Truth NFT - A philosophical experiment preserved on-chain", "author": "Jacque Antoine DeGraff", "license": "MIT", "scripts": { "compile": "hardhat compile", "test": "hardhat test", "deploy": "hardhat run scripts/deployTheTruth.js", "deploy:base": "hardhat run scripts/deployTheTruth.js --network base", "deploy:testnet": "hardhat run scripts/deployTheTruth.js --network baseSepolia", "generate-metadata": "node scripts/generate_metadata.js", "set-provenance": "hardhat run scripts/setProvenance.js", "toggle-minting": "hardhat run scripts/toggleMinting.js", "withdraw": "hardhat run scripts/withdraw.js", "deploy-splitter": "hardhat run scripts/deployPaymentSplitter.js", "set-treasury": "hardhat run scripts/setTreasury.js",
+{
+  "name": "the-truth-nft",
+  "version": "1.0.0",
+  "description": "The Truth NFT - A philosophical experiment preserved on-chain",
+  "author": "Jacque Antoine DeGraff",
+  "license": "MIT",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "npx hardhat test",
+    "deploy": "hardhat run scripts/deployTheTruth.js",
+    "deploy:base": "npx hardhat run scripts/deployTheTruth.js --network base",
+    "deploy:baseSepolia": "npx hardhat run scripts/deployTheTruth.js --network baseSepolia",
+    "deploy:metamask": "npx hardhat run scripts/deployWithMetaMaskHardhat.js",
+    "compile-browser": "npx hardhat run scripts/compileForBrowser.js",
+    "verify": "npx hardhat run scripts/verifyContract.js --network base",
+    "set-provenance": "npx hardhat run scripts/setProvenance.js --network base",
+    "toggle-minting": "npx hardhat run scripts/toggleMinting.js --network base",
+    "withdraw": "npx hardhat run scripts/withdraw.js --network base",
+    "check-status": "npx hardhat run scripts/checkStatus.js --network base",
+    "generate-metadata": "node scripts/generate_metadata.js",
     "start": "node server.js",
     "dev": "node server.js",
-    "update-contract": "node update-contract.js" }, "devDependencies": { "@nomiclabs/hardhat-ethers": "^2.2.3", "@nomiclabs/hardhat-etherscan": "^3.1.7", "@openzeppelin/contracts": "^4.9.3", "dotenv": "^16.3.1", "ethers": "^5.7.2", "hardhat": "^2.18.1" }, "dependencies": {
+    "update-contract": "node update-contract.js"
+  },
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.2.3",
+    "@nomiclabs/hardhat-etherscan": "^3.1.7",
+    "@openzeppelin/contracts": "^4.9.3",
+    "dotenv": "^16.3.1",
+    "ethers": "^5.7.2",
+    "hardhat": "^2.18.1"
+  },
+  "dependencies": {
     "express": "^4.18.2"
-  } }
+  }
+}

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Deploy The Truth NFT - MetaMask</title>
     <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
+    <script src="contract-artifacts.js"></script>
+    <script src="deploy-with-metamask.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
         .glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
@@ -23,7 +24,7 @@
 
         <div class="glass rounded-xl p-6 mb-6">
             <h3 class="text-xl font-semibold mb-4">Deployment Configuration</h3>
-            
+
             <div class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium mb-2">Initial Owner Address</label>
@@ -31,14 +32,14 @@
                            value="0x67BF9f428d92704C3Db3a08dC05Bc941A8647866"
                            class="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white">
                 </div>
-                
+
                 <div>
                     <label class="block text-sm font-medium mb-2">Base URI (IPFS)</label>
                     <input type="text" id="baseURI" 
                            placeholder="ipfs://YOUR_METADATA_ROOT_CID/"
                            class="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white">
                 </div>
-                
+
                 <div>
                     <label class="block text-sm font-medium mb-2">Treasury Address</label>
                     <input type="text" id="treasuryAddress" 
@@ -151,52 +152,77 @@
         }
 
         async function deployContract() {
+            if (!account || !signer) {
+                alert("Please connect your wallet first");
+                return;
+            }
+
+            const deployBtn = document.getElementById('deployBtn');
+            const statusDiv = document.getElementById('deploymentStatus');
+
             try {
+                deployBtn.disabled = true;
+                deployBtn.textContent = "🚀 Deploying...";
+                statusDiv.innerHTML = "<p class='text-blue-400'>Starting deployment...</p>";
+
                 const ownerAddress = document.getElementById('ownerAddress').value;
                 const baseURI = document.getElementById('baseURI').value;
                 const treasuryAddress = document.getElementById('treasuryAddress').value;
 
                 if (!ownerAddress || !baseURI || !treasuryAddress) {
-                    alert("Please fill in all fields");
-                    return;
+                    throw new Error("Please fill in all fields");
                 }
 
-                document.getElementById('deploymentStatus').innerHTML = 
-                    '<p class="text-yellow-400">🔄 Deploying contract... Please confirm transaction in MetaMask</p>';
+                // Create deployer instance
+                const deployer = new MetaMaskDeployer();
+                await deployer.initialize();
 
-                // Note: In a real deployment, you would need the actual contract bytecode
-                // For now, we'll simulate the deployment process
-                
-                alert("Contract deployment requires the compiled bytecode. Please use the hardhat deployment scripts for actual deployment.");
+                statusDiv.innerHTML = "<p class='text-blue-400'>📝 Deploying contract...</p>";
 
-                // Simulate successful deployment for demo
-                setTimeout(() => {
-                    const mockAddress = "0x" + Math.random().toString(16).substr(2, 40);
-                    showDeploymentSuccess(mockAddress);
-                }, 2000);
+                // Deploy The Truth contract
+                const result = await deployer.deployTheTruth({
+                    initialOwner: ownerAddress,
+                    baseURI: baseURI,
+                    treasury: treasuryAddress
+                });
+
+                statusDiv.innerHTML = "<p class='text-green-400'>✅ Contract deployed successfully!</p>";
+
+                // Save deployment info
+                await deployer.saveDeploymentInfo('TheTruth', result, {
+                    initialOwner: ownerAddress,
+                    baseURI: baseURI,
+                    treasury: treasuryAddress
+                });
+
+                showResults(result);
 
             } catch (error) {
-                document.getElementById('deploymentStatus').innerHTML = 
-                    `<p class="text-red-400">❌ Deployment failed: ${error.message}</p>`;
+                console.error("Deployment failed:", error);
+                statusDiv.innerHTML = `<p class='text-red-400'>❌ Deployment failed: ${error.message}</p>`;
+            } finally {
+                deployBtn.disabled = false;
+                deployBtn.textContent = "🚀 Deploy Contract";
             }
         }
 
-        function showDeploymentSuccess(contractAddress) {
+        function showResults(result) {
             document.getElementById('results').style.display = 'block';
             document.getElementById('contractInfo').innerHTML = `
                 <div class="space-y-2">
-                    <p><strong>Contract Address:</strong> ${contractAddress}</p>
+                    <p><strong>Contract Address:</strong> ${result.address}</p>
+                    <p><strong>Transaction Hash:</strong> <a href="${NETWORKS.baseSepolia.blockExplorerUrls[0]}/tx/${result.txHash}" target="_blank" class="underline">${result.txHash.slice(0, 10)}...${result.txHash.slice(-10)}</a></p>
                     <p><strong>Network:</strong> Base Sepolia</p>
                     <p><strong>Owner:</strong> ${document.getElementById('ownerAddress').value}</p>
                     <p><strong>Treasury:</strong> ${document.getElementById('treasuryAddress').value}</p>
-                    <a href="https://sepolia.basescan.org/address/${contractAddress}" 
+                    <a href="${NETWORKS.baseSepolia.blockExplorerUrls[0]}/address/${result.address}" 
                        target="_blank" 
                        class="inline-block bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg mt-4 transition-colors">
                         View on BaseScan
                     </a>
                 </div>
             `;
-            
+
             document.getElementById('deploymentStatus').innerHTML = 
                 '<p class="text-green-400">✅ Contract deployed successfully!</p>';
         }
