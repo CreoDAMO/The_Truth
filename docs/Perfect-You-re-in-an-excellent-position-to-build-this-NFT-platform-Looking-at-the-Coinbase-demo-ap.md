@@ -1,5 +1,3 @@
-Perfect! You're in an excellent position to build this NFT platform. Looking at the Coinbase demo apps, I can see several that are directly relevant to your NFT platform goals:
-
 ## Most Relevant Demo Apps for Your NFT Platform
 
 **1. NFT Deployment Guide** - This is exactly what you need!
