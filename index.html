@@ -16,13 +16,42 @@
             min-height: 100vh;
         }
         .glass {
-            backdrop-filter: blur(10px);
             background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
         .nft-card {
-            background: linear-gradient(145deg, #2a2d3a, #212529);
-            box-shadow: 20px 20px 60px #1a1d23, -20px -20px 60px #2e3138;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 140, 0, 0.05) 100%);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        /* Enhanced mobile responsiveness */
+        @media (max-width: 768px) {
+            .min-h-screen {
+                padding: 1rem;
+            }
+            .text-5xl {
+                font-size: 2.5rem;
+            }
+            .text-xl {
+                font-size: 1.125rem;
+            }
+            .grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+            .md\:grid-cols-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Better button styles */
+        .btn-connect {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            transition: all 0.3s ease;
+        }
+        .btn-connect:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
         }
     </style>
 </head>

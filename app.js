@@ -139,17 +139,13 @@ function App() {
         }
     };
 
-    // Connect wallet with SDK support and verification
+    // Connect wallet with improved MetaMask detection
     const connectWallet = async () => {
         try {
             let ethereum;
             
-            // Enhanced MetaMask detection
-            if (sdk) {
-                ethereum = sdk.getProvider();
-                console.log("Using MetaMask SDK provider");
-            } else if (window.ethereum) {
-                // Verify it's actually MetaMask
+            // Check for MetaMask in multiple ways
+            if (typeof window.ethereum !== 'undefined') {
                 if (window.ethereum.isMetaMask) {
                     ethereum = window.ethereum;
                     console.log("Using MetaMask browser extension");
@@ -160,18 +156,26 @@ function App() {
                         ethereum = provider;
                         console.log("Using MetaMask from multiple providers");
                     } else {
-                        throw new Error("MetaMask not found among installed wallets");
+                        // Try first provider if available
+                        ethereum = window.ethereum.providers[0] || window.ethereum;
+                        console.log("Using first available wallet provider");
                     }
                 } else {
                     ethereum = window.ethereum;
-                    console.warn("Using unknown wallet provider");
+                    console.log("Using default ethereum provider");
                 }
+            } else if (sdk) {
+                ethereum = sdk.getProvider();
+                console.log("Using MetaMask SDK provider");
             } else {
-                throw new Error("MetaMask not installed. Please install MetaMask to continue.");
+                // More user-friendly error message
+                setError("Please install MetaMask or use a Web3-enabled browser to continue.");
+                return;
             }
 
             // Verify connection
-            setSuccess("Connecting to MetaMask...");
+            setSuccess("Connecting to wallet...");
+            setError("");
 
             // Request account access with verification
             const accounts = await ethereum.request({
@@ -252,7 +256,14 @@ function App() {
 
         } catch (err) {
             console.error("Wallet connection error:", err);
-            setError(`Connection failed: ${err.message}`);
+            // More helpful error messages
+            if (err.message.includes('User rejected')) {
+                setError("Connection cancelled. Please try again and approve the connection.");
+            } else if (err.message.includes('not installed') || err.message.includes('ethereum')) {
+                setError("Please install MetaMask or use a Web3-enabled browser. Visit metamask.io to get started.");
+            } else {
+                setError(`Connection failed: ${err.message}`);
+            }
             setSuccess("");
         }
     };
@@ -520,9 +531,9 @@ function App() {
                         {!account && (
                             <button
                                 onClick={connectWallet}
-                                className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-lg font-semibold transition-colors"
+                                className="btn-connect text-white px-6 py-3 rounded-lg font-semibold"
                             >
-                                Connect MetaMask
+                                🦊 Connect Wallet
                             </button>
                         )}
                     </div>
@@ -788,4 +799,12 @@ function App() {
     );
 }
 
-ReactDOM.render(<App />, document.getElementById('root'));
+// React 18 compatibility
+const rootElement = document.getElementById('root');
+if (window.ReactDOM.createRoot) {
+    const root = ReactDOM.createRoot(rootElement);
+    root.render(<App />);
+} else {
+    // Fallback for older React versions
+    ReactDOM.render(<App />, rootElement);
+}

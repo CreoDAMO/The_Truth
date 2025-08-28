@@ -593,7 +593,15 @@
             );
         }
 
-        ReactDOM.render(<Shop />, document.getElementById('shop-root'));
+        // React 18 compatibility
+        const shopRootElement = document.getElementById('shop-root');
+        if (window.ReactDOM.createRoot) {
+            const root = ReactDOM.createRoot(shopRootElement);
+            root.render(<Shop />);
+        } else {
+            // Fallback for older React versions
+            ReactDOM.render(<Shop />, shopRootElement);
+        }
     </script>
 </body>
 </html>
