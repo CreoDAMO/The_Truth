@@ -16,24 +16,39 @@ const CONTRACT_CONFIG = {
         "function MAX_SUPPLY() view returns (uint256)",
         "function MASTER_COPY_ID() view returns (uint256)",
         "function ownerOf(uint256) view returns (address)",
-        "function withdraw() external"
+        "function withdraw() external",
+        "function setProvenance(bytes32) external",
+        "function transferOwnership(address) external"
     ]
 };
 
 const NETWORKS = {
     base: {
-        chainId: 8453,
-        name: "Base",
-        rpcUrl: "https://mainnet.base.org",
-        explorer: "https://basescan.org"
+        chainId: "0x2105", // 8453 in hex
+        chainName: "Base",
+        nativeCurrency: {
+            name: "Ethereum",
+            symbol: "ETH",
+            decimals: 18
+        },
+        rpcUrls: ["https://mainnet.base.org"],
+        blockExplorerUrls: ["https://basescan.org"]
     },
     baseSepolia: {
-        chainId: 84532,
-        name: "Base Sepolia",
-        rpcUrl: "https://sepolia.base.org",
-        explorer: "https://sepolia.basescan.org"
+        chainId: "0x14a34", // 84532 in hex
+        chainName: "Base Sepolia Testnet",
+        nativeCurrency: {
+            name: "Ethereum",
+            symbol: "ETH",
+            decimals: 18
+        },
+        rpcUrls: ["https://sepolia.base.org"],
+        blockExplorerUrls: ["https://sepolia.basescan.org"]
     }
 };
+
+// Default to Base Sepolia for testing
+const CURRENT_NETWORK = NETWORKS.baseSepolia;
 
 function App() {
     const [account, setAccount] = useState(null);
@@ -54,20 +69,54 @@ function App() {
     const [success, setSuccess] = useState("");
     const [network, setNetwork] = useState(null);
 
+    // Switch to Base network
+    const switchToBase = async () => {
+        try {
+            await window.ethereum.request({
+                method: 'wallet_switchEthereumChain',
+                params: [{ chainId: CURRENT_NETWORK.chainId }],
+            });
+        } catch (switchError) {
+            // This error code indicates that the chain has not been added to MetaMask
+            if (switchError.code === 4902) {
+                try {
+                    await window.ethereum.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [CURRENT_NETWORK],
+                    });
+                } catch (addError) {
+                    throw new Error("Failed to add Base network to MetaMask");
+                }
+            } else {
+                throw new Error("Failed to switch to Base network");
+            }
+        }
+    };
+
     // Connect wallet
     const connectWallet = async () => {
         try {
             if (!window.ethereum) {
-                throw new Error("MetaMask not installed");
+                throw new Error("MetaMask not installed. Please install MetaMask to continue.");
             }
 
+            // Request account access
             const accounts = await window.ethereum.request({
                 method: 'eth_requestAccounts'
             });
 
             const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
-            const web3Signer = web3Provider.getSigner();
             const networkInfo = await web3Provider.getNetwork();
+
+            // Check if we're on the correct network
+            if (networkInfo.chainId !== parseInt(CURRENT_NETWORK.chainId, 16)) {
+                setError("Please switch to Base network to continue");
+                await switchToBase();
+                // Reconnect after network switch
+                return connectWallet();
+            }
+
+            const web3Signer = web3Provider.getSigner();
 
             setAccount(accounts[0]);
             setProvider(web3Provider);
@@ -191,6 +240,51 @@ function App() {
         }
     };
 
+    // Deploy contract function
+    const deployContract = async () => {
+        if (!signer) {
+            setError("Please connect your wallet first");
+            return;
+        }
+
+        setLoading(true);
+        setError("");
+        setSuccess("");
+
+        try {
+            // Contract bytecode and ABI would need to be included here
+            // For now, we'll show the deployment interface
+            setSuccess("Contract deployment feature coming soon. For now, please use the deployment scripts.");
+            
+        } catch (err) {
+            setError("Deployment failed: " + err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Update contract address
+    const updateContractAddress = async (newAddress) => {
+        if (!ethers.utils.isAddress(newAddress)) {
+            setError("Invalid contract address");
+            return;
+        }
+
+        CONTRACT_CONFIG.address = newAddress;
+        
+        if (signer) {
+            const nftContract = new ethers.Contract(
+                newAddress,
+                CONTRACT_CONFIG.abi,
+                signer
+            );
+            setContract(nftContract);
+            await loadContractData(nftContract, account);
+        }
+        
+        setSuccess("Contract address updated successfully!");
+    };
+
     // Check if user is owner
     const isOwner = account && contractData.owner === account.toLowerCase();
 
@@ -228,7 +322,19 @@ function App() {
                             {account ? (
                                 <div>
                                     <p className="text-green-400">✅ Connected: {account.slice(0, 6)}...{account.slice(-4)}</p>
-                                    {network && <p className="text-sm opacity-60">Network: {network.name}</p>}
+                                    {network && (
+                                        <div className="text-sm opacity-60">
+                                            <p>Network: {network.name} (Chain ID: {network.chainId})</p>
+                                            {network.chainId !== parseInt(CURRENT_NETWORK.chainId, 16) && (
+                                                <button
+                                                    onClick={switchToBase}
+                                                    className="bg-orange-600 hover:bg-orange-700 px-3 py-1 rounded mt-1 text-xs"
+                                                >
+                                                    Switch to Base
+                                                </button>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
                             ) : (
                                 <p className="text-red-400">❌ Not Connected</p>
@@ -239,11 +345,60 @@ function App() {
                                 onClick={connectWallet}
                                 className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-lg font-semibold transition-colors"
                             >
-                                Connect Wallet
+                                Connect MetaMask
                             </button>
                         )}
                     </div>
                 </div>
+
+                {/* Contract Configuration */}
+                {account && (
+                    <div className="glass rounded-xl p-6 mb-6">
+                        <h3 className="text-xl font-semibold mb-4">Contract Configuration</h3>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium mb-2">Contract Address</label>
+                                <div className="flex gap-2">
+                                    <input
+                                        type="text"
+                                        placeholder="0x..."
+                                        className="flex-1 bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white"
+                                        onChange={(e) => {
+                                            if (e.target.value.length === 42) {
+                                                updateContractAddress(e.target.value);
+                                            }
+                                        }}
+                                    />
+                                    <button
+                                        onClick={() => {
+                                            const address = document.querySelector('input[placeholder="0x..."]').value;
+                                            updateContractAddress(address);
+                                        }}
+                                        className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-sm"
+                                    >
+                                        Connect
+                                    </button>
+                                </div>
+                                <p className="text-xs opacity-60 mt-1">
+                                    Enter the deployed contract address or deploy a new one
+                                </p>
+                            </div>
+                            
+                            {CONTRACT_CONFIG.address === "0x..." && (
+                                <div className="border-t border-gray-600 pt-4">
+                                    <p className="text-yellow-400 text-sm mb-3">⚠️ No contract connected</p>
+                                    <button
+                                        onClick={deployContract}
+                                        disabled={loading || !account}
+                                        className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 px-6 py-2 rounded-lg font-semibold transition-colors"
+                                    >
+                                        Deploy New Contract
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
 
                 {/* Contract Info */}
                 {contract && (

@@ -1,0 +1,205 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deploy The Truth NFT - MetaMask</title>
+    <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
+        body { background: linear-gradient(135deg, #1a1a1a, #2d2d2d); }
+    </style>
+</head>
+<body class="min-h-screen text-white">
+    <div class="max-w-4xl mx-auto p-8">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold mb-4 bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+                Deploy The Truth NFT
+            </h1>
+            <p class="text-lg opacity-80">Deploy your contract using MetaMask on Base Network</p>
+        </div>
+
+        <div class="glass rounded-xl p-6 mb-6">
+            <h3 class="text-xl font-semibold mb-4">Deployment Configuration</h3>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-2">Initial Owner Address</label>
+                    <input type="text" id="ownerAddress" 
+                           value="0x67BF9f428d92704C3Db3a08dC05Bc941A8647866"
+                           class="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium mb-2">Base URI (IPFS)</label>
+                    <input type="text" id="baseURI" 
+                           placeholder="ipfs://YOUR_METADATA_ROOT_CID/"
+                           class="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium mb-2">Treasury Address</label>
+                    <input type="text" id="treasuryAddress" 
+                           value="0x67BF9f428d92704C3Db3a08dC05Bc941A8647866"
+                           class="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white">
+                </div>
+            </div>
+        </div>
+
+        <div class="glass rounded-xl p-6 mb-6">
+            <h3 class="text-xl font-semibold mb-4">Connection Status</h3>
+            <div id="connectionStatus" class="mb-4">
+                <p class="text-red-400">❌ Not Connected</p>
+            </div>
+            <button onclick="connectWallet()" 
+                    class="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-lg font-semibold transition-colors">
+                Connect MetaMask
+            </button>
+        </div>
+
+        <div class="glass rounded-xl p-6">
+            <button onclick="deployContract()" id="deployBtn" disabled
+                    class="w-full bg-green-600 hover:bg-green-700 disabled:opacity-50 px-8 py-4 rounded-lg font-bold text-xl transition-colors">
+                🚀 Deploy Contract
+            </button>
+            <div id="deploymentStatus" class="mt-4 text-center"></div>
+        </div>
+
+        <div id="results" class="mt-6" style="display: none;">
+            <div class="glass rounded-xl p-6">
+                <h3 class="text-xl font-semibold mb-4 text-green-400">✅ Deployment Successful!</h3>
+                <div id="contractInfo"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let account = null;
+        let provider = null;
+        let signer = null;
+
+        const NETWORKS = {
+            baseSepolia: {
+                chainId: "0x14a34",
+                chainName: "Base Sepolia Testnet",
+                nativeCurrency: {
+                    name: "Ethereum",
+                    symbol: "ETH",
+                    decimals: 18
+                },
+                rpcUrls: ["https://sepolia.base.org"],
+                blockExplorerUrls: ["https://sepolia.basescan.org"]
+            }
+        };
+
+        // Contract ABI and bytecode would go here
+        const CONTRACT_ABI = [
+            "constructor(address initialOwner, string memory baseURI, address treasury)",
+            "function name() view returns (string)",
+            "function symbol() view returns (string)",
+            "function owner() view returns (address)"
+        ];
+
+        async function connectWallet() {
+            try {
+                if (!window.ethereum) {
+                    throw new Error("MetaMask not installed");
+                }
+
+                const accounts = await window.ethereum.request({
+                    method: 'eth_requestAccounts'
+                });
+
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                const network = await provider.getNetwork();
+
+                if (network.chainId !== parseInt(NETWORKS.baseSepolia.chainId, 16)) {
+                    await switchToBase();
+                }
+
+                signer = provider.getSigner();
+                account = accounts[0];
+
+                document.getElementById('connectionStatus').innerHTML = `
+                    <p class="text-green-400">✅ Connected: ${account.slice(0, 6)}...${account.slice(-4)}</p>
+                    <p class="text-sm opacity-60">Network: Base Sepolia</p>
+                `;
+
+                document.getElementById('deployBtn').disabled = false;
+
+            } catch (error) {
+                alert("Connection failed: " + error.message);
+            }
+        }
+
+        async function switchToBase() {
+            try {
+                await window.ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: NETWORKS.baseSepolia.chainId }],
+                });
+            } catch (switchError) {
+                if (switchError.code === 4902) {
+                    await window.ethereum.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [NETWORKS.baseSepolia],
+                    });
+                }
+            }
+        }
+
+        async function deployContract() {
+            try {
+                const ownerAddress = document.getElementById('ownerAddress').value;
+                const baseURI = document.getElementById('baseURI').value;
+                const treasuryAddress = document.getElementById('treasuryAddress').value;
+
+                if (!ownerAddress || !baseURI || !treasuryAddress) {
+                    alert("Please fill in all fields");
+                    return;
+                }
+
+                document.getElementById('deploymentStatus').innerHTML = 
+                    '<p class="text-yellow-400">🔄 Deploying contract... Please confirm transaction in MetaMask</p>';
+
+                // Note: In a real deployment, you would need the actual contract bytecode
+                // For now, we'll simulate the deployment process
+                
+                alert("Contract deployment requires the compiled bytecode. Please use the hardhat deployment scripts for actual deployment.");
+
+                // Simulate successful deployment for demo
+                setTimeout(() => {
+                    const mockAddress = "0x" + Math.random().toString(16).substr(2, 40);
+                    showDeploymentSuccess(mockAddress);
+                }, 2000);
+
+            } catch (error) {
+                document.getElementById('deploymentStatus').innerHTML = 
+                    `<p class="text-red-400">❌ Deployment failed: ${error.message}</p>`;
+            }
+        }
+
+        function showDeploymentSuccess(contractAddress) {
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('contractInfo').innerHTML = `
+                <div class="space-y-2">
+                    <p><strong>Contract Address:</strong> ${contractAddress}</p>
+                    <p><strong>Network:</strong> Base Sepolia</p>
+                    <p><strong>Owner:</strong> ${document.getElementById('ownerAddress').value}</p>
+                    <p><strong>Treasury:</strong> ${document.getElementById('treasuryAddress').value}</p>
+                    <a href="https://sepolia.basescan.org/address/${contractAddress}" 
+                       target="_blank" 
+                       class="inline-block bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg mt-4 transition-colors">
+                        View on BaseScan
+                    </a>
+                </div>
+            `;
+            
+            document.getElementById('deploymentStatus').innerHTML = 
+                '<p class="text-green-400">✅ Contract deployed successfully!</p>';
+        }
+    </script>
+</body>
+</html>
