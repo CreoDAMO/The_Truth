@@ -1,9 +1,8 @@
 
 const { useState, useEffect } = React;
 
-// Deployment-aware configuration
+// Browser-compatible configuration
 const getNetworkConfig = () => {
-    const isProduction = process.env.NODE_ENV === 'production';
     const environment = window.location.hostname;
     
     // Auto-detect network based on deployment
@@ -13,7 +12,7 @@ const getNetworkConfig = () => {
     if (environment.includes('render')) return NETWORKS.base;
     if (environment.includes('herokuapp')) return NETWORKS.base;
     
-    return isProduction ? NETWORKS.base : NETWORKS.baseSepolia;
+    return window.location.hostname === 'localhost' ? NETWORKS.baseSepolia : NETWORKS.base;
 };
 
 // Contract configuration
@@ -65,11 +64,26 @@ const NETWORKS = {
 // Dynamic network selection based on deployment
 const CURRENT_NETWORK = getNetworkConfig();
 
+// MetaMask SDK configuration
+const MMSDK_OPTIONS = {
+    dappMetadata: {
+        name: "The Truth NFT",
+        url: window.location.href,
+        iconUrl: `${window.location.origin}/favicon.ico`,
+    },
+    infuraAPIKey: "demo", // Replace with your Infura key
+    preferDesktop: false,
+    openDeeplink: (link) => {
+        window.open(link, '_blank');
+    }
+};
+
 function App() {
     const [account, setAccount] = useState(null);
     const [provider, setProvider] = useState(null);
     const [contract, setContract] = useState(null);
     const [signer, setSigner] = useState(null);
+    const [sdk, setSdk] = useState(null);
     const [contractData, setContractData] = useState({
         owner: null,
         mintingEnabled: false,
@@ -83,19 +97,36 @@ function App() {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [network, setNetwork] = useState(null);
+    const [paymentMethod, setPaymentMethod] = useState('metamask');
+
+    // Initialize MetaMask SDK
+    useEffect(() => {
+        const initSDK = async () => {
+            try {
+                if (typeof MetaMaskSDK !== 'undefined') {
+                    const MMSDK = new MetaMaskSDK.MetaMaskSDK(MMSDK_OPTIONS);
+                    setSdk(MMSDK);
+                }
+            } catch (err) {
+                console.warn("MetaMask SDK not available, using direct ethereum provider");
+            }
+        };
+        initSDK();
+    }, []);
 
     // Switch to Base network
     const switchToBase = async () => {
         try {
-            await window.ethereum.request({
+            const ethereum = sdk?.getProvider() || window.ethereum;
+            await ethereum.request({
                 method: 'wallet_switchEthereumChain',
                 params: [{ chainId: CURRENT_NETWORK.chainId }],
             });
         } catch (switchError) {
-            // This error code indicates that the chain has not been added to MetaMask
             if (switchError.code === 4902) {
                 try {
-                    await window.ethereum.request({
+                    const ethereum = sdk?.getProvider() || window.ethereum;
+                    await ethereum.request({
                         method: 'wallet_addEthereumChain',
                         params: [CURRENT_NETWORK],
                     });
@@ -108,26 +139,31 @@ function App() {
         }
     };
 
-    // Connect wallet
+    // Connect wallet with SDK support
     const connectWallet = async () => {
         try {
-            if (!window.ethereum) {
+            let ethereum;
+            
+            if (sdk) {
+                ethereum = sdk.getProvider();
+            } else if (window.ethereum) {
+                ethereum = window.ethereum;
+            } else {
                 throw new Error("MetaMask not installed. Please install MetaMask to continue.");
             }
 
             // Request account access
-            const accounts = await window.ethereum.request({
+            const accounts = await ethereum.request({
                 method: 'eth_requestAccounts'
             });
 
-            const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+            const web3Provider = new ethers.providers.Web3Provider(ethereum);
             const networkInfo = await web3Provider.getNetwork();
 
             // Check if we're on the correct network
             if (networkInfo.chainId !== parseInt(CURRENT_NETWORK.chainId, 16)) {
                 setError("Please switch to Base network to continue");
                 await switchToBase();
-                // Reconnect after network switch
                 return connectWallet();
             }
 
@@ -190,7 +226,7 @@ function App() {
         }
     };
 
-    // Mint NFT
+    // Mint NFT with multiple payment options
     const mintNFT = async () => {
         if (!contract) return;
 
@@ -200,10 +236,18 @@ function App() {
 
         try {
             const price = await contract.PRICE();
-            const tx = await contract.mintTruth({ 
-                value: price,
-                gasLimit: 150000
-            });
+            
+            let tx;
+            if (paymentMethod === 'metamask') {
+                tx = await contract.mintTruth({ 
+                    value: price,
+                    gasLimit: 150000
+                });
+            } else if (paymentMethod === 'superpay') {
+                // SuperPay integration would go here
+                setError("SuperPay integration coming soon!");
+                return;
+            }
 
             setSuccess("Transaction submitted! Waiting for confirmation...");
             await tx.wait();
@@ -255,8 +299,8 @@ function App() {
         }
     };
 
-    // Deploy contract function
-    const deployContract = async () => {
+    // Deploy contract using CDP Agent Kit
+    const deployWithAgentKit = async () => {
         if (!signer) {
             setError("Please connect your wallet first");
             return;
@@ -267,9 +311,8 @@ function App() {
         setSuccess("");
 
         try {
-            // Contract bytecode and ABI would need to be included here
-            // For now, we'll show the deployment interface
-            setSuccess("Contract deployment feature coming soon. For now, please use the deployment scripts.");
+            // This would integrate with CDP Agent Kit for deployment
+            setSuccess("CDP Agent Kit deployment feature coming soon. Please use the deployment scripts for now.");
             
         } catch (err) {
             setError("Deployment failed: " + err.message);
@@ -402,13 +445,21 @@ function App() {
                             {CONTRACT_CONFIG.address === "0x..." && (
                                 <div className="border-t border-gray-600 pt-4">
                                     <p className="text-yellow-400 text-sm mb-3">⚠️ No contract connected</p>
-                                    <button
-                                        onClick={deployContract}
-                                        disabled={loading || !account}
-                                        className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 px-6 py-2 rounded-lg font-semibold transition-colors"
-                                    >
-                                        Deploy New Contract
-                                    </button>
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={deployWithAgentKit}
+                                            disabled={loading || !account}
+                                            className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 px-6 py-2 rounded-lg font-semibold transition-colors"
+                                        >
+                                            Deploy with CDP Agent Kit
+                                        </button>
+                                        <a 
+                                            href="/deploy.html" 
+                                            className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-lg font-semibold transition-colors inline-block"
+                                        >
+                                            Use Deploy Tool
+                                        </a>
+                                    </div>
                                 </div>
                             )}
                         </div>
@@ -478,6 +529,52 @@ function App() {
                     <div className="nft-card rounded-xl p-6 mb-6">
                         <h3 className="text-xl font-semibold mb-4">🎨 Mint The Truth NFT</h3>
                         
+                        {/* Payment Method Selection */}
+                        <div className="mb-6">
+                            <h4 className="text-lg font-semibold mb-3">Choose Payment Method</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                <button
+                                    onClick={() => setPaymentMethod('metamask')}
+                                    className={`p-3 rounded-lg border-2 transition-colors ${
+                                        paymentMethod === 'metamask' 
+                                            ? 'border-blue-500 bg-blue-900' 
+                                            : 'border-gray-600 bg-gray-800'
+                                    }`}
+                                >
+                                    <div className="text-center">
+                                        <p className="font-semibold">MetaMask</p>
+                                        <p className="text-xs opacity-60">Direct wallet payment</p>
+                                    </div>
+                                </button>
+                                <button
+                                    onClick={() => setPaymentMethod('superpay')}
+                                    className={`p-3 rounded-lg border-2 transition-colors ${
+                                        paymentMethod === 'superpay' 
+                                            ? 'border-green-500 bg-green-900' 
+                                            : 'border-gray-600 bg-gray-800'
+                                    }`}
+                                >
+                                    <div className="text-center">
+                                        <p className="font-semibold">SuperPay</p>
+                                        <p className="text-xs opacity-60">Credit card / Bank</p>
+                                    </div>
+                                </button>
+                                <button
+                                    onClick={() => setPaymentMethod('usdc')}
+                                    className={`p-3 rounded-lg border-2 transition-colors ${
+                                        paymentMethod === 'usdc' 
+                                            ? 'border-purple-500 bg-purple-900' 
+                                            : 'border-gray-600 bg-gray-800'
+                                    }`}
+                                >
+                                    <div className="text-center">
+                                        <p className="font-semibold">USDC</p>
+                                        <p className="text-xs opacity-60">Free on Base</p>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                        
                         {contractData.hasMinted ? (
                             <div className="text-center py-8">
                                 <p className="text-xl text-green-400 mb-2">🎉 You've already minted!</p>
@@ -508,6 +605,12 @@ function App() {
                                 >
                                     {loading ? '⏳ Minting...' : '🎯 Mint The Truth'}
                                 </button>
+                                
+                                {paymentMethod !== 'metamask' && (
+                                    <p className="text-yellow-400 text-sm mt-2">
+                                        {paymentMethod} payment coming soon!
+                                    </p>
+                                )}
                             </div>
                         )}
                     </div>
