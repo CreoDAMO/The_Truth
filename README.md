@@ -153,7 +153,7 @@ npm run deploy-metamask-hardhat
 
 1. **Clone and Setup**
    ```bash
-   git clone https://github.com/CreoDAMO/the-truth-nft
+   git clone https://github.com/CreoDAMO/The_Truth.git
    cd the-truth-nft
    npm install
    ```
