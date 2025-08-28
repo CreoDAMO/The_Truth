@@ -11,6 +11,11 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+// Shop route
+app.get('/shop', (req, res) => {
+    res.sendFile(path.join(__dirname, 'shop.html'));
+});
+
 // API route to get contract info
 app.get('/api/contract-info', (req, res) => {
     const fs = require('fs');

@@ -1,0 +1,368 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Truth Shop - Digital Content</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d1810 50%, #1a1a1a 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            min-height: 100vh;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .product-card {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 140, 0, 0.05) 100%);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 215, 0, 0.6);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
+            color: #1a1a1a;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+        }
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div id="shop-root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const PRODUCTS = {
+            truth: {
+                audiobook: {
+                    id: 'truth-audiobook',
+                    name: 'The Truth - Complete Audiobook',
+                    description: '25-page philosophical demonstration narrated by the author. The complete work that captured AI systems demonstrating institutional translation gaps.',
+                    price: 35,
+                    type: 'audiobook',
+                    collection: 'The Truth',
+                    file: 'ipfs://bafybeibtcjku4uce7volglh6edjw2va63usahqixoqxwkv4quvptljonw4',
+                    duration: '45 minutes',
+                    format: 'MP3'
+                },
+                pdf: {
+                    id: 'truth-pdf',
+                    name: 'The Truth - Original Document',
+                    description: 'The complete 25-page philosophical work in its original written form. Unedited, unaltered Truth.',
+                    price: 20,
+                    type: 'pdf',
+                    collection: 'The Truth',
+                    file: 'ipfs://bafybeid4w7qtpzjkjxpb5l7hw4qxh6wkzjgqgfgnqkclgzjbgbg5qw7bw4',
+                    pages: '25 pages',
+                    format: 'PDF'
+                }
+            },
+            bonus: {
+                audiobook: {
+                    id: 'bonus-audiobook',
+                    name: 'The Truth Bonus - Audio Commentary',
+                    description: 'Extended analysis and commentary on the recursive demonstration. The meta-analysis preserved.',
+                    price: 15,
+                    type: 'audiobook',
+                    collection: 'Bonus Gift',
+                    file: 'ipfs://bafybeibtudgvfggsjdpyikuwh67pdktqqznpcfv5b2xpwyjn62myero2wy',
+                    duration: '30 minutes',
+                    format: 'MP3'
+                },
+                pdf: {
+                    id: 'bonus-pdf',
+                    name: 'The Truth Bonus - Complete Analysis',
+                    description: 'The five-act revelation analysis. How Truth metabolizes institutional responses.',
+                    price: 10,
+                    type: 'pdf',
+                    collection: 'Bonus Gift',
+                    file: 'ipfs://bafybeid4t2jkcolfhs6zrwdv4ch6z2lnodywqpzjudpi5w24gl4rr7n5sq',
+                    pages: 'Extended',
+                    format: 'PDF'
+                }
+            }
+        };
+
+        function Shop() {
+            const [cart, setCart] = useState([]);
+            const [showCart, setShowCart] = useState(false);
+            const [customerEmail, setCustomerEmail] = useState('');
+            const [loading, setLoading] = useState(false);
+            const [success, setSuccess] = useState('');
+            const [error, setError] = useState('');
+
+            const addToCart = (product) => {
+                const existing = cart.find(item => item.id === product.id);
+                if (existing) {
+                    setError('Product already in cart');
+                    return;
+                }
+                setCart([...cart, { ...product, quantity: 1 }]);
+                setError('');
+            };
+
+            const removeFromCart = (productId) => {
+                setCart(cart.filter(item => item.id !== productId));
+            };
+
+            const getCartTotal = () => {
+                return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+            };
+
+            const handleCheckout = async () => {
+                if (!customerEmail) {
+                    setError('Please enter your email address');
+                    return;
+                }
+                if (cart.length === 0) {
+                    setError('Cart is empty');
+                    return;
+                }
+
+                setLoading(true);
+                setError('');
+
+                try {
+                    // In a real implementation, this would integrate with Stripe, PayPal, or similar
+                    // For now, we'll simulate the process
+                    console.log('Processing order:', {
+                        customer: customerEmail,
+                        items: cart,
+                        total: getCartTotal()
+                    });
+
+                    // Simulate API call
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+
+                    setSuccess('Order processed! Check your email for download links.');
+                    setCart([]);
+                    setCustomerEmail('');
+                    setShowCart(false);
+                } catch (err) {
+                    setError('Payment failed. Please try again.');
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            const ProductCard = ({ product }) => (
+                <div className="product-card rounded-xl p-6">
+                    <div className="mb-4">
+                        <h3 className="text-xl font-bold text-yellow-400 mb-2">{product.name}</h3>
+                        <p className="text-sm opacity-80 mb-3">{product.description}</p>
+                        <div className="flex justify-between items-center text-sm opacity-60 mb-4">
+                            <span>{product.collection}</span>
+                            <span>{product.type === 'audiobook' ? product.duration : product.pages}</span>
+                            <span>{product.format}</span>
+                        </div>
+                    </div>
+                    <div className="flex justify-between items-center">
+                        <div>
+                            <span className="text-2xl font-bold text-green-400">${product.price}</span>
+                            <span className="text-sm opacity-60 ml-2">USD</span>
+                        </div>
+                        <button
+                            onClick={() => addToCart(product)}
+                            className="btn-primary px-4 py-2 rounded-lg"
+                            disabled={cart.some(item => item.id === product.id)}
+                        >
+                            {cart.some(item => item.id === product.id) ? 'In Cart' : 'Add to Cart'}
+                        </button>
+                    </div>
+                </div>
+            );
+
+            return (
+                <div className="min-h-screen p-4">
+                    <div className="max-w-6xl mx-auto">
+                        {/* Header */}
+                        <div className="text-center mb-8">
+                            <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+                                THE TRUTH SHOP
+                            </h1>
+                            <p className="text-xl opacity-80 mb-2">
+                                Digital Content - Independent of Blockchain
+                            </p>
+                            <p className="text-lg opacity-60">
+                                "Truth accessible to all, regardless of technology"
+                            </p>
+                        </div>
+
+                        {/* Cart Button */}
+                        <div className="flex justify-end mb-6">
+                            <button
+                                onClick={() => setShowCart(!showCart)}
+                                className="btn-secondary px-4 py-2 rounded-lg relative"
+                            >
+                                🛒 Cart ({cart.length})
+                                {cart.length > 0 && (
+                                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                                        {cart.length}
+                                    </span>
+                                )}
+                            </button>
+                        </div>
+
+                        {/* Cart Dropdown */}
+                        {showCart && (
+                            <div className="glass rounded-xl p-6 mb-6">
+                                <h3 className="text-xl font-bold mb-4">Shopping Cart</h3>
+                                {cart.length === 0 ? (
+                                    <p className="opacity-60">Your cart is empty</p>
+                                ) : (
+                                    <>
+                                        {cart.map(item => (
+                                            <div key={item.id} className="flex justify-between items-center py-2 border-b border-gray-600">
+                                                <div>
+                                                    <p className="font-semibold">{item.name}</p>
+                                                    <p className="text-sm opacity-60">{item.collection}</p>
+                                                </div>
+                                                <div className="flex items-center gap-3">
+                                                    <span className="font-bold">${item.price}</span>
+                                                    <button
+                                                        onClick={() => removeFromCart(item.id)}
+                                                        className="text-red-400 hover:text-red-300"
+                                                    >
+                                                        ❌
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                        <div className="mt-4 pt-4 border-t border-gray-600">
+                                            <div className="flex justify-between items-center mb-4">
+                                                <span className="text-xl font-bold">Total: ${getCartTotal()}</span>
+                                            </div>
+                                            <div className="space-y-3">
+                                                <input
+                                                    type="email"
+                                                    placeholder="Your email address"
+                                                    value={customerEmail}
+                                                    onChange={(e) => setCustomerEmail(e.target.value)}
+                                                    className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white"
+                                                />
+                                                <button
+                                                    onClick={handleCheckout}
+                                                    disabled={loading}
+                                                    className="btn-primary w-full py-3 rounded-lg text-lg"
+                                                >
+                                                    {loading ? '⏳ Processing...' : '💳 Checkout'}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        )}
+
+                        {/* The Truth Collection */}
+                        <div className="mb-12">
+                            <h2 className="text-3xl font-bold mb-6 text-center">The Truth Collection</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <ProductCard product={PRODUCTS.truth.audiobook} />
+                                <ProductCard product={PRODUCTS.truth.pdf} />
+                            </div>
+                        </div>
+
+                        {/* Bonus Gift Collection */}
+                        <div className="mb-12">
+                            <h2 className="text-3xl font-bold mb-6 text-center">Bonus Gift Collection</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <ProductCard product={PRODUCTS.bonus.audiobook} />
+                                <ProductCard product={PRODUCTS.bonus.pdf} />
+                            </div>
+                        </div>
+
+                        {/* NFT vs Shop Comparison */}
+                        <div className="glass rounded-xl p-6 mb-6">
+                            <h3 className="text-xl font-bold mb-4 text-center">NFT vs Digital Shop</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <h4 className="font-bold text-yellow-400 mb-3">🎯 NFT Collection (Web3)</h4>
+                                    <ul className="text-sm space-y-2 opacity-80">
+                                        <li>• Complete package + ownership proof</li>
+                                        <li>• The Truth: $777 (77 editions)</li>
+                                        <li>• Bonus Gift: $145 (145,000 editions)</li>
+                                        <li>• 10% royalties on resales</li>
+                                        <li>• Immutable blockchain record</li>
+                                        <li>• Requires MetaMask + ETH</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-green-400 mb-3">🛒 Digital Shop (Web2)</h4>
+                                    <ul className="text-sm space-y-2 opacity-80">
+                                        <li>• Individual content pieces</li>
+                                        <li>• Audiobooks: $35 / $15</li>
+                                        <li>• PDFs: $20 / $10</li>
+                                        <li>• Traditional payment methods</li>
+                                        <li>• Instant download access</li>
+                                        <li>• No crypto knowledge required</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Messages */}
+                        {error && (
+                            <div className="bg-red-900 border border-red-600 rounded-lg p-4 mb-4">
+                                <p className="text-red-200">❌ {error}</p>
+                            </div>
+                        )}
+
+                        {success && (
+                            <div className="bg-green-900 border border-green-600 rounded-lg p-4 mb-4">
+                                <p className="text-green-200">✅ {success}</p>
+                            </div>
+                        )}
+
+                        {/* Footer */}
+                        <div className="text-center py-8 opacity-60">
+                            <p className="text-sm mb-2">
+                                "Truth doesn't discriminate by technology"
+                            </p>
+                            <p className="text-xs">
+                                Choose your preferred access method: Blockchain ownership or traditional purchase
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<Shop />, document.getElementById('shop-root'));
+    </script>
+</body>
+</html>
