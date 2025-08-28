@@ -1,6 +1,21 @@
 
 const { useState, useEffect } = React;
 
+// Deployment-aware configuration
+const getNetworkConfig = () => {
+    const isProduction = process.env.NODE_ENV === 'production';
+    const environment = window.location.hostname;
+    
+    // Auto-detect network based on deployment
+    if (environment.includes('replit')) return NETWORKS.baseSepolia;
+    if (environment.includes('vercel')) return NETWORKS.base;
+    if (environment.includes('railway')) return NETWORKS.base;
+    if (environment.includes('render')) return NETWORKS.base;
+    if (environment.includes('herokuapp')) return NETWORKS.base;
+    
+    return isProduction ? NETWORKS.base : NETWORKS.baseSepolia;
+};
+
 // Contract configuration
 const CONTRACT_CONFIG = {
     address: "0x...", // Will be filled when deployed
@@ -47,8 +62,8 @@ const NETWORKS = {
     }
 };
 
-// Default to Base Sepolia for testing
-const CURRENT_NETWORK = NETWORKS.baseSepolia;
+// Dynamic network selection based on deployment
+const CURRENT_NETWORK = getNetworkConfig();
 
 function App() {
     const [account, setAccount] = useState(null);

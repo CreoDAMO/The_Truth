@@ -1,0 +1,14 @@
+
+[build]
+buildCommand = "npm install && npm run compile"
+
+[deploy]
+startCommand = "node server.js"
+restartPolicyType = "always"
+
+[env]
+NODE_ENV = "production"
+PORT = "8080"
+
+[networking]
+external = true

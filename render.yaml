@@ -1,0 +1,16 @@
+
+services:
+  - type: web
+    name: the-truth-nft
+    env: node
+    buildCommand: npm install && npm run compile
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+    disk:
+      name: the-truth-nft-disk
+      mountPath: /app/data
+      sizeGB: 1

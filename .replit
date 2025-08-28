@@ -19,6 +19,23 @@ mode = "sequential"
 task = "shell.exec"
 args = "node server.js"
 
+[[workflows.workflow]]
+name = "Universal Deploy"
+author = 46990582
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "chmod +x deploy-everywhere.sh"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run build"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Ready for universal deployment! Use: npm run deploy:[platform]\""
+
 [[ports]]
 localPort = 5000
 externalPort = 80

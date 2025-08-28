@@ -20,7 +20,15 @@
     "generate-metadata": "node scripts/generate_metadata.js",
     "start": "node server.js",
     "dev": "node server.js",
-    "update-contract": "node update-contract.js"
+    "build": "npm run compile && npm run generate-metadata",
+    "update-contract": "node update-contract.js",
+    "deploy:vercel": "./deploy-everywhere.sh vercel",
+    "deploy:railway": "./deploy-everywhere.sh railway",
+    "deploy:render": "./deploy-everywhere.sh render",
+    "deploy:heroku": "./deploy-everywhere.sh heroku",
+    "deploy:docker": "./deploy-everywhere.sh docker",
+    "deploy:aws": "./deploy-everywhere.sh aws",
+    "deploy:all": "echo 'Choose specific platform with deploy:[platform]'"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.2.3",
