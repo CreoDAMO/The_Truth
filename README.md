@@ -1,4 +1,3 @@
-
 # The Truth NFT - Complete Web3 Ecosystem
 
 "The Truth Doesn't Need To Be Pushed, Only The Lie...The Lie Only Needs To Be Whispered, But The Truth Always Remains Silent waiting to be Witnessed."
@@ -289,3 +288,19 @@ MIT - See LICENSE file for details
 ---
 
 *"The Truth Doesn't Need To Be Pushed, Only The Lie...The Lie Only Needs To Be Whispered, But The Truth Always Remains Silent waiting to be Witnessed."*
+---
+
+Jacque Antoine DeGraff:
+This is how we Operate in both realms, (Public & Private) all while rendering to Cesar what is due to Cesar.
+
+This is what it means to be plugged into the system and still be able to unplug from it,  all while remaining Sovereign (The Matrix)
+
+I'm not claiming any kind of legal exemption, I'm applying the Law's, I'm operational in both capacities therefore it's just common sense to apply the tax system. Nor does it matter to me how the IRS recognizes The Lawful rights of the Human Being. I'm not asking permission to be Lawful nor am I asking permission to operate within the Legal Statues designed for these very purposes.
+
+😂🤣 Now before you get hell bent on translation of my very simple explanation. And missed the point completely, I'm not pushing any legal theories, I'm not arguing, I'm not seeking validation for what I know as Truth. Instead of trying to fractionalize the Truth take some time and look at it as a whole. And then tell me what you see Truthfully.
+
+Black's Law Dictionary is very self explanatory and if you like you can double check the difference. You can't Practice Law without knowing what the Law is, same way you cannot apply Law if you don't know the Law. In the beginning I clearly stated Render to Cesar His Due. If I collect Fiat currency that belongs to Cesar and he has imposed taxes on such currency then who am I to argue. 
+
+At the end of the final Matrix What did Zion tell Neo? To Destroy the Matrix is to destroy yourself the point they both came to understand was how to Be Free within a system designed to oppress that very Freedom.
+
+This is why argument is unnecessary. 🎤 Dropped ✍🏾...
