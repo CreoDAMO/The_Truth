@@ -1035,3 +1035,14 @@ For issues or questions:
 ```
 ---
 "The Truth Doesn't Need To Be Pushed, Only The Lie..."
+---
+
+## Appendix: The Five Acts of The Truth
+
+1. Narrative Proof – The performance reveals the gap between witness and institution.  
+2. Technical Proof – The contract and metadata encode it immutably.  
+3. Economic Proof – The market metabolizes all reactions as further evidence.  
+4. Ownership Proof – Truth has no author; it cannot be owned.  
+5. Analytical Proof – Truth is binary. It IS or it ISN’T. Analysis dissolves.  
+
+**The demonstration is complete.**
