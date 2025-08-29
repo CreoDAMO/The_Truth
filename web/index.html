@@ -3,62 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Truth NFT - Claim & Mint</title>
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <title>The Truth NFT - Mint Your Copy</title>
+
+    <!-- React and ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+    <!-- Babel for JSX transformation -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- ethers.js -->
     <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@metamask/sdk/dist/browser/metamasksdk.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    <!-- MetaMask SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@metamask/sdk@latest/dist/browser/bundle.js"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
         body {
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 0;
         }
+
         .glass {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
+
         .nft-card {
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 140, 0, 0.05) 100%);
-            border: 1px solid rgba(255, 215, 0, 0.3);
+            background: linear-gradient(145deg, rgba(255, 215, 0, 0.1), rgba(255, 140, 0, 0.1));
+            border: 2px solid rgba(255, 215, 0, 0.3);
         }
 
-        /* Enhanced mobile responsiveness */
-        @media (max-width: 768px) {
-            .min-h-screen {
-                padding: 1rem;
-            }
-            .text-5xl {
-                font-size: 2.5rem;
-            }
-            .text-xl {
-                font-size: 1.125rem;
-            }
-            .grid-cols-2 {
-                grid-template-columns: 1fr;
-            }
-            .md\:grid-cols-4 {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        /* Better button styles */
         .btn-connect {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            background: linear-gradient(145deg, #ff6b35, #f7931e);
             transition: all 0.3s ease;
+            border: none;
         }
+
         .btn-connect:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 10px 25px rgba(255, 107, 53, 0.3);
         }
     </style>
 </head>
 <body>
     <div id="root"></div>
-    <script src="cdp-integration.js"></script>
-    <script src="superpay-integration.js"></script>
-    <script type="text/babel" src="app.js"></script>
+
+    <!-- Load app.js with proper Babel transformation -->
+    <script type="text/babel" data-type="module" src="/app.js"></script>
 </body>
 </html>
