@@ -77,6 +77,15 @@
     </div>
 
     <script>
+        // Escape text for safe HTML insertion
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
         let account = null;
         let provider = null;
         let signer = null;
@@ -208,13 +217,15 @@
 
         function showResults(result) {
             document.getElementById('results').style.display = 'block';
+            const ownerAddress = escapeHtml(document.getElementById('ownerAddress').value);
+            const treasuryAddress = escapeHtml(document.getElementById('treasuryAddress').value);
             document.getElementById('contractInfo').innerHTML = `
                 <div class="space-y-2">
                     <p><strong>Contract Address:</strong> ${result.address}</p>
                     <p><strong>Transaction Hash:</strong> <a href="${NETWORKS.baseSepolia.blockExplorerUrls[0]}/tx/${result.txHash}" target="_blank" class="underline">${result.txHash.slice(0, 10)}...${result.txHash.slice(-10)}</a></p>
                     <p><strong>Network:</strong> Base Sepolia</p>
-                    <p><strong>Owner:</strong> ${document.getElementById('ownerAddress').value}</p>
-                    <p><strong>Treasury:</strong> ${document.getElementById('treasuryAddress').value}</p>
+                    <p><strong>Owner:</strong> ${ownerAddress}</p>
+                    <p><strong>Treasury:</strong> ${treasuryAddress}</p>
                     <a href="${NETWORKS.baseSepolia.blockExplorerUrls[0]}/address/${result.address}" 
                        target="_blank" 
                        class="inline-block bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg mt-4 transition-colors">
