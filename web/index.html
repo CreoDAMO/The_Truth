@@ -64,3 +64,418 @@
     <script type="text/babel" data-type="module" src="/app.js"></script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Truth NFT - Complete Web3 Creator Economy</title>
+    <meta name="description" content="The Truth NFT ecosystem - where philosophy meets blockchain technology">
+    <link rel="manifest" href="manifest.json">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0f0f23, #1a1a2e, #16213e);
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #00d4ff;
+        }
+
+        .wallet-btn {
+            background: linear-gradient(45deg, #00d4ff, #090979);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .wallet-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .hero {
+            text-align: center;
+            padding: 120px 20px 60px;
+            background: radial-gradient(circle at center, rgba(0, 212, 255, 0.1) 0%, transparent 70%);
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #00d4ff, #090979);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+
+        .hero .subtitle {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #00d4ff;
+        }
+
+        .ecosystem-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            max-width: 1000px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .stat-card {
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 5px;
+        }
+
+        .cta-section {
+            text-align: center;
+            padding: 60px 20px;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .cta-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-primary {
+            background: linear-gradient(45deg, #4CAF50, #00d4ff);
+            color: white;
+        }
+
+        .cta-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .token-info {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 60px auto;
+            max-width: 1000px;
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+
+        .token-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .token-card {
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .token-symbol {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #00d4ff;
+            margin-bottom: 10px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .quote {
+            font-style: italic;
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin: 30px 0;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/governance">🗳️ Governance</a>
+                <a href="/community">👥 Community</a>
+                <a href="/analytics">📊 Analytics</a>
+                <a href="/shop">🛒 Shop</a>
+                <a href="/deploy">🚀 Deploy</a>
+            </div>
+            <button class="wallet-btn" id="connectWallet">Connect Wallet</button>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <h1>The Truth NFT Ecosystem</h1>
+        <p class="subtitle">A complete Web3 creator economy platform integrating NFTs, governance tokens, and community-driven philosophy</p>
+        <div class="quote">
+            "The Truth Doesn't Need To Be Pushed, Only The Lie...The Lie Only Needs To Be Whispered, But The Truth Always Remains Silent waiting to be Witnessed."
+            <br><em>— Jacque Antoine DeGraff</em>
+        </div>
+    </section>
+
+    <div class="ecosystem-stats">
+        <div class="stat-card">
+            <div class="stat-number">77</div>
+            <div class="stat-label">Truth NFTs</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">145K</div>
+            <div class="stat-label">Bonus Gift NFTs</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">10M</div>
+            <div class="stat-label">TRUTH Tokens</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">1B</div>
+            <div class="stat-label">Creator Tokens</div>
+        </div>
+    </div>
+
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">🎯</div>
+            <h3>NFT Collections</h3>
+            <p>Two-tier collection system: The Truth (77 editions at $777) and Bonus Gift (145K editions at $145)</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">🪙</div>
+            <h3>Token Economy</h3>
+            <p>TRUTH governance token and Creator community token create functional utility beyond speculation</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">🗳️</div>
+            <h3>Community Governance</h3>
+            <p>Token holders vote on pricing, revenue distribution, and future collection themes</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">💰</div>
+            <h3>Revenue Sharing</h3>
+            <p>Platform revenue flows back to token holders through automated distribution systems</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">🔐</div>
+            <h3>Token-Gated Access</h3>
+            <p>Exclusive content, Discord channels, and creator sessions based on token holdings</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">📱</div>
+            <h3>Multi-Platform</h3>
+            <p>Blockchain NFTs + traditional sales channels (audiobooks, PDFs) with tax compliance</p>
+        </div>
+    </div>
+
+    <div class="token-info">
+        <h2 style="text-align: center; margin-bottom: 20px;">Ecosystem Tokens</h2>
+        <div class="token-grid">
+            <div class="token-card">
+                <div class="token-symbol">TRUTH</div>
+                <p><strong>Supply:</strong> 10,000,000</p>
+                <p><strong>Purpose:</strong> Governance & Platform Currency</p>
+                <p><strong>Benefits:</strong> Voting rights, staking rewards, Master Copy priority</p>
+                <p><strong>Address:</strong> 0x8f6cf6...30a3c</p>
+            </div>
+            
+            <div class="token-card">
+                <div class="token-symbol">@jacqueantoinedegraff</div>
+                <p><strong>Supply:</strong> 1,000,000,000</p>
+                <p><strong>Purpose:</strong> Creator Community Access</p>
+                <p><strong>Benefits:</strong> Revenue sharing, exclusive content, early access</p>
+                <p><strong>Address:</strong> 0x22b04...5aa7</p>
+            </div>
+        </div>
+    </div>
+
+    <section class="cta-section">
+        <h2>Join The Truth Ecosystem</h2>
+        <p>Participate in the future of creator economies where philosophy meets technology</p>
+        <div class="cta-buttons">
+            <a href="/governance" class="cta-btn cta-primary">🗳️ Governance Dashboard</a>
+            <a href="/community" class="cta-btn cta-secondary">👥 Community Hub</a>
+            <a href="/shop" class="cta-btn cta-secondary">🛒 Traditional Shop</a>
+            <a href="/deploy" class="cta-btn cta-secondary">🚀 Deploy Tools</a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p><strong>Jacque Antoine DeGraff</strong></p>
+        <p>Master of Nothing, Student of All Things</p>
+        <p>Address: 0x67BF9f428d92704C3Db3a08dC05Bc941A8647866</p>
+        <p style="margin-top: 20px; color: rgba(255, 255, 255, 0.6);">
+            Operating in both realms (Public & Private) while rendering to Caesar what is due to Caesar
+        </p>
+    </footer>
+
+    <script src="token-integration.js"></script>
+    <script>
+        // Initialize wallet connection
+        document.getElementById('connectWallet').addEventListener('click', async () => {
+            const account = await window.connectTruthWallet();
+            if (account) {
+                document.getElementById('connectWallet').textContent = 
+                    `${account.substring(0, 6)}...${account.substring(38)}`;
+                await window.updateTokenDisplays();
+            }
+        });
+
+        // Auto-connect if previously connected
+        window.addEventListener('load', async () => {
+            if (window.ethereum && window.ethereum.selectedAddress) {
+                const account = await window.connectTruthWallet();
+                if (account) {
+                    document.getElementById('connectWallet').textContent = 
+                        `${account.substring(0, 6)}...${account.substring(38)}`;
+                    await window.updateTokenDisplays();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

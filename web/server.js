@@ -178,3 +178,233 @@ app.get('*', (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+const express = require('express');
+const path = require('path');
+const cors = require('cors');
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+// Middleware
+app.use(cors({
+    origin: ['http://localhost:5000', 'https://*.replit.dev', 'https://*.replit.app', 'https://*.repl.co'],
+    credentials: true
+}));
+
+app.use(express.json());
+app.use(express.static('web'));
+
+// Serve main pages
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/governance', (req, res) => {
+    res.sendFile(path.join(__dirname, 'governance.html'));
+});
+
+app.get('/community', (req, res) => {
+    res.sendFile(path.join(__dirname, 'community-dashboard.html'));
+});
+
+app.get('/analytics', (req, res) => {
+    res.sendFile(path.join(__dirname, 'analytics.html'));
+});
+
+app.get('/deploy', (req, res) => {
+    res.sendFile(path.join(__dirname, 'deploy.html'));
+});
+
+app.get('/shop', (req, res) => {
+    res.sendFile(path.join(__dirname, 'shop.html'));
+});
+
+// API Routes for Community Features
+app.post('/api/governance/vote', async (req, res) => {
+    try {
+        const { proposalId, vote, address, signature } = req.body;
+        
+        // In production, verify signature and token holdings
+        console.log(`Vote received: ${address} voted ${vote} on proposal ${proposalId}`);
+        
+        res.json({ 
+            success: true, 
+            message: 'Vote recorded successfully' 
+        });
+    } catch (error) {
+        res.status(500).json({ 
+            success: false, 
+            error: error.message 
+        });
+    }
+});
+
+app.get('/api/governance/proposals', (req, res) => {
+    // Mock proposals - in production, fetch from database/IPFS
+    const proposals = [
+        {
+            id: 1,
+            title: "Bonus Gift Collection Pricing",
+            description: "Should we reduce the Bonus Gift NFT price from 0.039 ETH to 0.025 ETH to increase accessibility?",
+            yesVotes: 67,
+            noVotes: 33,
+            totalVotes: 1247,
+            endDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
+            status: 'active'
+        },
+        {
+            id: 2,
+            title: "Revenue Distribution",
+            description: "Allocate 15% of audiobook sales revenue to TRUTH token staking rewards?",
+            yesVotes: 82,
+            noVotes: 18,
+            totalVotes: 892,
+            endDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+            status: 'active'
+        },
+        {
+            id: 3,
+            title: "New Collection Theme",
+            description: "Next philosophical NFT collection should focus on \"The Gap Between Knowledge and Wisdom\"",
+            yesVotes: 74,
+            noVotes: 26,
+            totalVotes: 2156,
+            endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+            status: 'active'
+        }
+    ];
+    
+    res.json(proposals);
+});
+
+app.get('/api/community/content/:address', async (req, res) => {
+    try {
+        const { address } = req.params;
+        
+        // In production, verify token holdings from blockchain
+        const mockContent = [
+            {
+                id: 1,
+                title: "The Complete 25-Page Analysis",
+                description: "Full unedited philosophical framework",
+                type: "pdf",
+                requirement: "Any NFT holder",
+                accessible: true,
+                url: "/content/complete-analysis.pdf"
+            },
+            {
+                id: 2,
+                title: "Extended Audio Commentary",
+                description: "45-minute deep dive with creator insights",
+                type: "audio",
+                requirement: "100+ Creator tokens",
+                accessible: false, // Would check token balance
+                url: "/content/extended-commentary.mp3"
+            }
+        ];
+        
+        res.json(mockContent);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get('/api/community/revenue/:address', async (req, res) => {
+    try {
+        const { address } = req.params;
+        
+        // Mock revenue calculation - in production, calculate from blockchain data
+        const revenueData = {
+            totalEarned: 245.67,
+            thisMonth: 23.45,
+            nextDistribution: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString(),
+            breakdown: {
+                nftRoyalties: 15.20,
+                audiobookSales: 5.15,
+                tokenRewards: 3.10
+            }
+        };
+        
+        res.json(revenueData);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.post('/api/community/access-discord', async (req, res) => {
+    try {
+        const { address, tokenHoldings } = req.body;
+        
+        // In production, verify token holdings and generate Discord invite
+        const accessLevel = tokenHoldings.creator >= 1000 ? 'premium' : 'basic';
+        
+        res.json({
+            success: true,
+            inviteUrl: 'https://discord.gg/thetruth',
+            accessLevel: accessLevel,
+            channels: accessLevel === 'premium' ? 
+                ['general', 'philosophy', 'exclusive', 'governance'] :
+                ['general', 'philosophy']
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Token information endpoints
+app.get('/api/tokens/info', (req, res) => {
+    const tokenInfo = {
+        truth: {
+            address: '0x8f6cf6f7747e170f4768533b869c339dc3d30a3c',
+            symbol: 'TRUTH',
+            decimals: 18,
+            totalSupply: '10000000',
+            network: 'base',
+            description: 'Platform governance and utility token'
+        },
+        creator: {
+            address: '0x22b0434e89882f8e6841d340b28427646c015aa7',
+            symbol: '@jacqueantoinedegraff',
+            decimals: 18,
+            totalSupply: '1000000000',
+            network: 'base',
+            description: 'Creator economy and community access token'
+        }
+    };
+    
+    res.json(tokenInfo);
+});
+
+// Health check
+app.get('/api/health', (req, res) => {
+    res.json({ 
+        status: 'healthy', 
+        timestamp: new Date().toISOString(),
+        features: {
+            governance: true,
+            community: true,
+            tokenIntegration: true,
+            analytics: true
+        }
+    });
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ error: 'Something went wrong!' });
+});
+
+// 404 handler
+app.use((req, res) => {
+    res.status(404).json({ error: 'Not found' });
+});
+
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 The Truth Community Server running on http://0.0.0.0:${PORT}`);
+    console.log(`📊 Analytics: http://0.0.0.0:${PORT}/analytics`);
+    console.log(`🗳️  Governance: http://0.0.0.0:${PORT}/governance`);
+    console.log(`👥 Community: http://0.0.0.0:${PORT}/community`);
+    console.log(`🏪 Shop: http://0.0.0.0:${PORT}/shop`);
+    console.log(`🚀 Deploy: http://0.0.0.0:${PORT}/deploy`);
+});

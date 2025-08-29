@@ -1,0 +1,461 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Truth - Community Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0f0f23, #1a1a2e, #16213e);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #00d4ff, #090979);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .access-level {
+            display: inline-block;
+            background: linear-gradient(45deg, #4CAF50, #00d4ff);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .widget {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .revenue-widget {
+            text-align: center;
+        }
+
+        .revenue-amount {
+            font-size: 2rem;
+            color: #4CAF50;
+            margin: 10px 0;
+        }
+
+        .content-library {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .content-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .content-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .locked-content {
+            opacity: 0.6;
+            background: rgba(255, 255, 255, 0.02);
+            position: relative;
+        }
+
+        .locked-content::after {
+            content: "🔒";
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.2rem;
+        }
+
+        .staking-section {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(9, 9, 121, 0.1));
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .stake-input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            margin: 10px 0;
+        }
+
+        .stake-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(45deg, #4CAF50, #00d4ff);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .stake-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+        }
+
+        .activity-feed {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #00d4ff, #090979);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+
+        .social-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .social-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .social-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+        }
+
+        .discord-btn {
+            background: #5865F2;
+            color: white;
+        }
+
+        .telegram-btn {
+            background: #0088cc;
+            color: white;
+        }
+
+        .exclusive-btn {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            height: 8px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #4CAF50, #00d4ff);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .social-features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="header">
+            <h1>Community Dashboard</h1>
+            <div class="access-level" id="accessLevel">Access Level: Loading...</div>
+            <p>"Where Truth creates community, and community sustains Truth"</p>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="widget revenue-widget">
+                <h3>Revenue Share</h3>
+                <div class="revenue-amount" id="revenueAmount">$0.00</div>
+                <p>Next distribution in <span id="nextDistribution">15 days</span></p>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="revenueProgress" style="width: 30%"></div>
+                </div>
+                <small>Based on your token holdings</small>
+            </div>
+
+            <div class="widget content-library">
+                <h3>Exclusive Content Library</h3>
+                <div id="contentList">
+                    <div class="content-item">
+                        <h4>📚 The Complete 25-Page Analysis</h4>
+                        <p>Full unedited philosophical framework</p>
+                        <small>Requires: Any NFT holder</small>
+                    </div>
+                    
+                    <div class="content-item">
+                        <h4>🎧 Extended Audio Commentary</h4>
+                        <p>45-minute deep dive with creator insights</p>
+                        <small>Requires: 100+ Creator tokens</small>
+                    </div>
+                    
+                    <div class="content-item locked-content">
+                        <h4>📝 Unreleased Writings Collection</h4>
+                        <p>10 additional philosophical essays</p>
+                        <small>Requires: 1000+ Creator tokens</small>
+                    </div>
+                    
+                    <div class="content-item locked-content">
+                        <h4>🎥 Master Copy Behind the Scenes</h4>
+                        <p>Video documentation of the creation process</p>
+                        <small>Requires: 500+ TRUTH tokens</small>
+                    </div>
+                    
+                    <div class="content-item locked-content">
+                        <h4>💎 Future Collection Previews</h4>
+                        <p>Early access to upcoming philosophical NFTs</p>
+                        <small>Requires: Staked TRUTH tokens</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="widget staking-section">
+                <h3>TRUTH Token Staking</h3>
+                <p>Stake TRUTH tokens for enhanced rewards and Master Copy priority access.</p>
+                
+                <div id="stakingStats">
+                    <p>Your Staked: <strong id="stakedAmount">0 TRUTH</strong></p>
+                    <p>APY: <strong>24.5%</strong></p>
+                    <p>Rewards: <strong id="pendingRewards">0.00 TRUTH</strong></p>
+                </div>
+                
+                <input type="number" class="stake-input" placeholder="Amount to stake" id="stakeAmount">
+                <button class="stake-btn" onclick="stakeTruthTokens()">Stake TRUTH</button>
+                <button class="stake-btn" style="background: #f44336; margin-top: 5px;" onclick="unstakeTruthTokens()">Unstake</button>
+            </div>
+        </div>
+
+        <div class="widget">
+            <h3>Community Activity</h3>
+            <div class="activity-feed" id="activityFeed">
+                <div class="activity-item">
+                    <div class="activity-icon">🎯</div>
+                    <div>
+                        <strong>New Proposal:</strong> Bonus Gift pricing reduction<br>
+                        <small>2 hours ago</small>
+                    </div>
+                </div>
+                
+                <div class="activity-item">
+                    <div class="activity-icon">💰</div>
+                    <div>
+                        <strong>Revenue Distribution:</strong> $12,847 distributed to holders<br>
+                        <small>1 day ago</small>
+                    </div>
+                </div>
+                
+                <div class="activity-item">
+                    <div class="activity-icon">🚀</div>
+                    <div>
+                        <strong>New Member:</strong> @philosopher.eth joined with 500 TRUTH<br>
+                        <small>3 days ago</small>
+                    </div>
+                </div>
+                
+                <div class="activity-item">
+                    <div class="activity-icon">📚</div>
+                    <div>
+                        <strong>Content Added:</strong> "The Translation Gap Extended"<br>
+                        <small>1 week ago</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="social-features">
+            <div class="social-card">
+                <h4>🔊 Discord Community</h4>
+                <p>Join token-gated channels based on your holdings</p>
+                <button class="social-btn discord-btn" onclick="joinDiscord()">Join Discord</button>
+            </div>
+            
+            <div class="social-card">
+                <h4>📱 Telegram Alerts</h4>
+                <p>Get notified about proposals, distributions, and drops</p>
+                <button class="social-btn telegram-btn" onclick="joinTelegram()">Join Telegram</button>
+            </div>
+            
+            <div class="social-card">
+                <h4>🎓 Philosophy Sessions</h4>
+                <p>Monthly live discussions with the creator</p>
+                <button class="social-btn exclusive-btn" onclick="bookSession()">Book Session</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Community dashboard functionality
+        let userTokens = {
+            truth: 0,
+            creator: 0,
+            nfts: []
+        };
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserData();
+            updateAccessLevel();
+            calculateRevenue();
+        });
+
+        function loadUserData() {
+            // In production, this would fetch from blockchain/backend
+            // Simulating user data
+            userTokens = {
+                truth: 1250,
+                creator: 2500,
+                nfts: ['Truth #42', 'Bonus Gift #1337']
+            };
+            
+            document.getElementById('stakedAmount').textContent = `${userTokens.truth * 0.6} TRUTH`;
+            document.getElementById('pendingRewards').textContent = `${(userTokens.truth * 0.245 / 365 * 30).toFixed(2)} TRUTH`;
+        }
+
+        function updateAccessLevel() {
+            let level = "Basic";
+            if (userTokens.creator >= 10000) level = "Platinum";
+            else if (userTokens.creator >= 1000) level = "Gold";
+            else if (userTokens.creator >= 100) level = "Silver";
+            else if (userTokens.nfts.length > 0) level = "Bronze";
+            
+            document.getElementById('accessLevel').textContent = `Access Level: ${level}`;
+            
+            // Update content accessibility
+            updateContentAccess();
+        }
+
+        function updateContentAccess() {
+            const contentItems = document.querySelectorAll('.content-item');
+            contentItems.forEach((item, index) => {
+                const requirements = [
+                    () => userTokens.nfts.length > 0, // Any NFT
+                    () => userTokens.creator >= 100,   // 100+ Creator tokens
+                    () => userTokens.creator >= 1000,  // 1000+ Creator tokens
+                    () => userTokens.truth >= 500,     // 500+ TRUTH tokens
+                    () => userTokens.truth >= 100      // Staked TRUTH
+                ];
+                
+                if (requirements[index] && requirements[index]()) {
+                    item.classList.remove('locked-content');
+                }
+            });
+        }
+
+        function calculateRevenue() {
+            // Calculate monthly revenue share based on token holdings
+            const baseRevenue = 1000; // Total monthly revenue pool
+            const totalTruthSupply = 10000000;
+            const totalCreatorSupply = 1000000000;
+            
+            const truthShare = (userTokens.truth / totalTruthSupply) * baseRevenue * 0.6;
+            const creatorShare = (userTokens.creator / totalCreatorSupply) * baseRevenue * 0.4;
+            
+            const totalShare = truthShare + creatorShare;
+            document.getElementById('revenueAmount').textContent = `$${totalShare.toFixed(2)}`;
+        }
+
+        function stakeTruthTokens() {
+            const amount = document.getElementById('stakeAmount').value;
+            if (!amount || amount <= 0) {
+                alert('Please enter a valid amount');
+                return;
+            }
+            
+            // In production, would interact with staking contract
+            alert(`Staking ${amount} TRUTH tokens...`);
+            console.log(`Staking ${amount} TRUTH tokens`);
+        }
+
+        function unstakeTruthTokens() {
+            // In production, would interact with staking contract
+            alert('Unstaking TRUTH tokens...');
+            console.log('Unstaking TRUTH tokens');
+        }
+
+        function joinDiscord() {
+            window.open('https://discord.gg/thetruth', '_blank');
+        }
+
+        function joinTelegram() {
+            window.open('https://t.me/thetruthcommunity', '_blank');
+        }
+
+        function bookSession() {
+            alert('Philosophy sessions available for holders with 1000+ combined tokens');
+        }
+    </script>
+</body>
+</html>
