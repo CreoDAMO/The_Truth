@@ -17,7 +17,7 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node server.js"
+args = "node web/server.js"
 
 [[workflows.workflow]]
 name = "Universal Deploy"
@@ -35,6 +35,10 @@ args = "npm run build"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "echo \"Ready for universal deployment! Use: npm run deploy:[platform]\""
+
+[[ports]]
+localPort = 3000
+externalPort = 3000
 
 [[ports]]
 localPort = 5000
