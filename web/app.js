@@ -484,7 +484,68 @@ function App() {
         if (window.ethereum && window.ethereum.selectedAddress) {
             connectWallet();
         }
+
+        // Initialize PWA features
+        initializePWA();
+        
+        // Initialize analytics
+        initializeAnalytics();
     }, []);
+
+    // PWA Installation
+    const initializePWA = () => {
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(registration => {
+                    console.log('SW registered:', registration);
+                })
+                .catch(error => {
+                    console.log('SW registration failed:', error);
+                });
+        }
+
+        // Handle PWA install prompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            window.deferredPrompt = e;
+            
+            // Show custom install button
+            const installButton = document.createElement('button');
+            installButton.textContent = '📱 Install App';
+            installButton.className = 'bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-sm fixed bottom-4 right-4 z-50';
+            installButton.onclick = () => {
+                e.prompt();
+                e.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                    }
+                    window.deferredPrompt = null;
+                    installButton.remove();
+                });
+            };
+            document.body.appendChild(installButton);
+        });
+    };
+
+    // Initialize analytics tracking
+    const initializeAnalytics = () => {
+        if (typeof TruthAnalytics !== 'undefined') {
+            window.analytics = new TruthAnalytics();
+        }
+        
+        // Track page view
+        fetch('/api/track-event', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                event: 'page_view',
+                page: 'main',
+                timestamp: Date.now(),
+                userAgent: navigator.userAgent
+            })
+        }).catch(console.error);
+    };
 
     return (
         <div className="min-h-screen text-white p-4">

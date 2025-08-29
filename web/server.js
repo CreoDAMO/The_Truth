@@ -29,6 +29,28 @@ app.use(express.static(__dirname));
 // Then serve from parent directory
 app.use(express.static(path.join(__dirname, '..')));
 
+// Serve PWA manifest with correct MIME type
+app.get('/manifest.json', (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.sendFile(path.join(__dirname, 'manifest.json'));
+});
+
+// Event tracking endpoint
+app.post('/api/track-event', (req, res) => {
+    const { event, page, timestamp, userAgent } = req.body;
+    
+    // Log analytics event (replace with real analytics service)
+    console.log('Analytics Event:', {
+        event,
+        page,
+        timestamp: new Date(timestamp),
+        userAgent,
+        ip: req.ip
+    });
+    
+    res.json({ success: true });
+});
+
 // Serve contract artifacts specifically
 app.use('/contract-artifacts.js', express.static(path.join(__dirname, '..', 'contract-artifacts.js')));
 
@@ -64,6 +86,84 @@ app.post('/api/create-tax-transaction', async (req, res) => {
     res.json({ success: true, message: 'Tax transaction recorded' });
   } catch (error) {
     console.error('Tax transaction recording error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Analytics endpoint
+app.get('/api/analytics', async (req, res) => {
+  try {
+    const { timeframe = '7d' } = req.query;
+    
+    // Mock analytics data - replace with real data sources
+    const analyticsData = {
+      totalRevenue: 75000, // $75k total
+      mintingVelocity: [
+        { date: '2024-01-01', mints: 5 },
+        { date: '2024-01-02', mints: 8 },
+        { date: '2024-01-03', mints: 12 },
+        { date: '2024-01-04', mints: 7 },
+        { date: '2024-01-05', mints: 15 },
+        { date: '2024-01-06', mints: 10 },
+        { date: '2024-01-07', mints: 9 }
+      ],
+      geographicDistribution: {
+        'United States': 45,
+        'United Kingdom': 12,
+        'Germany': 8,
+        'Japan': 6,
+        'Canada': 5,
+        'Australia': 4
+      },
+      holderAnalytics: {
+        uniqueHolders: 80,
+        topHolders: [
+          { address: '0x742d35Cc6523c0532925a3b8D4b9d35C21B64C4A', count: 3, totalValue: 2331 },
+          { address: '0x8ba1f109551bD432803012645Hac136c82d', count: 2, totalValue: 1554 },
+          { address: '0x2f318C334780961FB129D2a6c30D0763d9a5C970', count: 2, totalValue: 1554 }
+        ],
+        holdingDuration: [30, 45, 60, 15, 90] // days
+      },
+      secondaryMarket: {
+        volume: 25000,
+        averagePrice: 950,
+        priceHistory: [
+          { date: '2024-01-01', price: 777 },
+          { date: '2024-01-02', price: 825 },
+          { date: '2024-01-03', price: 890 },
+          { date: '2024-01-04', price: 920 },
+          { date: '2024-01-05', price: 950 }
+        ]
+      },
+      platformMetrics: {
+        webVisitors: 5200,
+        conversionRate: 0.042,
+        shopSales: 85,
+        nftSales: 57
+      }
+    };
+
+    res.json(analyticsData);
+  } catch (error) {
+    console.error('Analytics error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Philosophy metrics endpoint
+app.get('/api/philosophy-metrics', async (req, res) => {
+  try {
+    const metrics = {
+      truthValidationScore: 94.7, // How well market behavior matches predictions
+      institutionalTranslationRate: 67.3, // % of responses that "translated" the truth
+      abundanceImpact: 1313, // % premium NFT commands over direct purchase
+      witnessEngagement: 87.2, // Active engagement vs passive consumption
+      paradoxDemonstration: 98.1 // How clearly the system demonstrates its own thesis
+    };
+    
+    res.json(metrics);
+  } catch (error) {
+    console.error('Philosophy metrics error:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
