@@ -5,7 +5,7 @@
 const deploymentConfigs = {
   replit: {
     buildCommand: "npm run compile",
-    startCommand: "node server.js",
+    startCommand: "node web/server.js",
     port: process.env.PORT || 5000,
     host: "0.0.0.0",
     environment: "REPLIT_DEPLOYMENT"

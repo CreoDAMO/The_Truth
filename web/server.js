@@ -5,9 +5,12 @@ const port = process.env.PORT || 5000;
 
 // Serve static files from the root directory
 // This will serve index.html, deploy.html, shop.html, app.js, etc.
-// It also serves files from subdirectories like 'web', 'integrations', 'deployment'
+// Serve static files from current directory and parent
 app.use(express.static(__dirname));
 app.use(express.static(path.join(__dirname, '..')));
+
+// Serve contract artifacts specifically
+app.use('/contract-artifacts.js', express.static(path.join(__dirname, '..', 'contract-artifacts.js')));
 
 
 // API Routes (example)

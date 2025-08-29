@@ -6,8 +6,10 @@ echo "🏗️ Building static files for deployment..."
 # Create build directory
 mkdir -p dist
 
-# Copy web files
-cp -r web/* dist/
+# Copy web files (excluding server.js to avoid conflicts)
+cp web/*.html dist/
+cp web/*.js dist/ 2>/dev/null || echo "No JS files to copy"
+cp web/*.css dist/ 2>/dev/null || echo "No CSS files to copy"
 
 # Copy contract artifacts if they exist
 if [ -f "contract-artifacts.js" ]; then

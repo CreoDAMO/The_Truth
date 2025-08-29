@@ -11,10 +11,11 @@ async function main() {
     
     console.log("📋 Steps to deploy with MetaMask:");
     console.log("1. Run: npm run compile-browser");
-    console.log("2. Open deploy.html in your browser");
-    console.log("3. Connect your MetaMask wallet");
-    console.log("4. Configure deployment parameters");
-    console.log("5. Click 'Deploy Contract'");
+    console.log("2. Start server: npm start");
+    console.log("3. Navigate to: http://localhost:5000/deploy.html");
+    console.log("4. Connect your MetaMask wallet");
+    console.log("5. Configure deployment parameters");
+    console.log("6. Click 'Deploy Contract'");
     console.log("");
     
     console.log("🔗 Alternative - Use the minting app:");
