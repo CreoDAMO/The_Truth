@@ -36,6 +36,39 @@ args = "npm run build"
 task = "shell.exec"
 args = "echo \"Ready for universal deployment! Use: npm run deploy:[platform]\""
 
+[[workflows.workflow]]
+name = "Deploy to GitHub Pages"
+author = 47038706
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "chmod +x build-static.sh"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "./build-static.sh"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "git add dist/"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "git commit -m \"Build static files for GitHub Pages deployment\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "git push origin main"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"✅ Static files built and pushed to GitHub\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"🔗 Enable GitHub Pages in your repo settings to deploy from /dist folder\""
+
 [[ports]]
 localPort = 5000
 externalPort = 80
