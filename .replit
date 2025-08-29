@@ -1,11 +1,11 @@
 modules = ["nodejs-20", "web", "bash"]
-run = "node index.js"
+run = "npm run dev"
 
 [nix]
 channel = "stable-25_05"
 
 [deployment]
-run = ["sh", "-c", "node index.js"]
+run = ["sh", "-c", "npm run dev"]
 
 [workflows]
 runButton = "Start Minting App"
