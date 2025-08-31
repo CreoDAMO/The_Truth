@@ -375,7 +375,7 @@ function AnalyticsDashboard() {
                                 <div className="flex items-center justify-between p-3 bg-purple-900 bg-opacity-50 rounded-lg">
                                     <div className="flex items-center gap-3">
                                         <div className="w-3 h-3 bg-purple-400 rounded-full"></div>
-                                        <span>Shop purchase: PDF + Audio bundle</span>
+                                        <span>Blackpaper collection mint: Part Three #42</span>
                                     </div>
                                     <span className="text-sm opacity-60">1 hour ago</span>
                                 </div>

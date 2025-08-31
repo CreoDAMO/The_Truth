@@ -1,5 +1,5 @@
 
-# THE TRUTH: DOCTRINAL WHITEPAPER OUTLINE
+# THE TRUTH: DOCTRINAL BLACKPAPER OUTLINE
 ## "NFTs as Choses in Action: A Black's Law Analysis of Digital Asset Classification"
 
 ### Executive Summary
@@ -54,7 +54,7 @@ Regulatory challenges to properly structured systems reflect policy gaps, not co
 ---
 
 ### Next Steps
-1. **Full Whitepaper**: Expand outline to 25-page analysis
+1. **Full Blackpaper**: Expand outline to 25-page analysis
 2. **No-Action Request**: Submit to SEC FinHub for interpretive guidance
 3. **Industry Coalition**: Rally creators for joint petition
 4. **Academic Partnership**: Engage law schools for doctrinal research
