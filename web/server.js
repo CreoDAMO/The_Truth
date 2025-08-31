@@ -1,8 +1,11 @@
+
 const express = require('express');
 const path = require('path');
 const RateLimit = require('express-rate-limit');
+const cors = require('cors');
+
 const app = express();
-const port = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000;
 
 // Trust proxy for Replit hosting environment
 app.set('trust proxy', true);
@@ -17,11 +20,10 @@ const limiter = RateLimit({
 app.use(limiter);
 
 // Enable CORS and JSON parsing
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    next();
-});
+app.use(cors({
+    origin: ['http://localhost:5000', 'https://*.replit.dev', 'https://*.replit.app', 'https://*.repl.co'],
+    credentials: true
+}));
 app.use(express.json());
 
 // Serve static files from the web directory first (highest priority)
@@ -35,164 +37,8 @@ app.get('/manifest.json', (req, res) => {
     res.sendFile(path.join(__dirname, 'manifest.json'));
 });
 
-// Event tracking endpoint
-app.post('/api/track-event', (req, res) => {
-    const { event, page, timestamp, userAgent } = req.body;
-    
-    // Log analytics event (replace with real analytics service)
-    console.log('Analytics Event:', {
-        event,
-        page,
-        timestamp: new Date(timestamp),
-        userAgent,
-        ip: req.ip
-    });
-    
-    res.json({ success: true });
-});
-
 // Serve contract artifacts specifically
 app.use('/contract-artifacts.js', express.static(path.join(__dirname, '..', 'contract-artifacts.js')));
-
-
-// API Routes
-app.get('/api/data', (req, res) => {
-  res.json({ message: 'Hello from the API!' });
-});
-
-// Tax calculation endpoint
-app.post('/api/calculate-nft-tax', async (req, res) => {
-  try {
-    const { amount, customerAddress } = req.body;
-    // Mock tax calculation for now - integrate with Stripe Tax later
-    const taxAmount = amount * 0.065; // 6.5% Florida sales tax
-    res.json({
-      success: true,
-      taxAmount: taxAmount,
-      totalAmount: amount + taxAmount,
-      calculationId: 'calc_' + Date.now()
-    });
-  } catch (error) {
-    console.error('Tax calculation error:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-// Tax transaction recording endpoint
-app.post('/api/create-tax-transaction', async (req, res) => {
-  try {
-    const { calculationId, transactionId, saleType } = req.body;
-    console.log('Tax transaction recorded:', { calculationId, transactionId, saleType });
-    res.json({ success: true, message: 'Tax transaction recorded' });
-  } catch (error) {
-    console.error('Tax transaction recording error:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-// Analytics endpoint
-app.get('/api/analytics', async (req, res) => {
-  try {
-    const { timeframe = '7d' } = req.query;
-    
-    // Mock analytics data - replace with real data sources
-    const analyticsData = {
-      totalRevenue: 75000, // $75k total
-      mintingVelocity: [
-        { date: '2024-01-01', mints: 5 },
-        { date: '2024-01-02', mints: 8 },
-        { date: '2024-01-03', mints: 12 },
-        { date: '2024-01-04', mints: 7 },
-        { date: '2024-01-05', mints: 15 },
-        { date: '2024-01-06', mints: 10 },
-        { date: '2024-01-07', mints: 9 }
-      ],
-      geographicDistribution: {
-        'United States': 45,
-        'United Kingdom': 12,
-        'Germany': 8,
-        'Japan': 6,
-        'Canada': 5,
-        'Australia': 4
-      },
-      holderAnalytics: {
-        uniqueHolders: 80,
-        topHolders: [
-          { address: '0x742d35Cc6523c0532925a3b8D4b9d35C21B64C4A', count: 3, totalValue: 2331 },
-          { address: '0x8ba1f109551bD432803012645Hac136c82d', count: 2, totalValue: 1554 },
-          { address: '0x2f318C334780961FB129D2a6c30D0763d9a5C970', count: 2, totalValue: 1554 }
-        ],
-        holdingDuration: [30, 45, 60, 15, 90] // days
-      },
-      secondaryMarket: {
-        volume: 25000,
-        averagePrice: 950,
-        priceHistory: [
-          { date: '2024-01-01', price: 777 },
-          { date: '2024-01-02', price: 825 },
-          { date: '2024-01-03', price: 890 },
-          { date: '2024-01-04', price: 920 },
-          { date: '2024-01-05', price: 950 }
-        ]
-      },
-      platformMetrics: {
-        webVisitors: 5200,
-        conversionRate: 0.042,
-        shopSales: 85,
-        nftSales: 57
-      }
-    };
-
-    res.json(analyticsData);
-  } catch (error) {
-    console.error('Analytics error:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-// Philosophy metrics endpoint
-app.get('/api/philosophy-metrics', async (req, res) => {
-  try {
-    const metrics = {
-      truthValidationScore: 94.7, // How well market behavior matches predictions
-      institutionalTranslationRate: 67.3, // % of responses that "translated" the truth
-      abundanceImpact: 1313, // % premium NFT commands over direct purchase
-      witnessEngagement: 87.2, // Active engagement vs passive consumption
-      paradoxDemonstration: 98.1 // How clearly the system demonstrates its own thesis
-    };
-    
-    res.json(metrics);
-  } catch (error) {
-    console.error('Philosophy metrics error:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-// Catch-all for serving the main HTML file for client-side routing
-// This should be the last route defined
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
-const express = require('express');
-const path = require('path');
-const cors = require('cors');
-
-const app = express();
-const PORT = process.env.PORT || 5000;
-
-// Middleware
-app.use(cors({
-    origin: ['http://localhost:5000', 'https://*.replit.dev', 'https://*.replit.app', 'https://*.repl.co'],
-    credentials: true
-}));
-
-app.use(express.json());
-app.use(express.static('web'));
 
 // Serve main pages
 app.get('/', (req, res) => {
@@ -217,6 +63,34 @@ app.get('/deploy', (req, res) => {
 
 app.get('/shop', (req, res) => {
     res.sendFile(path.join(__dirname, 'shop.html'));
+});
+
+app.get('/payments', (req, res) => {
+    res.sendFile(path.join(__dirname, 'payments.html'));
+});
+
+app.get('/social', (req, res) => {
+    res.sendFile(path.join(__dirname, 'social.html'));
+});
+
+app.get('/ai', (req, res) => {
+    res.sendFile(path.join(__dirname, 'ai-insights.html'));
+});
+
+// Event tracking endpoint
+app.post('/api/track-event', (req, res) => {
+    const { event, page, timestamp, userAgent } = req.body;
+    
+    // Log analytics event (replace with real analytics service)
+    console.log('Analytics Event:', {
+        event,
+        page,
+        timestamp: new Date(timestamp),
+        userAgent,
+        ip: req.ip
+    });
+    
+    res.json({ success: true });
 });
 
 // API Routes for Community Features
@@ -351,6 +225,253 @@ app.post('/api/community/access-discord', async (req, res) => {
     }
 });
 
+// Enhanced Payment Infrastructure APIs
+app.post('/api/payments/gasless-mint', async (req, res) => {
+    try {
+        const { recipient, quantity, tokenType } = req.body;
+        
+        // Mock gasless minting - in production, use meta-transactions
+        const mintId = 'gasless_' + Date.now();
+        
+        res.json({
+            success: true,
+            mintId,
+            message: 'Gasless mint initiated',
+            estimatedCompletion: 30 // seconds
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.post('/api/payments/fiat-to-nft', async (req, res) => {
+    try {
+        const { email, cardToken, nftType, quantity } = req.body;
+        
+        // Mock fiat-to-NFT conversion with wallet creation
+        const walletAddress = '0x' + Math.random().toString(16).substr(2, 40);
+        const transactionId = 'fiat_' + Date.now();
+        
+        res.json({
+            success: true,
+            transactionId,
+            walletAddress,
+            privateKeyBackup: 'mnemonic phrase would be securely provided',
+            nftTokenIds: Array.from({length: quantity}, (_, i) => 1000 + i)
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.post('/api/payments/subscription', async (req, res) => {
+    try {
+        const { address, plan, paymentMethod } = req.body;
+        
+        const subscriptions = {
+            monthly: { price: 29.99, benefits: ['Basic content', 'Community access'] },
+            yearly: { price: 299.99, benefits: ['All content', 'Premium community', 'Airdrops', 'Governance voting'] }
+        };
+        
+        res.json({
+            success: true,
+            subscriptionId: 'sub_' + Date.now(),
+            plan: subscriptions[plan],
+            nextBilling: new Date(Date.now() + (plan === 'monthly' ? 30 : 365) * 24 * 60 * 60 * 1000).toISOString()
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Social & Viral Features APIs
+app.post('/api/social/referral', async (req, res) => {
+    try {
+        const { referrerAddress, refereeAddress, actionType } = req.body;
+        
+        const rewards = {
+            mint: { referrer: 0.01, referee: 0.005 }, // ETH
+            subscription: { referrer: 10, referee: 5 }, // USD value
+            purchase: { referrer: 0.02, referee: 0.01 }
+        };
+        
+        res.json({
+            success: true,
+            rewardId: 'ref_' + Date.now(),
+            rewards: rewards[actionType],
+            referralCode: btoa(referrerAddress).substr(0, 8).toUpperCase()
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get('/api/social/profile/:address', async (req, res) => {
+    try {
+        const { address } = req.params;
+        
+        // Mock collector profile
+        const profile = {
+            address,
+            ensName: null,
+            joinDate: '2024-01-15',
+            nftCount: 3,
+            truthTokens: 2500,
+            creatorTokens: 15000,
+            philosophyAlignment: 94.5,
+            collections: [
+                { name: 'The Truth Original', count: 1, rarity: 'Rare' },
+                { name: 'Bonus Gift', count: 2, rarity: 'Common' }
+            ],
+            achievements: ['Early Adopter', 'Truth Seeker', 'Community Builder'],
+            referrals: 7,
+            contentContributions: 12
+        };
+        
+        res.json(profile);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.post('/api/social/share', async (req, res) => {
+    try {
+        const { nftId, platform, customMessage } = req.body;
+        
+        const shareUrl = `https://thetruth.nft/share/${nftId}`;
+        const shareText = customMessage || "Check out this Truth NFT - where philosophy meets blockchain!";
+        
+        res.json({
+            success: true,
+            shareUrl,
+            shareText,
+            previewImage: `https://thetruth.nft/api/og-image/${nftId}`,
+            trackingId: 'share_' + Date.now()
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// AI-Powered Extensions APIs
+app.post('/api/ai/analyze-content', async (req, res) => {
+    try {
+        const { content, analysisType } = req.body;
+        
+        // Mock AI analysis through Truth philosophical lens
+        const analyses = {
+            truth_validation: {
+                score: 87.3,
+                insights: [
+                    "Content demonstrates institutional translation gap",
+                    "Aligns with abundance over scarcity principles",
+                    "Shows clear paradox resolution"
+                ],
+                truthMoments: [
+                    "Identification of systemic contradiction",
+                    "Recognition of translation mechanisms"
+                ]
+            },
+            philosophy_alignment: {
+                score: 92.1,
+                themes: ["Abundance", "Truth", "Institutional Analysis"],
+                recommendations: [
+                    "Explore deeper institutional examples",
+                    "Connect to current events",
+                    "Add personal experience narratives"
+                ]
+            }
+        };
+        
+        res.json({
+            success: true,
+            analysis: analyses[analysisType] || analyses.truth_validation,
+            analysisId: 'ai_' + Date.now()
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.post('/api/ai/generate-insights/:address', async (req, res) => {
+    try {
+        const { address } = req.params;
+        
+        // Mock personalized insights based on holder activity
+        const insights = {
+            personalizedMessage: "Your collection shows deep alignment with truth-seeking principles. Consider exploring the intersection of AI and institutional translation.",
+            recommendedContent: [
+                "The Philosophy of Artificial Intelligence",
+                "Institutional AI: Promise vs Reality",
+                "Truth in the Age of Algorithms"
+            ],
+            truthScore: 94.7,
+            nextRecommendations: [
+                "Share your AI experience story",
+                "Join the Philosophy Discussion group",
+                "Consider the Truth Validator role"
+            ]
+        };
+        
+        res.json(insights);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.post('/api/ai/generate-image', async (req, res) => {
+    try {
+        const { prompt, style, philosophicalTheme } = req.body;
+        
+        // Mock AI image generation for community creators
+        const imageData = {
+            imageUrl: `https://thetruth.nft/ai-generated/${Date.now()}.png`,
+            promptUsed: `${prompt} in the style of ${style} with ${philosophicalTheme} philosophical themes`,
+            metadata: {
+                generator: 'Truth AI Engine v1.0',
+                philosophicalAlignment: 89.2,
+                truthElements: ['abundance', 'paradox', 'institutional_gap']
+            },
+            generationId: 'img_' + Date.now()
+        };
+        
+        res.json({
+            success: true,
+            ...imageData
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.post('/api/ai/update-metadata', async (req, res) => {
+    try {
+        const { tokenId, interactionData } = req.body;
+        
+        // Mock dynamic metadata updates based on holder interactions
+        const updatedMetadata = {
+            name: `The Truth #${tokenId}`,
+            description: "Dynamic NFT that evolves with community interaction",
+            attributes: [
+                { trait_type: "Truth Score", value: 94.5 },
+                { trait_type: "Interaction Level", value: "Active" },
+                { trait_type: "Philosophy Alignment", value: "Deep" },
+                { trait_type: "Community Engagement", value: interactionData.engagementLevel || "High" }
+            ],
+            lastUpdated: new Date().toISOString(),
+            evolutionStage: interactionData.stage || "Enlightened"
+        };
+        
+        res.json({
+            success: true,
+            metadata: updatedMetadata,
+            updateId: 'meta_' + Date.now()
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Token information endpoints
 app.get('/api/tokens/info', (req, res) => {
     const tokenInfo = {
@@ -375,6 +496,114 @@ app.get('/api/tokens/info', (req, res) => {
     res.json(tokenInfo);
 });
 
+// Tax calculation endpoint
+app.post('/api/calculate-nft-tax', async (req, res) => {
+  try {
+    const { amount, customerAddress } = req.body;
+    // Mock tax calculation for now - integrate with Stripe Tax later
+    const taxAmount = amount * 0.065; // 6.5% Florida sales tax
+    res.json({
+      success: true,
+      taxAmount: taxAmount,
+      totalAmount: amount + taxAmount,
+      calculationId: 'calc_' + Date.now()
+    });
+  } catch (error) {
+    console.error('Tax calculation error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Tax transaction recording endpoint
+app.post('/api/create-tax-transaction', async (req, res) => {
+  try {
+    const { calculationId, transactionId, saleType } = req.body;
+    console.log('Tax transaction recorded:', { calculationId, transactionId, saleType });
+    res.json({ success: true, message: 'Tax transaction recorded' });
+  } catch (error) {
+    console.error('Tax transaction recording error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Analytics endpoint
+app.get('/api/analytics', async (req, res) => {
+  try {
+    const { timeframe = '7d' } = req.query;
+    
+    // Mock analytics data - replace with real data sources
+    const analyticsData = {
+      totalRevenue: 75000,
+      mintingVelocity: [
+        { date: '2024-01-01', mints: 5 },
+        { date: '2024-01-02', mints: 8 },
+        { date: '2024-01-03', mints: 12 },
+        { date: '2024-01-04', mints: 7 },
+        { date: '2024-01-05', mints: 15 },
+        { date: '2024-01-06', mints: 10 },
+        { date: '2024-01-07', mints: 9 }
+      ],
+      geographicDistribution: {
+        'United States': 45,
+        'United Kingdom': 12,
+        'Germany': 8,
+        'Japan': 6,
+        'Canada': 5,
+        'Australia': 4
+      },
+      holderAnalytics: {
+        uniqueHolders: 80,
+        topHolders: [
+          { address: '0x742d35Cc6523c0532925a3b8D4b9d35C21B64C4A', count: 3, totalValue: 2331 },
+          { address: '0x8ba1f109551bD432803012645Hac136c82d', count: 2, totalValue: 1554 },
+          { address: '0x2f318C334780961FB129D2a6c30D0763d9a5C970', count: 2, totalValue: 1554 }
+        ],
+        holdingDuration: [30, 45, 60, 15, 90]
+      },
+      secondaryMarket: {
+        volume: 25000,
+        averagePrice: 950,
+        priceHistory: [
+          { date: '2024-01-01', price: 777 },
+          { date: '2024-01-02', price: 825 },
+          { date: '2024-01-03', price: 890 },
+          { date: '2024-01-04', price: 920 },
+          { date: '2024-01-05', price: 950 }
+        ]
+      },
+      platformMetrics: {
+        webVisitors: 5200,
+        conversionRate: 0.042,
+        shopSales: 85,
+        nftSales: 57
+      }
+    };
+
+    res.json(analyticsData);
+  } catch (error) {
+    console.error('Analytics error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Philosophy metrics endpoint
+app.get('/api/philosophy-metrics', async (req, res) => {
+  try {
+    const metrics = {
+      truthValidationScore: 94.7,
+      institutionalTranslationRate: 67.3,
+      abundanceImpact: 1313,
+      witnessEngagement: 87.2,
+      paradoxDemonstration: 98.1
+    };
+    
+    res.json(metrics);
+  } catch (error) {
+    console.error('Philosophy metrics error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // Health check
 app.get('/api/health', (req, res) => {
     res.json({ 
@@ -384,7 +613,10 @@ app.get('/api/health', (req, res) => {
             governance: true,
             community: true,
             tokenIntegration: true,
-            analytics: true
+            analytics: true,
+            payments: true,
+            social: true,
+            ai: true
         }
     });
 });
@@ -395,16 +627,19 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: 'Something went wrong!' });
 });
 
-// 404 handler
-app.use((req, res) => {
-    res.status(404).json({ error: 'Not found' });
+// Catch-all for serving the main HTML file for client-side routing
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 The Truth Community Server running on http://0.0.0.0:${PORT}`);
+    console.log(`🚀 The Truth Complete Web3 Ecosystem running on http://0.0.0.0:${PORT}`);
     console.log(`📊 Analytics: http://0.0.0.0:${PORT}/analytics`);
     console.log(`🗳️  Governance: http://0.0.0.0:${PORT}/governance`);
     console.log(`👥 Community: http://0.0.0.0:${PORT}/community`);
+    console.log(`💳 Payments: http://0.0.0.0:${PORT}/payments`);
+    console.log(`📱 Social: http://0.0.0.0:${PORT}/social`);
+    console.log(`🤖 AI Insights: http://0.0.0.0:${PORT}/ai`);
     console.log(`🏪 Shop: http://0.0.0.0:${PORT}/shop`);
     console.log(`🚀 Deploy: http://0.0.0.0:${PORT}/deploy`);
 });
