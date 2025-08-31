@@ -611,6 +611,60 @@ app.get('/api/philosophy-metrics', async (req, res) => {
   }
 });
 
+// Analytics API endpoint
+app.get('/api/analytics', (req, res) => {
+    const timeframe = req.query.timeframe || '7d';
+    
+    // Generate mock analytics data based on timeframe
+    const analyticsData = {
+        totalRevenue: 847650,
+        mintingVelocity: [
+            { date: '2025-08-24', mints: 15 },
+            { date: '2025-08-25', mints: 23 },
+            { date: '2025-08-26', mints: 31 },
+            { date: '2025-08-27', mints: 18 },
+            { date: '2025-08-28', mints: 44 },
+            { date: '2025-08-29', mints: 67 },
+            { date: '2025-08-30', mints: 52 }
+        ],
+        geographicDistribution: {
+            'United States': 342,
+            'Canada': 89,
+            'United Kingdom': 67,
+            'Germany': 45,
+            'France': 34,
+            'Netherlands': 28,
+            'Australia': 23,
+            'Japan': 19,
+            'Switzerland': 15,
+            'Singapore': 12
+        },
+        holderAnalytics: {
+            uniqueHolders: 674,
+            topHolders: [
+                { address: '0x742d35Cc6523c0532925a3b8D4b9d35C21B64C4A', count: 12, totalValue: 15847 },
+                { address: '0x8f6cf6f7747e170f4768533b869c339dc3d30a3c', count: 8, totalValue: 12456 },
+                { address: '0x22b0434e89882f8e6841d340b28427646c015aa7', count: 6, totalValue: 9873 },
+                { address: '0x1a2b3c4d5e6f7890abcdef1234567890fedcba09', count: 5, totalValue: 8234 },
+                { address: '0x9876543210fedcba0987654321abcdef12345678', count: 4, totalValue: 6789 }
+            ]
+        },
+        secondaryMarket: {
+            volume: 234567,
+            averagePrice: 1847,
+            priceHistory: []
+        },
+        platformMetrics: {
+            webVisitors: 12847,
+            conversionRate: 0.0847,
+            shopSales: 156,
+            nftSales: 342
+        }
+    };
+    
+    res.json(analyticsData);
+});
+
 // Compliance dashboard endpoint
 app.get('/api/compliance-dashboard', (req, res) => {
     const complianceData = {
