@@ -736,18 +736,25 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 The Truth Complete Web3 Ecosystem running on http://0.0.0.0:${PORT}`);
-    console.log(`📊 Analytics: http://0.0.0.0:${PORT}/analytics`);
-    console.log(`🗳️  Governance: http://0.0.0.0:${PORT}/governance`);
-    console.log(`👥 Community: http://0.0.0.0:${PORT}/community`);
-    console.log(`💳 Payments: http://0.0.0.0:${PORT}/payments`);
-    console.log(`📱 Social: http://0.0.0.0:${PORT}/social`);
-    console.log(`🤖 AI Insights: http://0.0.0.0:${PORT}/ai`);
-    console.log(`⚖️  Lawful Dashboard: http://0.0.0.0:${PORT}/lawful`);
-    console.log(`🏪 Shop: http://0.0.0.0:${PORT}/shop`);
-    console.log(`🚀 Deploy: http://0.0.0.0:${PORT}/deploy`);
-    console.log(`\n🏛️  LAW FRAMEWORK: Complete doctrinal positioning active`);
-    console.log(`📜 Foundation: Black's Law Dictionary categories applied`);
-    console.log(`⚖️  Compliance: Over-application demonstrates lawful sovereignty`);
+// Start server with error handling
+const server = app.listen(PORT, '0.0.0.0', () => {
+  console.log(`✅ The Truth NFT server running on port ${PORT}`);
+  console.log(`🔗 Access: http://localhost:${PORT}`);
+  console.log(`📊 Analytics: http://localhost:${PORT}/analytics`);
+  console.log(`🗳️ Governance: http://localhost:${PORT}/governance`);
+  console.log(`👥 Community: http://localhost:${PORT}/community-dashboard`);
+  console.log(`💳 Payments: http://localhost:${PORT}/payments`);
+  console.log(`⚖️ Legal: http://localhost:${PORT}/lawful-dashboard`);
+});
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.log(`❌ Port ${PORT} is busy, trying port ${PORT + 1}...`);
+    const altServer = app.listen(PORT + 1, '0.0.0.0', () => {
+      console.log(`✅ The Truth NFT server running on port ${PORT + 1}`);
+      console.log(`🔗 Access: http://localhost:${PORT + 1}`);
+    });
+  } else {
+    console.error('Server error:', err);
+  }
 });

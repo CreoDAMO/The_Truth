@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,26 +15,28 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background: radial-gradient(ellipse at center, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 100%);
+            background-attachment: fixed;
             color: #ffffff;
             min-height: 100vh;
             overflow-x: hidden;
         }
 
         .navbar {
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
+            background: rgba(15, 15, 35, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 212, 255, 0.3);
             padding: 15px 0;
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 1000;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 212, 255, 0.1);
         }
 
         .nav-container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
@@ -41,315 +44,122 @@
             padding: 0 20px;
         }
 
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #00d4ff, #090979);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
         .nav-links {
             display: flex;
-            gap: 30px;
+            gap: 25px;
             align-items: center;
         }
 
         .nav-links a {
-            color: #ffffff;
+            color: rgba(255, 255, 255, 0.9);
             text-decoration: none;
             font-weight: 500;
-            transition: color 0.3s ease;
+            transition: all 0.3s ease;
+            padding: 8px 16px;
+            border-radius: 8px;
         }
 
         .nav-links a:hover {
             color: #00d4ff;
+            background: rgba(0, 212, 255, 0.1);
         }
 
         .wallet-btn {
-            background: linear-gradient(45deg, #00d4ff, #090979);
+            background: linear-gradient(135deg, #00d4ff, #090979);
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 24px;
             border-radius: 25px;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 600;
+            font-size: 0.9rem;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
         }
 
         .wallet-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+            box-shadow: 0 8px 30px rgba(0, 212, 255, 0.5);
         }
 
-        .hero {
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 100px 20px 40px;
+        }
+
+        .hero-section {
             text-align: center;
-            padding: 80px 0;
             margin-bottom: 60px;
-            position: relative;
+            padding: 40px 20px;
         }
 
-        .hero::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 200px;
-            height: 4px;
-            background: linear-gradient(90deg, transparent, #00d4ff, transparent);
-            border-radius: 2px;
-        }
-
-        .hero h1 {
-            font-size: 5em;
+        .hero-title {
+            font-size: 4rem;
             font-weight: 900;
             margin-bottom: 20px;
-            text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
-            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #00d4ff 0%, #090979 25%, #4CAF50 50%, #ff6b6b 75%, #ffd93d 100%);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 4s ease-in-out infinite;
         }
 
-        .hero p {
-            font-size: 1.5em;
-            margin-bottom: 40px;
-            opacity: 0.95;
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 30px;
             max-width: 800px;
             margin-left: auto;
             margin-right: auto;
             line-height: 1.6;
         }
 
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            max-width: 1200px;
-            margin: 60px auto;
-            padding: 0 20px;
-        }
-
-        .feature-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 30px;
-            text-align: center;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-10px);
-            background: rgba(255, 255, 255, 0.1);
-            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.2);
-        }
-
-        .feature-icon {
-            font-size: 3rem;
-            margin-bottom: 20px;
-        }
-
-        .feature-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-            color: #00d4ff;
-        }
-
-        /* Ecosystem Stats */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            max-width: 1000px;
-            margin: 60px auto;
-            padding: 0 20px;
-        }
-
-        .stat-card {
-            background: rgba(0, 212, 255, 0.1);
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
-            border: 1px solid rgba(0, 212, 255, 0.3);
-        }
-
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #00d4ff;
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.7);
-            margin-top: 5px;
-        }
-
-        .cta-section {
-            text-align: center;
-            padding: 60px 20px;
-            background: rgba(255, 255, 255, 0.02);
-        }
-
-        .cta-buttons {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 30px;
-        }
-
-        .cta-btn {
-            padding: 15px 30px;
-            border: none;
-            border-radius: 25px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .cta-primary {
-            background: linear-gradient(45deg, #4CAF50, #00d4ff);
-            color: white;
-        }
-
-        .cta-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .cta-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .token-info {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 40px;
-            margin: 60px auto;
-            max-width: 1000px;
-            margin-left: 20px;
-            margin-right: 20px;
-        }
-
-        .token-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-            margin-top: 30px;
-        }
-
-        .token-card {
-            background: rgba(0, 212, 255, 0.1);
-            border-radius: 15px;
-            padding: 25px;
-            border: 1px solid rgba(0, 212, 255, 0.3);
-        }
-
-        .token-symbol {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #00d4ff;
-            margin-bottom: 10px;
-        }
-
-        .footer {
-            text-align: center;
-            padding: 40px 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(0, 0, 0, 0.3);
-        }
-
-        .quote {
+        .hero-quote {
             font-style: italic;
-            font-size: 1.2rem;
-            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.7);
             margin: 30px 0;
+            padding: 20px;
+            border-left: 3px solid #00d4ff;
+            background: rgba(0, 212, 255, 0.05);
+            border-radius: 0 10px 10px 0;
         }
 
-        /* Collections Grid */
-        .grid {
+        .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
             gap: 30px;
-            max-width: 1200px;
-            margin: 60px auto;
-            padding: 0 20px;
+            margin-bottom: 40px;
         }
 
-        .collection-card {
-            padding: 30px;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .collection-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
-        }
-
-        .collection-desc {
-            font-size: 0.95rem;
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
-
-        .collection-stats {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 25px;
-            opacity: 0.8;
-        }
-
-        .collection-stats .stat {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .stat-label {
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        .stat-value {
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: #00d4ff;
-        }
-
-        .mint-btn {
-            background: linear-gradient(45deg, #00d4ff, #090979);
-            color: white;
-            border: none;
-            padding: 12px 28px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-        }
-
-        .mint-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
-        }
-
-        /* Ultra-Modern Glassmorphism */
-        .glass {
-            background: rgba(255, 255, 255, 0.06);
-            backdrop-filter: blur(24px) saturate(200%);
+        .dashboard-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 
-                0 8px 32px rgba(0, 0, 0, 0.35),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                0 0 0 1px rgba(255, 255, 255, 0.05);
-            transition: all 0.5s cubic-bezier(0.23, 1, 0.320, 1);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.4s ease;
             position: relative;
             overflow: hidden;
-            border-radius: 20px;
         }
 
-        .glass::before {
+        .dashboard-card::before {
             content: '';
             position: absolute;
             top: 0;
@@ -360,58 +170,256 @@
             transition: left 0.8s ease;
         }
 
-        .glass:hover {
-            background: rgba(255, 255, 255, 0.10);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 
-                0 20px 60px rgba(0, 0, 0, 0.5),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2),
-                0 0 40px rgba(0, 212, 255, 0.15);
+        .dashboard-card:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.2);
         }
 
-        .glass:hover::before {
+        .dashboard-card:hover::before {
             left: 100%;
         }
 
-        /* Floating Animations */
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            33% { transform: translateY(-8px) rotate(1deg); }
-            66% { transform: translateY(-4px) rotate(-1deg); }
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
         }
 
-        @keyframes floatReverse {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            33% { transform: translateY(8px) rotate(-1deg); }
-            66% { transform: translateY(4px) rotate(1deg); }
+        .card-icon {
+            font-size: 2.5rem;
+            margin-right: 15px;
         }
 
-        .floating { 
-            animation: float 8s ease-in-out infinite; 
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #00d4ff;
         }
 
-        .floating-reverse { 
-            animation: floatReverse 10s ease-in-out infinite; 
+        .wallet-status {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            margin-bottom: 20px;
         }
 
-        /* Gradient Text */
-        .text-gradient {
-            background: linear-gradient(135deg, #00d4ff 0%, #090979 25%, #4CAF50 50%, #ff6b6b 75%, #ffd93d 100%);
-            background-size: 300% 300%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: gradientShift 6s ease-in-out infinite;
+        .wallet-connected {
+            color: #4CAF50;
         }
 
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
+        .wallet-disconnected {
+            color: #ff6b6b;
+        }
+
+        .wallet-address {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 5px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 5px;
+        }
+
+        .collections-section {
+            margin: 40px 0;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #00d4ff;
+        }
+
+        .collections-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .collection-card {
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .collection-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .collection-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .collection-icon {
+            font-size: 2rem;
+            margin-right: 12px;
+        }
+
+        .collection-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .collection-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .collection-stat {
+            text-align: center;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .mint-btn {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .mint-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+        }
+
+        .mint-btn.truth {
+            background: linear-gradient(135deg, #00d4ff, #090979);
+        }
+
+        .mint-btn.blackpaper {
+            background: linear-gradient(135deg, #FFD700, #FFA000);
+        }
+
+        .token-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 40px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .token-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .token-card {
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .token-symbol {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #00d4ff;
+            margin-bottom: 10px;
+        }
+
+        .token-balance {
+            font-size: 1.1rem;
+            margin: 10px 0;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, #4CAF50, #00d4ff);
+            color: white;
+        }
+
+        .action-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.3);
+            margin-top: 60px;
+        }
+
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
         }
 
         @media (max-width: 768px) {
-            .hero h1 {
+            .hero-title {
                 font-size: 2.5rem;
             }
 
@@ -419,7 +427,15 @@
                 display: none;
             }
 
-            .cta-buttons {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .collections-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
                 flex-direction: column;
                 align-items: center;
             }
@@ -429,277 +445,230 @@
 <body>
     <nav class="navbar">
         <div class="nav-container">
+            <div class="nav-brand">🎯 The Truth Ecosystem</div>
             <div class="nav-links">
                 <a href="/">🏠 Home</a>
-                <a href="/analytics">📊 Analytics</a>
-                <a href="/governance">🗳️ Governance</a>
-                <a href="/community">👥 Community</a>
-                <a href="/payments">💳 Payments</a>
-                <a href="/social">📱 Social</a>
-                <a href="/ai">🤖 AI Extensions</a>
-                <a href="/lawful">⚖️ Lawful Dashboard</a>
+                <a href="/analytics.html">📊 Analytics</a>
+                <a href="/governance.html">🗳️ Governance</a>
+                <a href="/community-dashboard.html">👥 Community</a>
+                <a href="/payments.html">💳 Payments</a>
+                <a href="/social.html">📱 Social</a>
+                <a href="/ai-insights.html">🤖 AI Insights</a>
+                <a href="/lawful-dashboard.html">⚖️ Legal</a>
             </div>
             <button class="wallet-btn" id="connectWallet">Connect Wallet</button>
         </div>
     </nav>
 
-    <section class="hero">
-        <h1 class="text-gradient floating">The Truth NFT Ecosystem</h1>
-        <p class="subtitle">A complete Web3 creator economy platform integrating NFTs, governance tokens, and community-driven philosophy</p>
-        <div class="quote">
-            "The Truth Doesn't Need To Be Pushed, Only The Lie...The Lie Only Needs To Be Whispered, But The Truth Always Remains Silent waiting to be Witnessed."
-            <br><em>— Jacque Antoine DeGraff</em>
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <h1 class="hero-title">The Truth NFT Ecosystem</h1>
+            <p class="hero-subtitle">A complete Web3 creator economy platform integrating NFTs, governance tokens, and community-driven philosophy</p>
+            <div class="hero-quote">
+                "The Truth Doesn't Need To Be Pushed, Only The Lie...The Lie Only Needs To Be Whispered, But The Truth Always Remains Silent waiting to be Witnessed."
+                <br><strong>— Jacque Antoine DeGraff</strong>
+            </div>
         </div>
 
-            <div class="lawful-notice" style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; margin: 20px 0; border-left: 4px solid #FFD700;">
-                <h4>⚖️ Lawful Positioning Notice</h4>
-                <p><strong>This ecosystem operates from foundational Law (Black's Law Dictionary principles):</strong></p>
-                <ul style="text-align: left; max-width: 600px; margin: 0 auto;">
-                    <li><strong>NFTs/Tokens:</strong> Choses in action (intangible property rights)</li>
-                    <li><strong>Provenance:</strong> Trust corpus with fiduciary protection</li>
-                    <li><strong>Governance:</strong> Corporate agency with documented resolutions</li>
-                    <li><strong>Revenue:</strong> General intangibles under UCC framework</li>
-                </ul>
-                <p><em>See <a href="/LAW/README_LAWFUL_POSITIONING.md" style="color: #FFD700;">/LAW/</a> for complete doctrinal framework.</em></p>
-            </div>
-</section>
-
-    <!-- Ecosystem Stats -->
-            <div class="stats-grid glass floating-reverse" style="padding: 40px; margin-bottom: 60px;">
-                <h2 class="text-gradient" style="text-align: center; margin-bottom: 40px; font-size: 2.5em;">Live Ecosystem Metrics</h2>
-                <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
-                    <div class="stat-card">
-                        <div class="stat-icon">💎</div>
-                        <div class="stat-number" id="totalHolders">0</div>
-                        <div class="stat-text">Total Holders</div>
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Wallet Status Card -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon">🔗</div>
+                    <div class="card-title">Wallet Connection</div>
+                </div>
+                <div class="wallet-status" id="walletStatus">
+                    <div id="walletConnected" style="display: none;">
+                        <div class="wallet-connected">✅ Wallet Connected</div>
+                        <div class="wallet-address" id="walletAddress"></div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">🔥</div>
-                        <div class="stat-number" id="totalMinted">3</div>
-                        <div class="stat-text">Active Collections</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">💰</div>
-                        <div class="stat-number" id="totalVolume">0.1</div>
-                        <div class="stat-text">Volume (ETH)</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">⚡</div>
-                        <div class="stat-number" id="truthPower">94.7%</div>
-                        <div class="stat-text">Truth Power</div>
+                    <div id="walletDisconnected">
+                        <div class="wallet-disconnected">❌ Wallet Not Connected</div>
+                        <button class="wallet-btn" onclick="connectWallet()" style="margin-top: 10px;">Connect Wallet</button>
                     </div>
                 </div>
             </div>
 
-    <!-- Collections Grid -->
-    <!-- NFT Collections Grid -->
-        <div style="max-width: 1400px; margin: 60px auto; padding: 0 20px;">
-            <h2 class="text-gradient" style="text-align: center; margin-bottom: 40px; font-size: 2.5em;">🎯 NFT Collections</h2>
-            
-            <div class="features-grid">
-                <div class="collection-card glass floating" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(0, 212, 255, 0.3);">
-                    <div class="collection-icon" style="font-size: 4rem; margin-bottom: 20px;">🎯</div>
-                    <h3 style="color: #00d4ff; font-size: 1.8rem; margin-bottom: 15px;">The Truth NFT</h3>
-                    <p class="collection-desc">The original 4-part philosophical experiment capturing AI translation gaps. Master Copy + 76 editions with complete audiobook and meme comic.</p>
-                    <div class="collection-stats" style="margin: 25px 0;">
-                        <div class="stat">
-                            <div class="stat-value" style="color: #00d4ff; font-size: 1.3rem;">77</div>
-                            <div class="stat-label">Total Supply</div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-value" style="color: #4CAF50; font-size: 1.3rem;">$777</div>
-                            <div class="stat-label">Price (USD)</div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-value" style="color: #FFD700; font-size: 1.3rem;">10%</div>
-                            <div class="stat-label">Royalties</div>
-                        </div>
-                    </div>
-                    <button class="mint-btn" onclick="mintTruth()" style="background: linear-gradient(45deg, #00d4ff, #090979); padding: 15px 30px; font-size: 1.2rem;">Mint The Truth</button>
-                    <div style="margin-top: 15px; font-size: 0.9rem; color: rgba(255,255,255,0.7);">
-                        Contract: <a href="https://basescan.org/address/0x..." style="color: #00d4ff;">View on BaseScan</a>
-                    </div>
+            <!-- Ecosystem Stats Card -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon">📊</div>
+                    <div class="card-title">Live Ecosystem Metrics</div>
                 </div>
-
-                <div class="collection-card glass floating-reverse" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(76, 175, 80, 0.3);">
-                    <div class="collection-icon" style="font-size: 4rem; margin-bottom: 20px;">🎁</div>
-                    <h3 style="color: #4CAF50; font-size: 1.8rem; margin-bottom: 15px;">Bonus Gift Collection</h3>
-                    <p class="collection-desc">Accessible entry point into The Truth ecosystem. Community-focused collection with broad participation and creator revenue sharing.</p>
-                    <div class="collection-stats" style="margin: 25px 0;">
-                        <div class="stat">
-                            <div class="stat-value" style="color: #4CAF50; font-size: 1.3rem;">145K</div>
-                            <div class="stat-label">Total Supply</div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-value" style="color: #00d4ff; font-size: 1.3rem;">$145</div>
-                            <div class="stat-label">Price (USD)</div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-value" style="color: #FFD700; font-size: 1.3rem;">5%</div>
-                            <div class="stat-label">Royalties</div>
-                        </div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalHolders">42</div>
+                        <div class="stat-label">Total Holders</div>
                     </div>
-                    <button class="mint-btn" onclick="mintBonus()" style="background: linear-gradient(45deg, #4CAF50, #2E7D32); padding: 15px 30px; font-size: 1.2rem;">Mint Bonus Gift</button>
-                    <div style="margin-top: 15px; font-size: 0.9rem; color: rgba(255,255,255,0.7);">
-                        Contract: <a href="https://basescan.org/address/0x..." style="color: #4CAF50;">View on BaseScan</a>
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalCollections">3</div>
+                        <div class="stat-label">Collections</div>
                     </div>
-                </div>
-
-                <div class="collection-card glass floating" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 215, 0, 0.3);">
-                    <div class="collection-icon" style="font-size: 4rem; margin-bottom: 20px;">📜</div>
-                    <h3 style="color: #FFD700; font-size: 1.8rem; margin-bottom: 15px;">Part Three - Blackpaper</h3>
-                    <p class="collection-desc">The complete legal framework, doctrinal foundation, and philosophical blackpaper. Essential for understanding the ecosystem's lawful positioning.</p>
-                    <div class="collection-stats" style="margin: 25px 0;">
-                        <div class="stat">
-                            <div class="stat-value" style="color: #FFD700; font-size: 1.3rem;">444</div>
-                            <div class="stat-label">Total Supply</div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-value" style="color: #00d4ff; font-size: 1.3rem;">$1777</div>
-                            <div class="stat-label">Price (USD)</div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-value" style="color: #4CAF50; font-size: 1.3rem;">10%</div>
-                            <div class="stat-label">Royalties</div>
-                        </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalVolume">2.1</div>
+                        <div class="stat-label">Volume (ETH)</div>
                     </div>
-                    <button class="mint-btn" onclick="mintPartThree()" style="background: linear-gradient(45deg, #FFD700, #FFA000); padding: 15px 30px; font-size: 1.2rem;">Mint Blackpaper</button>
-                    <div style="margin-top: 15px; font-size: 0.9rem; color: rgba(255,255,255,0.7);">
-                        Contract: <a href="https://basescan.org/address/0x..." style="color: #FFD700;">View on BaseScan</a>
+                    <div class="stat-item">
+                        <div class="stat-value" id="truthPower">94.7%</div>
+                        <div class="stat-label">Truth Power</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Platform Features Grid -->
-        <div style="max-width: 1200px; margin: 60px auto; padding: 0 20px;">
-            <h2 class="text-gradient" style="text-align: center; margin-bottom: 40px; font-size: 2.5em;">🚀 Platform Features</h2>
-            
-            <div class="features-grid">
-
-        <div class="feature-card">
-            <div class="feature-icon">🪙</div>
-            <h3>Token Economy</h3>
-            <p>TRUTH governance token and Creator community token create functional utility beyond speculation</p>
-        </div>
-
-        <div class="feature-card">
-            <div class="feature-icon">🗳️</div>
-            <h3>Community Governance</h3>
-            <p>Token holders vote on pricing, revenue distribution, and future collection themes</p>
-        </div>
-
-        <div class="feature-card">
-            <div class="feature-icon">💰</div>
-            <h3>Revenue Sharing</h3>
-            <p>Platform revenue flows back to token holders through automated distribution systems</p>
-        </div>
-
-        <div class="feature-card">
-            <div class="feature-icon">🔐</div>
-            <h3>Token-Gated Access</h3>
-            <p>Exclusive content, Discord channels, and creator sessions based on token holdings</p>
-        </div>
-
-        <div class="feature-card">
-            <div class="feature-icon">📱</div>
-            <h3>Multi-Platform</h3>
-            <p>Blockchain NFTs + traditional sales channels (audiobooks, PDFs) with tax compliance</p>
-        </div>
-    </div>
-
-    <div class="token-info glass">
-        <h2 style="text-align: center; margin-bottom: 30px; color: #00d4ff;">Your Token Holdings</h2>
-        
-        <!-- Connected Wallet Display -->
-        <div id="walletStatus" style="text-align: center; margin-bottom: 30px; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 15px;">
-            <div id="connectedWallet" style="display: none;">
-                <h3 style="color: #4CAF50;">✅ Wallet Connected</h3>
-                <p id="walletAddress" style="font-family: monospace; color: #ccc;"></p>
-            </div>
-            <div id="disconnectedWallet">
-                <h3 style="color: #ff6b6b;">❌ Wallet Not Connected</h3>
-                <button class="wallet-btn" onclick="connectTruthWallet()">Connect Wallet to View Holdings</button>
-            </div>
-        </div>
-
-        <div class="token-grid">
-            <div class="token-card">
-                <div class="token-symbol">TRUTH</div>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin: 15px 0;">
-                    <span><strong>Your Balance:</strong></span>
-                    <span id="truthBalance" style="font-size: 1.2em; color: #00d4ff;">0 TRUTH</span>
-                </div>
-                <div style="margin: 10px 0;">
-                    <strong>Governance Power:</strong>
-                    <div style="background: rgba(0,0,0,0.3); border-radius: 10px; height: 8px; margin: 5px 0;">
-                        <div id="truthPowerBar" style="background: linear-gradient(90deg, #00d4ff, #4CAF50); height: 100%; border-radius: 10px; width: 0%; transition: width 0.5s ease;"></div>
+        <!-- NFT Collections Section -->
+        <div class="collections-section">
+            <h2 class="section-title">🎯 NFT Collections</h2>
+            <div class="collections-grid">
+                <!-- The Truth NFT -->
+                <div class="collection-card">
+                    <div class="collection-header">
+                        <div class="collection-icon">🎯</div>
+                        <div>
+                            <div class="collection-name" style="color: #00d4ff;">The Truth NFT</div>
+                            <div style="font-size: 0.9rem; color: rgba(255,255,255,0.7);">4-part philosophical experiment</div>
+                        </div>
                     </div>
-                    <span id="truthPowerText" style="font-size: 0.9em; color: #ccc;">0% Voting Power</span>
-                </div>
-                <p><strong>Total Supply:</strong> 10,000,000</p>
-                <p><strong>Purpose:</strong> Governance & Platform Currency</p>
-                <p><strong>Benefits:</strong> Voting rights, revenue sharing, Master Copy priority</p>
-                <div style="margin-top: 15px;">
-                    <a href="https://basescan.org/token/0x8f6cf6f7747e170f4768533b869c339dc3d30a3c" target="_blank" style="color: #00d4ff; text-decoration: none; font-size: 0.9em;">
-                        📊 View on BaseScan
-                    </a>
-                </div>
-            </div>
-
-            <div class="token-card">
-                <div class="token-symbol">@jacqueantoinedegraff</div>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin: 15px 0;">
-                    <span><strong>Your Balance:</strong></span>
-                    <span id="creatorBalance" style="font-size: 1.2em; color: #4CAF50;">0 Creator</span>
-                </div>
-                <div style="margin: 10px 0;">
-                    <strong>Access Level:</strong>
-                    <div id="accessLevel" style="background: rgba(76, 175, 80, 0.2); color: #4CAF50; padding: 5px 10px; border-radius: 15px; display: inline-block; margin: 5px 0; font-size: 0.9em;">
-                        Basic
+                    <div class="collection-stats">
+                        <div class="collection-stat">
+                            <div style="color: #00d4ff; font-weight: bold;">77</div>
+                            <div style="font-size: 0.8rem; opacity: 0.7;">Supply</div>
+                        </div>
+                        <div class="collection-stat">
+                            <div style="color: #4CAF50; font-weight: bold;">$777</div>
+                            <div style="font-size: 0.8rem; opacity: 0.7;">Price</div>
+                        </div>
+                        <div class="collection-stat">
+                            <div style="color: #FFD700; font-weight: bold;">10%</div>
+                            <div style="font-size: 0.8rem; opacity: 0.7;">Royalties</div>
+                        </div>
                     </div>
+                    <p style="font-size: 0.9rem; color: rgba(255,255,255,0.8); margin: 15px 0;">Complete 25-page audiobook + PDF + exclusive meme comic capturing AI translation gaps.</p>
+                    <button class="mint-btn truth" onclick="mintTruth()">Mint The Truth</button>
                 </div>
-                <div style="margin: 10px 0;">
-                    <strong>Revenue Share:</strong>
-                    <span id="revenueAmount" style="color: #FFD700; font-weight: bold;">$0.00</span>
+
+                <!-- Bonus Gift Collection -->
+                <div class="collection-card">
+                    <div class="collection-header">
+                        <div class="collection-icon">🎁</div>
+                        <div>
+                            <div class="collection-name" style="color: #4CAF50;">Bonus Gift Collection</div>
+                            <div style="font-size: 0.9rem; color: rgba(255,255,255,0.7);">Community entry point</div>
+                        </div>
+                    </div>
+                    <div class="collection-stats">
+                        <div class="collection-stat">
+                            <div style="color: #4CAF50; font-weight: bold;">145K</div>
+                            <div style="font-size: 0.8rem; opacity: 0.7;">Supply</div>
+                        </div>
+                        <div class="collection-stat">
+                            <div style="color: #00d4ff; font-weight: bold;">$145</div>
+                            <div style="font-size: 0.8rem; opacity: 0.7;">Price</div>
+                        </div>
+                        <div class="collection-stat">
+                            <div style="color: #FFD700; font-weight: bold;">5%</div>
+                            <div style="font-size: 0.8rem; opacity: 0.7;">Royalties</div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.9rem; color: rgba(255,255,255,0.8); margin: 15px 0;">Accessible entry into The Truth ecosystem with broad participation and revenue sharing.</p>
+                    <button class="mint-btn" onclick="mintBonus()">Mint Bonus Gift</button>
                 </div>
-                <p><strong>Total Supply:</strong> 1,000,000,000</p>
-                <p><strong>Purpose:</strong> Creator Community Access</p>
-                <p><strong>Benefits:</strong> Revenue sharing, exclusive content, early access</p>
-                <div style="margin-top: 15px;">
-                    <a href="https://basescan.org/token/0x22b0434e89882f8e6841d340b28427646c015aa7" target="_blank" style="color: #4CAF50; text-decoration: none; font-size: 0.9em;">
-                        📊 View on BaseScan
-                    </a>
+
+                <!-- Part Three - Blackpaper -->
+                <div class="collection-card">
+                    <div class="collection-header">
+                        <div class="collection-icon">📜</div>
+                        <div>
+                            <div class="collection-name" style="color: #FFD700;">Part Three - Blackpaper</div>
+                            <div style="font-size: 0.9rem; color: rgba(255,255,255,0.7);">Legal framework & doctrine</div>
+                        </div>
+                    </div>
+                    <div class="collection-stats">
+                        <div class="collection-stat">
+                            <div style="color: #FFD700; font-weight: bold;">444</div>
+                            <div style="font-size: 0.8rem; opacity: 0.7;">Supply</div>
+                        </div>
+                        <div class="collection-stat">
+                            <div style="color: #00d4ff; font-weight: bold;">$1777</div>
+                            <div style="font-size: 0.8rem; opacity: 0.7;">Price</div>
+                        </div>
+                        <div class="collection-stat">
+                            <div style="color: #4CAF50; font-weight: bold;">10%</div>
+                            <div style="font-size: 0.8rem; opacity: 0.7;">Royalties</div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.9rem; color: rgba(255,255,255,0.8); margin: 15px 0;">Complete legal framework, doctrinal foundation, and philosophical blackpaper for ecosystem's lawful positioning.</p>
+                    <button class="mint-btn blackpaper" onclick="mintPartThree()">Mint Blackpaper</button>
                 </div>
             </div>
         </div>
 
-        <!-- Token Actions -->
-        <div style="text-align: center; margin-top: 30px;">
-            <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
-                <button class="cta-btn cta-secondary" onclick="window.open('https://app.uniswap.org/#/swap?outputCurrency=0x8f6cf6f7747e170f4768533b869c339dc3d30a3c&chain=base', '_blank')">
+        <!-- Token Holdings Section -->
+        <div class="token-section">
+            <h2 class="section-title">💰 Your Token Holdings</h2>
+            <div class="token-grid">
+                <div class="token-card">
+                    <div class="token-symbol">TRUTH Token</div>
+                    <div class="token-balance">
+                        <strong>Balance:</strong> <span id="truthBalance">0 TRUTH</span>
+                    </div>
+                    <div style="margin: 10px 0;">
+                        <strong>Governance Power:</strong>
+                        <div style="background: rgba(0,0,0,0.3); border-radius: 10px; height: 8px; margin: 5px 0;">
+                            <div id="truthPowerBar" style="background: linear-gradient(90deg, #00d4ff, #4CAF50); height: 100%; border-radius: 10px; width: 0%; transition: width 0.5s ease;"></div>
+                        </div>
+                        <span id="truthPowerText" style="font-size: 0.9em; opacity: 0.7;">0% Voting Power</span>
+                    </div>
+                    <p style="font-size: 0.9rem; opacity: 0.8;">Governance rights, revenue sharing, Master Copy priority</p>
+                </div>
+
+                <div class="token-card">
+                    <div class="token-symbol">@jacqueantoinedegraff</div>
+                    <div class="token-balance">
+                        <strong>Balance:</strong> <span id="creatorBalance">0 Creator</span>
+                    </div>
+                    <div style="margin: 10px 0;">
+                        <strong>Access Level:</strong>
+                        <div id="accessLevel" style="background: rgba(76, 175, 80, 0.2); color: #4CAF50; padding: 5px 10px; border-radius: 15px; display: inline-block; margin: 5px 0; font-size: 0.9em;">
+                            Basic
+                        </div>
+                    </div>
+                    <div style="margin: 10px 0;">
+                        <strong>Revenue Share:</strong>
+                        <span id="revenueAmount" style="color: #FFD700; font-weight: bold;">$0.00</span>
+                    </div>
+                    <p style="font-size: 0.9rem; opacity: 0.8;">Creator community access, revenue sharing, exclusive content</p>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn secondary" onclick="window.open('https://app.uniswap.org/#/swap?outputCurrency=0x8f6cf6f7747e170f4768533b869c339dc3d30a3c&chain=base', '_blank')">
                     💰 Buy TRUTH Token
                 </button>
-                <button class="cta-btn cta-secondary" onclick="window.open('https://app.uniswap.org/#/swap?outputCurrency=0x22b0434e89882f8e6841d340b28427646c015aa7&chain=base', '_blank')">
+                <button class="action-btn secondary" onclick="window.open('https://app.uniswap.org/#/swap?outputCurrency=0x22b0434e89882f8e6841d340b28427646c015aa7&chain=base', '_blank')">
                     🎨 Buy Creator Token
                 </button>
-                <button class="cta-btn cta-primary" onclick="updateTokenDisplays()">
+                <button class="action-btn primary" onclick="updateTokenDisplays()">
                     🔄 Refresh Balances
                 </button>
             </div>
         </div>
-    </div>
 
-    <section class="cta-section">
-        <h2>Join The Truth Ecosystem</h2>
-        <p>Participate in the future of creator economies where philosophy meets technology</p>
-        <div class="cta-buttons">
-            <a href="/governance" class="cta-btn cta-primary">🗳️ Governance Dashboard</a>
-            <a href="/community" class="cta-btn cta-secondary">👥 Community Hub</a>
-            <a href="/shop" class="cta-btn cta-secondary">🛒 Traditional Shop</a>
-            <a href="/deploy" class="cta-btn cta-secondary">🚀 Deploy Tools</a>
+        <!-- Platform Features -->
+        <div class="collections-section">
+            <h2 class="section-title">🚀 Platform Features</h2>
+            <div class="action-buttons">
+                <a href="/governance.html" class="action-btn primary">🗳️ Governance Dashboard</a>
+                <a href="/community-dashboard.html" class="action-btn secondary">👥 Community Hub</a>
+                <a href="/analytics.html" class="action-btn secondary">📊 Analytics</a>
+                <a href="/ai-insights.html" class="action-btn secondary">🤖 AI Insights</a>
+                <a href="/lawful-dashboard.html" class="action-btn secondary">⚖️ Legal Framework</a>
+                <a href="/shop.html" class="action-btn secondary">🛒 Traditional Shop</a>
+            </div>
         </div>
-    </section>
+    </div>
 
     <footer class="footer">
         <p><strong>Jacque Antoine DeGraff</strong></p>
@@ -710,334 +679,308 @@
         </p>
     </footer>
 
-    <!-- Load ethers.js first -->
+    <!-- Load ethers.js -->
     <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
     
     <!-- Load token integration -->
     <script src="/token-integration.js"></script>
 
     <script>
-        // Enhanced token display update function that actually works
-        async function updateTokenDisplays() {
-            if (!window.truthTokens || !window.truthTokens.account) {
-                console.log('No wallet connected, using demo data');
+        // Enhanced cross-browser wallet connection
+        async function connectWallet() {
+            try {
+                console.log('Attempting wallet connection...');
                 
-                // Show demo data when wallet not connected
-                const elements = {
-                    'truthBalance': '0 TRUTH',
-                    'creatorBalance': '0 Creator',
-                    'truthPowerBar': '0%',
-                    'truthPowerText': '0% Voting Power',
-                    'accessLevel': 'Basic',
-                    'revenueAmount': '$0.00'
-                };
+                // Check for various wallet providers
+                let ethereum;
+                
+                if (window.ethereum) {
+                    if (window.ethereum.isMetaMask) {
+                        ethereum = window.ethereum;
+                        console.log('Using MetaMask');
+                    } else if (window.ethereum.providers) {
+                        // Multiple wallets - find MetaMask or use first available
+                        const provider = window.ethereum.providers.find(p => p.isMetaMask) || window.ethereum.providers[0];
+                        ethereum = provider;
+                        console.log('Using provider from multiple wallets');
+                    } else {
+                        ethereum = window.ethereum;
+                        console.log('Using default ethereum provider');
+                    }
+                } else {
+                    throw new Error('No Web3 wallet detected. Please install MetaMask or another Web3 wallet.');
+                }
 
-                Object.entries(elements).forEach(([id, value]) => {
-                    const el = document.getElementById(id);
-                    if (el) {
-                        if (id === 'truthPowerBar') {
-                            el.style.width = value;
+                // Request account access
+                const accounts = await ethereum.request({
+                    method: 'eth_requestAccounts'
+                });
+
+                if (!accounts || accounts.length === 0) {
+                    throw new Error('No accounts found. Please unlock your wallet.');
+                }
+
+                const account = accounts[0];
+                console.log('Connected account:', account);
+
+                // Initialize Web3 provider
+                const provider = new ethers.providers.Web3Provider(ethereum);
+                const network = await provider.getNetwork();
+                console.log('Network:', network);
+
+                // Check if we're on Base network
+                const targetChainId = '0x2105'; // Base mainnet
+                if (network.chainId !== parseInt(targetChainId, 16)) {
+                    console.log('Switching to Base network...');
+                    try {
+                        await ethereum.request({
+                            method: 'wallet_switchEthereumChain',
+                            params: [{ chainId: targetChainId }],
+                        });
+                    } catch (switchError) {
+                        if (switchError.code === 4902) {
+                            // Network not added, add it
+                            await ethereum.request({
+                                method: 'wallet_addEthereumChain',
+                                params: [{
+                                    chainId: targetChainId,
+                                    chainName: 'Base',
+                                    nativeCurrency: {
+                                        name: 'Ethereum',
+                                        symbol: 'ETH',
+                                        decimals: 18
+                                    },
+                                    rpcUrls: ['https://mainnet.base.org'],
+                                    blockExplorerUrls: ['https://basescan.org']
+                                }],
+                            });
                         } else {
-                            el.textContent = value;
+                            throw switchError;
+                        }
+                    }
+                }
+
+                // Update UI
+                updateWalletDisplay(account);
+                
+                // Initialize truth tokens if available
+                if (window.truthTokens) {
+                    window.truthTokens.account = account;
+                    window.truthTokens.web3 = provider;
+                    window.truthTokens.signer = provider.getSigner();
+                    await updateTokenDisplays();
+                }
+
+                // Listen for account changes
+                ethereum.on('accountsChanged', (accounts) => {
+                    if (accounts.length === 0) {
+                        disconnectWallet();
+                    } else {
+                        updateWalletDisplay(accounts[0]);
+                        if (window.truthTokens) {
+                            window.truthTokens.account = accounts[0];
+                            updateTokenDisplays();
                         }
                     }
                 });
+
+                // Listen for network changes
+                ethereum.on('chainChanged', (chainId) => {
+                    console.log('Network changed to:', chainId);
+                    // Reload page to ensure clean state
+                    window.location.reload();
+                });
+
+                return account;
+
+            } catch (error) {
+                console.error('Wallet connection failed:', error);
+                
+                // User-friendly error messages
+                let errorMessage = error.message;
+                if (error.code === 4001) {
+                    errorMessage = 'Connection cancelled. Please try again and approve the connection.';
+                } else if (error.message.includes('No Web3 wallet')) {
+                    errorMessage = 'Please install MetaMask or another Web3 wallet to continue.';
+                } else if (error.message.includes('unlock')) {
+                    errorMessage = 'Please unlock your wallet and try again.';
+                }
+                
+                showError(errorMessage);
+                return null;
+            }
+        }
+
+        function updateWalletDisplay(account) {
+            const walletConnected = document.getElementById('walletConnected');
+            const walletDisconnected = document.getElementById('walletDisconnected');
+            const walletAddress = document.getElementById('walletAddress');
+            const connectButton = document.getElementById('connectWallet');
+
+            if (account) {
+                walletConnected.style.display = 'block';
+                walletDisconnected.style.display = 'none';
+                walletAddress.textContent = account;
+                connectButton.textContent = `${account.substring(0, 6)}...${account.substring(38)}`;
+            } else {
+                walletConnected.style.display = 'none';
+                walletDisconnected.style.display = 'block';
+                connectButton.textContent = 'Connect Wallet';
+            }
+        }
+
+        function disconnectWallet() {
+            updateWalletDisplay(null);
+            if (window.truthTokens) {
+                window.truthTokens.account = null;
+                window.truthTokens.web3 = null;
+                window.truthTokens.signer = null;
+            }
+            // Reset token displays
+            document.getElementById('truthBalance').textContent = '0 TRUTH';
+            document.getElementById('creatorBalance').textContent = '0 Creator';
+            document.getElementById('truthPowerBar').style.width = '0%';
+            document.getElementById('truthPowerText').textContent = '0% Voting Power';
+            document.getElementById('accessLevel').textContent = 'Basic';
+            document.getElementById('revenueAmount').textContent = '$0.00';
+        }
+
+        async function updateTokenDisplays() {
+            if (!window.truthTokens || !window.truthTokens.account) {
+                console.log('No wallet connected for token display update');
                 return;
             }
 
             try {
-                console.log('Updating token displays for:', window.truthTokens.account);
+                console.log('Updating token displays...');
                 
-                // Get governance power and balances
                 const power = await window.truthTokens.getGovernancePower();
                 const accessLevel = await window.truthTokens.getAccessLevel();
                 const revenueShare = await window.truthTokens.calculateRevenueShare(1000);
 
                 // Update TRUTH token display
-                const truthBalanceEl = document.getElementById('truthBalance');
-                const truthPowerBar = document.getElementById('truthPowerBar');
-                const truthPowerText = document.getElementById('truthPowerText');
+                document.getElementById('truthBalance').textContent = 
+                    `${window.truthTokens.formatTokenAmount(power.truthBalance)} TRUTH`;
                 
-                if (truthBalanceEl) {
-                    truthBalanceEl.textContent = `${window.truthTokens.formatTokenAmount(power.truthBalance)} TRUTH`;
-                }
-                if (truthPowerBar) {
-                    truthPowerBar.style.width = `${power.truthPower}%`;
-                }
-                if (truthPowerText) {
-                    truthPowerText.textContent = `${power.truthPower.toFixed(1)}% Voting Power`;
-                }
+                document.getElementById('truthPowerBar').style.width = `${power.truthPower}%`;
+                document.getElementById('truthPowerText').textContent = 
+                    `${power.truthPower.toFixed(1)}% Voting Power`;
 
                 // Update Creator token display
-                const creatorBalanceEl = document.getElementById('creatorBalance');
-                const accessLevelEl = document.getElementById('accessLevel');
-                const revenueAmountEl = document.getElementById('revenueAmount');
+                document.getElementById('creatorBalance').textContent = 
+                    `${window.truthTokens.formatTokenAmount(power.creatorBalance)} Creator`;
                 
-                if (creatorBalanceEl) {
-                    creatorBalanceEl.textContent = `${window.truthTokens.formatTokenAmount(power.creatorBalance)} Creator`;
+                const accessEl = document.getElementById('accessLevel');
+                accessEl.textContent = accessLevel;
+                
+                // Update access level styling
+                const colorMap = {
+                    'Platinum': '#E5E7EB',
+                    'Gold': '#F59E0B', 
+                    'Silver': '#9CA3AF',
+                    'Bronze': '#CD7C2F',
+                    'Basic': '#6B7280'
+                };
+                if (colorMap[accessLevel]) {
+                    accessEl.style.background = `rgba(${colorMap[accessLevel]}, 0.2)`;
+                    accessEl.style.color = colorMap[accessLevel];
                 }
-                if (accessLevelEl) {
-                    accessLevelEl.textContent = accessLevel;
-                    // Update access level styling based on level
-                    const colorMap = {
-                        'Platinum': 'rgba(229, 231, 235, 0.2)',
-                        'Gold': 'rgba(245, 158, 11, 0.2)', 
-                        'Silver': 'rgba(156, 163, 175, 0.2)',
-                        'Bronze': 'rgba(205, 124, 47, 0.2)',
-                        'Basic': 'rgba(107, 114, 128, 0.2)'
-                    };
-                    const textColorMap = {
-                        'Platinum': '#E5E7EB',
-                        'Gold': '#F59E0B', 
-                        'Silver': '#9CA3AF',
-                        'Bronze': '#CD7C2F',
-                        'Basic': '#6B7280'
-                    };
-                    if (colorMap[accessLevel]) {
-                        accessLevelEl.style.background = colorMap[accessLevel];
-                        accessLevelEl.style.color = textColorMap[accessLevel];
-                    }
-                }
-                if (revenueAmountEl) {
-                    revenueAmountEl.textContent = `$${revenueShare.totalShare.toFixed(2)}`;
-                }
+
+                document.getElementById('revenueAmount').textContent = 
+                    `$${revenueShare.totalShare.toFixed(2)}`;
 
                 console.log('Token displays updated successfully');
             } catch (error) {
                 console.error('Failed to update token displays:', error);
-                // Show error state
-                const elements = {
-                    'truthBalance': 'Error loading',
-                    'creatorBalance': 'Error loading',
-                    'accessLevel': 'Error',
-                    'revenueAmount': 'Error'
-                };
-
-                Object.entries(elements).forEach(([id, value]) => {
-                    const el = document.getElementById(id);
-                    if (el) el.textContent = value;
-                });
             }
         }
 
-        async function connectTruthWallet() {
-            try {
-                if (!window.truthTokens) {
-                    console.log('TruthTokens not loaded, using direct connection');
-                    
-                    if (typeof window.ethereum === 'undefined') {
-                        throw new Error('MetaMask not detected. Please install MetaMask to continue.');
-                    }
+        function showError(message) {
+            // Create temporary error display
+            const errorDiv = document.createElement('div');
+            errorDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+                color: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 20px rgba(255, 107, 107, 0.3);
+                z-index: 10000;
+                max-width: 400px;
+                font-weight: 500;
+            `;
+            errorDiv.textContent = message;
+            document.body.appendChild(errorDiv);
 
-                    // Request account access
-                    const accounts = await window.ethereum.request({
-                        method: 'eth_requestAccounts'
-                    });
-
-                    if (!accounts || accounts.length === 0) {
-                        throw new Error('No accounts found. Please unlock MetaMask.');
-                    }
-
-                    // Verify we're on Base network
-                    const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-                    const targetChainId = '0x2105'; // Base mainnet
-                    
-                    if (chainId !== targetChainId) {
-                        try {
-                            await window.ethereum.request({
-                                method: 'wallet_switchEthereumChain',
-                                params: [{ chainId: targetChainId }],
-                            });
-                        } catch (switchError) {
-                            if (switchError.code === 4902) {
-                                await window.ethereum.request({
-                                    method: 'wallet_addEthereumChain',
-                                    params: [{
-                                        chainId: targetChainId,
-                                        chainName: 'Base',
-                                        nativeCurrency: {
-                                            name: 'Ethereum',
-                                            symbol: 'ETH',
-                                            decimals: 18
-                                        },
-                                        rpcUrls: ['https://mainnet.base.org'],
-                                        blockExplorerUrls: ['https://basescan.org']
-                                    }],
-                                });
-                            }
-                        }
-                    }
-
-                    console.log("Successfully connected to wallet:", accounts[0]);
-                    return accounts[0];
-                } else {
-                    // Use the TruthTokens integration
-                    const account = await window.truthTokens.connect();
-                    console.log("Connected via TruthTokens:", account);
-                    return account;
+            // Remove after 5 seconds
+            setTimeout(() => {
+                if (errorDiv.parentNode) {
+                    errorDiv.parentNode.removeChild(errorDiv);
                 }
-            } catch (error) {
-                console.error("Wallet connection failed:", error);
-                throw error;
-            }
+            }, 5000);
         }
 
+        // Minting functions
         function mintTruth() {
-            if (!truthTokens.account) {
-                alert('Please connect your wallet first');
+            if (!window.truthTokens || !window.truthTokens.account) {
+                showError('Please connect your wallet first');
                 return;
             }
-            alert('The Truth minting coming soon!');
+            showError('The Truth NFT minting coming soon!');
         }
 
         function mintBonus() {
-            if (!truthTokens.account) {
-                alert('Please connect your wallet first');
+            if (!window.truthTokens || !window.truthTokens.account) {
+                showError('Please connect your wallet first');
                 return;
             }
-            alert('Bonus Gift minting coming soon!');
+            showError('Bonus Gift Collection minting coming soon!');
         }
 
         function mintPartThree() {
-            if (!truthTokens.account) {
-                alert('Please connect your wallet first');
+            if (!window.truthTokens || !window.truthTokens.account) {
+                showError('Please connect your wallet first');
                 return;
             }
-            alert('Part Three - Blackpaper minting coming soon! This NFT contains the complete legal framework, blackpaper PDF, and philosophical foundation.');
+            showError('Part Three - Blackpaper minting coming soon! This NFT contains the complete legal framework.');
         }
 
-        // Enhanced wallet connection with token display updates
-        document.getElementById('connectWallet').addEventListener('click', async () => {
-            try {
-                const connectedAccount = await connectTruthWallet();
-                if (connectedAccount) {
-                    // Update wallet status display
-                    document.getElementById('disconnectedWallet').style.display = 'none';
-                    document.getElementById('connectedWallet').style.display = 'block';
-                    document.getElementById('walletAddress').textContent = connectedAccount;
-                    
-                    // Update navbar button
-                    document.getElementById('connectWallet').textContent = 
-                        `${connectedAccount.substring(0, 6)}...${connectedAccount.substring(38)}`;
-                    
-                    // Update token displays
-                    await updateTokenDisplays();
-                }
-            } catch (error) {
-                console.error('Wallet connection failed:', error);
-                alert('Failed to connect wallet: ' + error.message);
-            }
-        });
+        // Event listeners
+        document.getElementById('connectWallet').addEventListener('click', connectWallet);
 
-        // Enhanced token display update function
-        window.updateTokenDisplays = async function() {
-            if (!window.truthTokens || !window.truthTokens.account) {
-                console.log('No wallet connected, skipping token display update');
-                return;
-            }
-
-            try {
-                console.log('Updating token displays for:', window.truthTokens.account);
-                
-                // Get governance power and balances
-                const power = await window.truthTokens.getGovernancePower();
-                const accessLevel = await window.truthTokens.getAccessLevel();
-                const revenueShare = await window.truthTokens.calculateRevenueShare(1000); // $1000 example pool
-
-                // Update TRUTH token display
-                const truthBalanceEl = document.getElementById('truthBalance');
-                const truthPowerBar = document.getElementById('truthPowerBar');
-                const truthPowerText = document.getElementById('truthPowerText');
-                
-                if (truthBalanceEl) {
-                    truthBalanceEl.textContent = `${window.truthTokens.formatTokenAmount(power.truthBalance)} TRUTH`;
-                }
-                if (truthPowerBar) {
-                    truthPowerBar.style.width = `${power.truthPower}%`;
-                }
-                if (truthPowerText) {
-                    truthPowerText.textContent = `${power.truthPower.toFixed(1)}% Voting Power`;
-                }
-
-                // Update Creator token display
-                const creatorBalanceEl = document.getElementById('creatorBalance');
-                const accessLevelEl = document.getElementById('accessLevel');
-                const revenueAmountEl = document.getElementById('revenueAmount');
-                
-                if (creatorBalanceEl) {
-                    creatorBalanceEl.textContent = `${window.truthTokens.formatTokenAmount(power.creatorBalance)} Creator`;
-                }
-                if (accessLevelEl) {
-                    accessLevelEl.textContent = accessLevel;
-                    // Update access level color based on level
-                    const colors = {
-                        'Platinum': '#E5E7EB',
-                        'Gold': '#F59E0B', 
-                        'Silver': '#9CA3AF',
-                        'Bronze': '#CD7C2F',
-                        'Basic': '#6B7280'
-                    };
-                    accessLevelEl.style.background = `rgba(${colors[accessLevel] ? colors[accessLevel] : '#6B7280'}, 0.2)`;
-                    accessLevelEl.style.color = colors[accessLevel] || '#6B7280';
-                }
-                if (revenueAmountEl) {
-                    revenueAmountEl.textContent = `$${revenueShare.totalShare.toFixed(2)}`;
-                }
-
-                console.log('Token displays updated successfully');
-            } catch (error) {
-                console.error('Failed to update token displays:', error);
-            }
-        };
-
-        // Initialize everything when DOM is ready
-        function initializeDashboard() {
-            console.log('Initializing Truth Dashboard...');
+        // Auto-connect if previously connected
+        window.addEventListener('load', async () => {
+            console.log('Page loaded, checking for existing connection...');
             
-            // Initialize token displays with demo data
-            updateTokenDisplays();
-            
-            // Auto-connect if previously connected
+            // Check if wallet was previously connected
             if (window.ethereum && window.ethereum.selectedAddress) {
+                console.log('Previous connection detected, auto-connecting...');
                 setTimeout(async () => {
                     try {
-                        console.log('Attempting auto-connect...');
-                        const connectedAccount = await connectTruthWallet();
-                        if (connectedAccount) {
-                            // Update UI to show connected state
-                            const disconnectedWallet = document.getElementById('disconnectedWallet');
-                            const connectedWallet = document.getElementById('connectedWallet');
-                            const walletAddress = document.getElementById('walletAddress');
-                            const connectButton = document.getElementById('connectWallet');
-                            
-                            if (disconnectedWallet) disconnectedWallet.style.display = 'none';
-                            if (connectedWallet) connectedWallet.style.display = 'block';
-                            if (walletAddress) walletAddress.textContent = connectedAccount;
-                            if (connectButton) {
-                                connectButton.textContent = `${connectedAccount.substring(0, 6)}...${connectedAccount.substring(38)}`;
-                            }
-                            
-                            // Update token displays with real data
-                            await updateTokenDisplays();
-                        }
+                        await connectWallet();
                     } catch (error) {
                         console.log('Auto-connect failed:', error);
                     }
-                }, 1500);
+                }, 1000);
             }
-        }
 
-        // Multiple initialization strategies for reliability
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initializeDashboard);
-        } else {
-            initializeDashboard();
-        }
-
-        // Backup initialization
-        window.addEventListener('load', () => {
-            setTimeout(initializeDashboard, 500);
+            // Initialize token displays with demo data
+            updateTokenDisplays();
         });
+
+        // Initialize analytics tracking
+        fetch('/api/track-event', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                event: 'page_view',
+                page: 'home',
+                timestamp: Date.now(),
+                userAgent: navigator.userAgent
+            })
+        }).catch(console.error);
     </script>
 </body>
 </html>
