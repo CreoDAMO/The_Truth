@@ -13,44 +13,137 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(ellipse at top, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #1a1a2e 100%);
             color: #ffffff;
             min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Advanced Glassmorphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.125);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transform: translateY(-4px);
+            box-shadow: 
+                0 16px 48px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+
+        /* Floating Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+        }
+
+        .floating { 
+            animation: float 6s ease-in-out infinite; 
+        }
+
+        /* Pulse Glow Effect */
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 212, 255, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(0, 212, 255, 0.6), 0 0 60px rgba(0, 212, 255, 0.3); }
+        }
+
+        .pulse-glow { 
+            animation: pulse-glow 2s ease-in-out infinite; 
+        }
+
+        /* Modern Typography */
+        .text-gradient {
+            background: linear-gradient(135deg, #00d4ff 0%, #090979 50%, #4CAF50 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Advanced Navigation */
+        .nav-glass {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            padding: 1rem;
         }
 
         .governance-container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 100px 20px 20px;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 60px;
+            position: relative;
         }
 
         .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            background: linear-gradient(45deg, #00d4ff, #090979);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 4rem;
+            margin-bottom: 20px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #00d4ff, transparent);
+            border-radius: 2px;
         }
 
         .token-stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
         }
 
         .token-card {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 20px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.4s ease;
+        }
+
+        .token-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                #00d4ff 50%, 
+                transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .token-card:hover::before {
+            opacity: 1;
         }
 
         .governance-sections {
@@ -68,17 +161,38 @@
         }
 
         .proposal-item {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 15px;
+            position: relative;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 4px solid transparent;
+            overflow: hidden;
+        }
+
+        .proposal-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.05), rgba(76, 175, 80, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
         .proposal-item:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateY(-2px);
+            transform: translateY(-6px) translateX(8px);
+            border-left-color: #00d4ff;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.4),
+                0 0 20px rgba(0, 212, 255, 0.2);
+        }
+
+        .proposal-item:hover::before {
+            opacity: 1;
         }
 
         .vote-buttons {
@@ -172,6 +286,21 @@
     </style>
 </head>
 <body>
+    <!-- Modern Navigation -->
+    <nav class="nav-glass">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <div class="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-500 rounded-xl flex items-center justify-center text-white font-bold text-lg">⚖️</div>
+                <h2 class="text-xl font-bold text-gradient">Truth Governance</h2>
+            </div>
+            <div class="flex gap-3">
+                <a href="/" class="px-4 py-2 glass rounded-lg transition-all duration-300 hover:scale-105 text-sm font-medium">Home</a>
+                <a href="/analytics" class="px-4 py-2 glass rounded-lg transition-all duration-300 hover:scale-105 text-sm font-medium">Analytics</a>
+                <a href="/community" class="px-4 py-2 glass rounded-lg transition-all duration-300 hover:scale-105 text-sm font-medium">Community</a>
+            </div>
+        </div>
+    </nav>
+
     <div class="governance-container">
         <div class="header">
             <h1>The Truth - Lawful Governance</h1>
