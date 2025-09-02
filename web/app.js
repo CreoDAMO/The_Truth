@@ -1,17 +1,16 @@
-
 const { useState, useEffect } = React;
 
 // Browser-compatible configuration
 const getNetworkConfig = () => {
     const environment = window.location.hostname;
-    
+
     // Auto-detect network based on deployment
     if (environment.includes('replit')) return NETWORKS.baseSepolia;
     if (environment.includes('vercel')) return NETWORKS.base;
     if (environment.includes('railway')) return NETWORKS.base;
     if (environment.includes('render')) return NETWORKS.base;
     if (environment.includes('herokuapp')) return NETWORKS.base;
-    
+
     return window.location.hostname === 'localhost' ? NETWORKS.baseSepolia : NETWORKS.base;
 };
 
@@ -143,7 +142,7 @@ function App() {
     const connectWallet = async () => {
         try {
             let ethereum;
-            
+
             // Check for MetaMask in multiple ways
             if (typeof window.ethereum !== 'undefined') {
                 if (window.ethereum.isMetaMask) {
@@ -205,7 +204,7 @@ function App() {
             }
 
             const web3Signer = web3Provider.getSigner();
-            
+
             // Verify signer
             const signerAddress = await web3Signer.getAddress();
             if (signerAddress.toLowerCase() !== accounts[0].toLowerCase()) {
@@ -307,7 +306,7 @@ function App() {
     const calculateTaxForMinting = async (priceInEth) => {
         try {
             const priceInUsd = parseFloat(priceInEth) * 3000; // Approximate ETH to USD conversion
-            
+
             const response = await fetch('/api/calculate-nft-tax', {
                 method: 'POST',
                 headers: {
@@ -338,15 +337,15 @@ function App() {
         try {
             const price = await contract.PRICE();
             const priceInEth = ethers.utils.formatEther(price);
-            
+
             // Calculate tax
             setSuccess("Calculating tax obligations...");
             const taxResult = await calculateTaxForMinting(priceInEth);
-            
+
             if (taxResult.success && taxResult.taxAmount > 0) {
                 setSuccess(`Tax calculated: $${taxResult.taxAmount.toFixed(2)}. Proceeding with minting...`);
             }
-            
+
             let tx;
             if (paymentMethod === 'metamask') {
                 tx = await contract.mintTruth({ 
@@ -361,7 +360,7 @@ function App() {
 
             setSuccess("Transaction submitted! Waiting for confirmation...");
             const receipt = await tx.wait();
-            
+
             // Create tax transaction record
             if (taxResult.success && taxResult.calculationId) {
                 try {
@@ -380,9 +379,9 @@ function App() {
                     console.error("Tax transaction recording failed:", taxError);
                 }
             }
-            
+
             setSuccess("🎉 Successfully minted The Truth NFT! Tax obligations recorded.");
-            
+
             // Refresh data
             await loadContractData(contract, account);
         } catch (err) {
@@ -443,7 +442,7 @@ function App() {
         try {
             // This would integrate with CDP Agent Kit for deployment
             setSuccess("CDP Agent Kit deployment feature coming soon. Please use the deployment scripts for now.");
-            
+
         } catch (err) {
             setError("Deployment failed: " + err.message);
         } finally {
@@ -459,7 +458,7 @@ function App() {
         }
 
         CONTRACT_CONFIG.address = newAddress;
-        
+
         if (signer) {
             const nftContract = new ethers.Contract(
                 newAddress,
@@ -469,7 +468,7 @@ function App() {
             setContract(nftContract);
             await loadContractData(nftContract, account);
         }
-        
+
         setSuccess("Contract address updated successfully!");
     };
 
@@ -487,7 +486,7 @@ function App() {
 
         // Initialize PWA features
         initializePWA();
-        
+
         // Initialize analytics
         initializeAnalytics();
     }, []);
@@ -509,7 +508,7 @@ function App() {
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             window.deferredPrompt = e;
-            
+
             // Show custom install button
             const installButton = document.createElement('button');
             installButton.textContent = '📱 Install App';
@@ -533,7 +532,7 @@ function App() {
         if (typeof TruthAnalytics !== 'undefined') {
             window.analytics = new TruthAnalytics();
         }
-        
+
         // Track page view
         fetch('/api/track-event', {
             method: 'POST',
@@ -632,7 +631,7 @@ function App() {
                                     Enter the deployed contract address or deploy a new one
                                 </p>
                             </div>
-                            
+
                             {CONTRACT_CONFIG.address === "0x..." && (
                                 <div className="border-t border-gray-600 pt-4">
                                     <p className="text-yellow-400 text-sm mb-3">⚠️ No contract connected</p>
@@ -719,7 +718,7 @@ function App() {
                 {account && !isOwner && (
                     <div className="nft-card rounded-xl p-6 mb-6">
                         <h3 className="text-xl font-semibold mb-4">🎨 Mint The Truth NFT</h3>
-                        
+
                         {/* Payment Method Selection */}
                         <div className="mb-6">
                             <h4 className="text-lg font-semibold mb-3">Choose Payment Method</h4>
@@ -765,7 +764,7 @@ function App() {
                                 </button>
                             </div>
                         </div>
-                        
+
                         {contractData.hasMinted ? (
                             <div className="text-center py-8">
                                 <p className="text-xl text-green-400 mb-2">🎉 You've already minted!</p>
@@ -788,7 +787,7 @@ function App() {
                                     <p className="text-lg opacity-80">≈ $777 USD</p>
                                     <p className="text-sm opacity-60 mt-2">Price includes 25-page audiobook, PDF, and exclusive meme comic</p>
                                 </div>
-                                
+
                                 <button
                                     onClick={mintNFT}
                                     disabled={loading}
@@ -796,7 +795,7 @@ function App() {
                                 >
                                     {loading ? '⏳ Minting...' : '🎯 Mint The Truth'}
                                 </button>
-                                
+
                                 {paymentMethod !== 'metamask' && (
                                     <p className="text-yellow-400 text-sm mt-2">
                                         {paymentMethod} payment coming soon!
