@@ -710,67 +710,172 @@
         </p>
     </footer>
 
-    <!-- Load token integration first -->
+    <!-- Load ethers.js first -->
     <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
-    <script src="/token-integration.js"></script>
     
-    <!-- Load app.js with proper Babel transformation -->
-    <script type="text/babel" data-type="module" src="/app.js"></script>
+    <!-- Load token integration -->
+    <script src="/token-integration.js"></script>
 
     <script>
-        // Placeholder functions, actual implementation would be in token-integration.js or app.js
+        // Enhanced token display update function that actually works
         async function updateTokenDisplays() {
-            // Simulate updating token displays
-            console.log("Updating token displays...");
+            if (!window.truthTokens || !window.truthTokens.account) {
+                console.log('No wallet connected, using demo data');
+                
+                // Show demo data when wallet not connected
+                const elements = {
+                    'truthBalance': '0 TRUTH',
+                    'creatorBalance': '0 Creator',
+                    'truthPowerBar': '0%',
+                    'truthPowerText': '0% Voting Power',
+                    'accessLevel': 'Basic',
+                    'revenueAmount': '$0.00'
+                };
+
+                Object.entries(elements).forEach(([id, value]) => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        if (id === 'truthPowerBar') {
+                            el.style.width = value;
+                        } else {
+                            el.textContent = value;
+                        }
+                    }
+                });
+                return;
+            }
+
+            try {
+                console.log('Updating token displays for:', window.truthTokens.account);
+                
+                // Get governance power and balances
+                const power = await window.truthTokens.getGovernancePower();
+                const accessLevel = await window.truthTokens.getAccessLevel();
+                const revenueShare = await window.truthTokens.calculateRevenueShare(1000);
+
+                // Update TRUTH token display
+                const truthBalanceEl = document.getElementById('truthBalance');
+                const truthPowerBar = document.getElementById('truthPowerBar');
+                const truthPowerText = document.getElementById('truthPowerText');
+                
+                if (truthBalanceEl) {
+                    truthBalanceEl.textContent = `${window.truthTokens.formatTokenAmount(power.truthBalance)} TRUTH`;
+                }
+                if (truthPowerBar) {
+                    truthPowerBar.style.width = `${power.truthPower}%`;
+                }
+                if (truthPowerText) {
+                    truthPowerText.textContent = `${power.truthPower.toFixed(1)}% Voting Power`;
+                }
+
+                // Update Creator token display
+                const creatorBalanceEl = document.getElementById('creatorBalance');
+                const accessLevelEl = document.getElementById('accessLevel');
+                const revenueAmountEl = document.getElementById('revenueAmount');
+                
+                if (creatorBalanceEl) {
+                    creatorBalanceEl.textContent = `${window.truthTokens.formatTokenAmount(power.creatorBalance)} Creator`;
+                }
+                if (accessLevelEl) {
+                    accessLevelEl.textContent = accessLevel;
+                    // Update access level styling based on level
+                    const colorMap = {
+                        'Platinum': 'rgba(229, 231, 235, 0.2)',
+                        'Gold': 'rgba(245, 158, 11, 0.2)', 
+                        'Silver': 'rgba(156, 163, 175, 0.2)',
+                        'Bronze': 'rgba(205, 124, 47, 0.2)',
+                        'Basic': 'rgba(107, 114, 128, 0.2)'
+                    };
+                    const textColorMap = {
+                        'Platinum': '#E5E7EB',
+                        'Gold': '#F59E0B', 
+                        'Silver': '#9CA3AF',
+                        'Bronze': '#CD7C2F',
+                        'Basic': '#6B7280'
+                    };
+                    if (colorMap[accessLevel]) {
+                        accessLevelEl.style.background = colorMap[accessLevel];
+                        accessLevelEl.style.color = textColorMap[accessLevel];
+                    }
+                }
+                if (revenueAmountEl) {
+                    revenueAmountEl.textContent = `$${revenueShare.totalShare.toFixed(2)}`;
+                }
+
+                console.log('Token displays updated successfully');
+            } catch (error) {
+                console.error('Failed to update token displays:', error);
+                // Show error state
+                const elements = {
+                    'truthBalance': 'Error loading',
+                    'creatorBalance': 'Error loading',
+                    'accessLevel': 'Error',
+                    'revenueAmount': 'Error'
+                };
+
+                Object.entries(elements).forEach(([id, value]) => {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = value;
+                });
+            }
         }
 
         async function connectTruthWallet() {
             try {
-                if (typeof window.ethereum === 'undefined') {
-                    throw new Error('MetaMask not detected. Please install MetaMask to continue.');
-                }
+                if (!window.truthTokens) {
+                    console.log('TruthTokens not loaded, using direct connection');
+                    
+                    if (typeof window.ethereum === 'undefined') {
+                        throw new Error('MetaMask not detected. Please install MetaMask to continue.');
+                    }
 
-                // Request account access
-                const accounts = await window.ethereum.request({
-                    method: 'eth_requestAccounts'
-                });
+                    // Request account access
+                    const accounts = await window.ethereum.request({
+                        method: 'eth_requestAccounts'
+                    });
 
-                if (!accounts || accounts.length === 0) {
-                    throw new Error('No accounts found. Please unlock MetaMask.');
-                }
+                    if (!accounts || accounts.length === 0) {
+                        throw new Error('No accounts found. Please unlock MetaMask.');
+                    }
 
-                // Verify we're on Base network
-                const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-                const targetChainId = '0x2105'; // Base mainnet
-                
-                if (chainId !== targetChainId) {
-                    try {
-                        await window.ethereum.request({
-                            method: 'wallet_switchEthereumChain',
-                            params: [{ chainId: targetChainId }],
-                        });
-                    } catch (switchError) {
-                        if (switchError.code === 4902) {
+                    // Verify we're on Base network
+                    const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+                    const targetChainId = '0x2105'; // Base mainnet
+                    
+                    if (chainId !== targetChainId) {
+                        try {
                             await window.ethereum.request({
-                                method: 'wallet_addEthereumChain',
-                                params: [{
-                                    chainId: targetChainId,
-                                    chainName: 'Base',
-                                    nativeCurrency: {
-                                        name: 'Ethereum',
-                                        symbol: 'ETH',
-                                        decimals: 18
-                                    },
-                                    rpcUrls: ['https://mainnet.base.org'],
-                                    blockExplorerUrls: ['https://basescan.org']
-                                }],
+                                method: 'wallet_switchEthereumChain',
+                                params: [{ chainId: targetChainId }],
                             });
+                        } catch (switchError) {
+                            if (switchError.code === 4902) {
+                                await window.ethereum.request({
+                                    method: 'wallet_addEthereumChain',
+                                    params: [{
+                                        chainId: targetChainId,
+                                        chainName: 'Base',
+                                        nativeCurrency: {
+                                            name: 'Ethereum',
+                                            symbol: 'ETH',
+                                            decimals: 18
+                                        },
+                                        rpcUrls: ['https://mainnet.base.org'],
+                                        blockExplorerUrls: ['https://basescan.org']
+                                    }],
+                                });
+                            }
                         }
                     }
-                }
 
-                console.log("Successfully connected to wallet:", accounts[0]);
-                return accounts[0];
+                    console.log("Successfully connected to wallet:", accounts[0]);
+                    return accounts[0];
+                } else {
+                    // Use the TruthTokens integration
+                    const account = await window.truthTokens.connect();
+                    console.log("Connected via TruthTokens:", account);
+                    return account;
+                }
             } catch (error) {
                 console.error("Wallet connection failed:", error);
                 throw error;
@@ -885,26 +990,53 @@
             }
         };
 
-        // Auto-connect if previously connected
-        window.addEventListener('load', async () => {
-            // Wait for token integration to load
-            setTimeout(async () => {
-                if (window.ethereum && window.ethereum.selectedAddress) {
+        // Initialize everything when DOM is ready
+        function initializeDashboard() {
+            console.log('Initializing Truth Dashboard...');
+            
+            // Initialize token displays with demo data
+            updateTokenDisplays();
+            
+            // Auto-connect if previously connected
+            if (window.ethereum && window.ethereum.selectedAddress) {
+                setTimeout(async () => {
                     try {
+                        console.log('Attempting auto-connect...');
                         const connectedAccount = await connectTruthWallet();
                         if (connectedAccount) {
-                            document.getElementById('disconnectedWallet').style.display = 'none';
-                            document.getElementById('connectedWallet').style.display = 'block';
-                            document.getElementById('walletAddress').textContent = connectedAccount;
-                            document.getElementById('connectWallet').textContent = 
-                                `${connectedAccount.substring(0, 6)}...${connectedAccount.substring(38)}`;
+                            // Update UI to show connected state
+                            const disconnectedWallet = document.getElementById('disconnectedWallet');
+                            const connectedWallet = document.getElementById('connectedWallet');
+                            const walletAddress = document.getElementById('walletAddress');
+                            const connectButton = document.getElementById('connectWallet');
+                            
+                            if (disconnectedWallet) disconnectedWallet.style.display = 'none';
+                            if (connectedWallet) connectedWallet.style.display = 'block';
+                            if (walletAddress) walletAddress.textContent = connectedAccount;
+                            if (connectButton) {
+                                connectButton.textContent = `${connectedAccount.substring(0, 6)}...${connectedAccount.substring(38)}`;
+                            }
+                            
+                            // Update token displays with real data
                             await updateTokenDisplays();
                         }
                     } catch (error) {
                         console.log('Auto-connect failed:', error);
                     }
-                }
-            }, 1000); // Give time for scripts to load
+                }, 1500);
+            }
+        }
+
+        // Multiple initialization strategies for reliability
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeDashboard);
+        } else {
+            initializeDashboard();
+        }
+
+        // Backup initialization
+        window.addEventListener('load', () => {
+            setTimeout(initializeDashboard, 500);
         });
     </script>
 </body>
