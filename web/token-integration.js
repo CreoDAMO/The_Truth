@@ -1,19 +1,24 @@
-
 // Token Integration Utilities for The Truth Ecosystem
 class TruthTokenIntegration {
     constructor() {
+        // Truth ecosystem token contracts on Base
         this.contracts = {
             truth: {
                 address: '0x8f6cf6f7747e170f4768533b869c339dc3d30a3c',
+                name: 'TRUTH',
                 symbol: 'TRUTH',
-                decimals: 18,
-                totalSupply: 10000000
+                decimals: 18
             },
             creator: {
                 address: '0x22b0434e89882f8e6841d340b28427646c015aa7',
-                symbol: '@jacqueantoinedegraff',
-                decimals: 18,
-                totalSupply: 1000000000
+                name: '@jacqueantoinedegraff',
+                symbol: 'Creator',
+                decimals: 18
+            },
+            nfts: {
+                theTruth: { address: '0x...', name: 'The Truth NFT' },
+                bonusGift: { address: '0x...', name: 'Bonus Gift Collection' },
+                partThree: { address: '0x...', name: 'Part Three - Blackpaper' }
             }
         };
 
@@ -82,20 +87,23 @@ class TruthTokenIntegration {
         if (!address) address = this.account;
         if (!address) throw new Error('No address provided');
 
+        const contractInfo = this.contracts[tokenType];
+        if (!contractInfo) throw new Error(`Unknown token type: ${tokenType}`);
+
         const contract = new ethers.Contract(
-            this.contracts[tokenType].address,
+            contractInfo.address,
             this.erc20ABI,
             this.web3
         );
 
         const balance = await contract.balanceOf(address);
-        return ethers.utils.formatUnits(balance, this.contracts[tokenType].decimals);
+        return ethers.utils.formatUnits(balance, contractInfo.decimals);
     }
 
     // Calculate governance power
     async getGovernancePower(address = null) {
         if (!address) address = this.account;
-        
+
         const truthBalance = parseFloat(await this.getTokenBalance('truth', address));
         const creatorBalance = parseFloat(await this.getTokenBalance('creator', address));
 
@@ -115,7 +123,7 @@ class TruthTokenIntegration {
     // Calculate access level
     async getAccessLevel(address = null) {
         const power = await this.getGovernancePower(address);
-        
+
         if (power.creatorBalance >= 10000) return 'Platinum';
         if (power.creatorBalance >= 1000) return 'Gold';
         if (power.creatorBalance >= 100) return 'Silver';
@@ -126,10 +134,10 @@ class TruthTokenIntegration {
     // Calculate revenue share (example calculation)
     async calculateRevenueShare(totalRevenuePool = 1000, address = null) {
         const power = await this.getGovernancePower(address);
-        
+
         const truthShare = (power.truthBalance / this.contracts.truth.totalSupply) * totalRevenuePool * 0.6;
         const creatorShare = (power.creatorBalance / this.contracts.creator.totalSupply) * totalRevenuePool * 0.4;
-        
+
         return {
             truthShare,
             creatorShare,
@@ -141,7 +149,7 @@ class TruthTokenIntegration {
     // Check if user can access content
     async canAccessContent(contentType, address = null) {
         const power = await this.getGovernancePower(address);
-        
+
         const requirements = {
             'basic': () => power.truthBalance > 0 || power.creatorBalance > 0,
             'audio_extended': () => power.creatorBalance >= 100,
@@ -235,15 +243,15 @@ window.updateTokenDisplays = async function() {
         if (truthBalanceEl) {
             truthBalanceEl.textContent = `${window.truthTokens.formatTokenAmount(power.truthBalance)} TRUTH`;
         }
-        
+
         if (creatorBalanceEl) {
             creatorBalanceEl.textContent = `${window.truthTokens.formatTokenAmount(power.creatorBalance)} @jacqueantoinedegraff`;
         }
-        
+
         if (accessLevelEl) {
             accessLevelEl.textContent = `Access Level: ${accessLevel}`;
         }
-        
+
         if (revenueAmountEl) {
             revenueAmountEl.textContent = `$${revenueShare.totalShare.toFixed(2)}`;
         }
@@ -251,7 +259,7 @@ window.updateTokenDisplays = async function() {
         // Update power meters
         const truthPowerEl = document.getElementById('truthPower');
         const creatorPowerEl = document.getElementById('creatorPower');
-        
+
         if (truthPowerEl) truthPowerEl.style.width = `${power.truthPower}%`;
         if (creatorPowerEl) creatorPowerEl.style.width = `${power.creatorPower}%`;
 

@@ -148,7 +148,7 @@ function App() {
                 if (window.ethereum.isMetaMask) {
                     ethereum = window.ethereum;
                     console.log("Using MetaMask browser extension");
-                } else if (window.ethereum.providers) {
+                } else if (window.ethereum.providers && Array.isArray(window.ethereum.providers)) {
                     // Multiple wallet providers - find MetaMask
                     const provider = window.ethereum.providers.find(p => p.isMetaMask);
                     if (provider) {
@@ -163,13 +163,13 @@ function App() {
                     ethereum = window.ethereum;
                     console.log("Using default ethereum provider");
                 }
-            } else if (sdk) {
+            } else if (sdk && sdk.getProvider) {
                 ethereum = sdk.getProvider();
                 console.log("Using MetaMask SDK provider");
             } else {
                 // More user-friendly error message
                 setError("Please install MetaMask or use a Web3-enabled browser to continue.");
-                return;
+                return null;
             }
 
             // Verify connection
