@@ -10,21 +10,219 @@
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        .glass { 
-            background: rgba(255, 255, 255, 0.1); 
-            backdrop-filter: blur(10px); 
-            border: 1px solid rgba(255, 255, 255, 0.2); 
+        * { 
+            font-family: 'Inter', sans-serif; 
         }
+        
         body { 
-            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            background: radial-gradient(ellipse at top, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #1a1a2e 100%);
             min-height: 100vh;
+            overflow-x: hidden;
         }
+        
+        /* Advanced Glassmorphism */
+        .glass { 
+            background: rgba(255, 255, 255, 0.08); 
+            backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.125); 
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .glass:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transform: translateY(-4px);
+            box-shadow: 
+                0 16px 48px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+        
+        /* Enhanced Gradients */
+        .gradient-card {
+            background: linear-gradient(135deg, 
+                rgba(251, 191, 36, 0.1) 0%, 
+                rgba(245, 158, 11, 0.05) 50%, 
+                rgba(217, 119, 6, 0.1) 100%);
+            border: 1px solid rgba(251, 191, 36, 0.2);
+        }
+        
+        .gradient-purple {
+            background: linear-gradient(135deg, 
+                rgba(139, 92, 246, 0.1) 0%, 
+                rgba(124, 58, 237, 0.05) 50%, 
+                rgba(109, 40, 217, 0.1) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+        
+        .gradient-blue {
+            background: linear-gradient(135deg, 
+                rgba(59, 130, 246, 0.1) 0%, 
+                rgba(37, 99, 235, 0.05) 50%, 
+                rgba(29, 78, 216, 0.1) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        
+        .gradient-green {
+            background: linear-gradient(135deg, 
+                rgba(16, 185, 129, 0.1) 0%, 
+                rgba(5, 150, 105, 0.05) 50%, 
+                rgba(4, 120, 87, 0.1) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        
+        /* Floating Animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .floating { animation: float 6s ease-in-out infinite; }
+        
+        /* Pulse Effect */
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(251, 191, 36, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(251, 191, 36, 0.6); }
+        }
+        
+        .pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+        
+        /* Chart Container Enhancement */
         .chart-container { 
             position: relative; 
-            height: 300px; 
+            height: 320px; 
             width: 100%;
+            padding: 20px;
         }
+        
+        /* Advanced Button Styles */
+        .btn-primary {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            border: none;
+            color: #000;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(251, 191, 36, 0.4);
+        }
+        
+        /* Modern Typography */
+        .text-gradient {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Advanced Grid */
+        .masonry-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-gap: 24px;
+            grid-auto-rows: max-content;
+        }
+        
+        /* Loading States */
+        .skeleton {
+            background: linear-gradient(90deg, 
+                rgba(255,255,255,0.1) 25%, 
+                rgba(255,255,255,0.2) 50%, 
+                rgba(255,255,255,0.1) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+            .chart-container { height: 280px; padding: 15px; }
+            .masonry-grid { grid-template-columns: 1fr; grid-gap: 16px; }
+        }
+        
+        /* Scroll Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Enhanced Navigation */
+        .nav-glass {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Metric Cards Enhancement */
+        .metric-card {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                var(--accent-color, #fbbf24) 50%, 
+                transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .metric-card:hover::before {
+            opacity: 1;
+        }
+        
+        /* Enhanced Tables */
+        .holder-item {
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .holder-item:hover {
+            background: rgba(251, 191, 36, 0.05);
+            border-left-color: #fbbf24;
+            transform: translateX(8px);
+        }
+        
         #analytics-root {
             min-height: 100vh;
         }
@@ -34,8 +232,12 @@
     <div id="analytics-root">
         <div class="flex items-center justify-center min-h-screen">
             <div class="text-center">
-                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-400 mx-auto mb-4"></div>
-                <p class="text-yellow-400">Loading Analytics Dashboard...</p>
+                <div class="relative">
+                    <div class="animate-spin rounded-full h-16 w-16 border-4 border-transparent border-t-yellow-400 border-r-yellow-400 mx-auto mb-6"></div>
+                    <div class="absolute inset-0 rounded-full h-16 w-16 border-4 border-transparent border-b-orange-400 border-l-orange-400 mx-auto animate-spin" style="animation-direction: reverse; animation-duration: 1.5s;"></div>
+                </div>
+                <p class="text-xl font-medium text-gradient">Initializing Analytics Dashboard...</p>
+                <p class="text-sm text-gray-400 mt-2">Loading ecosystem metrics</p>
             </div>
         </div>
     </div>
