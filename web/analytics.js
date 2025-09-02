@@ -81,8 +81,10 @@ function AnalyticsDashboard() {
     const initializeCharts = () => {
         try {
             // Destroy existing charts first
-            Chart.helpers.each(Chart.instances, function(instance) {
-                instance.destroy();
+            Object.values(Chart.instances || {}).forEach(chart => {
+                if (chart && typeof chart.destroy === 'function') {
+                    chart.destroy();
+                }
             });
 
             // Minting Velocity Chart
@@ -215,6 +217,26 @@ function AnalyticsDashboard() {
     };
 
     return React.createElement('div', { className: "min-h-screen text-white p-4" },
+        // Navigation Bar
+        React.createElement('nav', { className: "glass rounded-lg p-4 mb-6" },
+            React.createElement('div', { className: "flex justify-between items-center" },
+                React.createElement('h2', { className: "text-xl font-bold text-yellow-400" }, "The Truth Analytics"),
+                React.createElement('div', { className: "flex gap-4" },
+                    React.createElement('a', { 
+                        href: '/', 
+                        className: "px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors" 
+                    }, "Home"),
+                    React.createElement('a', { 
+                        href: '/governance', 
+                        className: "px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors" 
+                    }, "Governance"),
+                    React.createElement('a', { 
+                        href: '/community', 
+                        className: "px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors" 
+                    }, "Community")
+                )
+            )
+        ),
         React.createElement('div', { className: "max-w-7xl mx-auto" },
             // Header
             React.createElement('div', { className: "flex justify-between items-center mb-8 flex-wrap" },
@@ -415,18 +437,57 @@ function AnalyticsDashboard() {
 }
 
 // Initialize when DOM is ready
+function initializeApp() {
+    console.log('Initializing Analytics App...');
+    const rootElement = document.getElementById('analytics-root');
+    
+    if (!rootElement) {
+        console.error('Root element not found');
+        return;
+    }
+    
+    if (typeof React === 'undefined') {
+        console.error('React not loaded');
+        return;
+    }
+    
+    if (typeof ReactDOM === 'undefined') {
+        console.error('ReactDOM not loaded');
+        return;
+    }
+    
+    try {
+        const root = ReactDOM.createRoot(rootElement);
+        root.render(React.createElement(AnalyticsDashboard));
+        console.log('Analytics dashboard rendered successfully');
+    } catch (error) {
+        console.error('Error rendering analytics dashboard:', error);
+        // Fallback: show basic HTML
+        rootElement.innerHTML = `
+            <div class="min-h-screen text-white p-4 flex items-center justify-center">
+                <div class="text-center">
+                    <h1 class="text-4xl font-bold text-red-400 mb-4">Analytics Dashboard Error</h1>
+                    <p class="text-lg">Unable to load React components. Please refresh the page.</p>
+                    <button onclick="window.location.reload()" class="mt-4 px-6 py-2 bg-yellow-500 text-black rounded-lg">
+                        Refresh Page
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+}
+
+// Multiple initialization attempts
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initializeApp);
 } else {
     initializeApp();
 }
 
-function initializeApp() {
-    const rootElement = document.getElementById('analytics-root');
-    if (rootElement && typeof ReactDOM !== 'undefined') {
-        const root = ReactDOM.createRoot(rootElement);
-        root.render(React.createElement(AnalyticsDashboard));
-    } else {
-        console.error('React DOM not loaded or root element not found');
+// Backup initialization after a delay
+setTimeout(() => {
+    if (document.getElementById('analytics-root').innerHTML.includes('Loading Analytics Dashboard')) {
+        console.log('Attempting backup initialization...');
+        initializeApp();
     }
-}
+}, 2000);
