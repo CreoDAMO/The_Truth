@@ -707,6 +707,61 @@ app.get('/api/compliance-dashboard', (req, res) => {
     res.json(complianceData);
 });
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.json({ 
+        status: 'healthy', 
+        timestamp: new Date().toISOString(),
+        contracts: process.env.NODE_ENV === 'production' ? 'deployed' : 'development'
+    });
+});
+
+// Comprehensive system status endpoint
+app.get('/api/system-status', (req, res) => {
+    const systemStatus = {
+        server: {
+            status: 'operational',
+            uptime: process.uptime(),
+            memory: process.memoryUsage(),
+            version: process.version
+        },
+        contracts: {
+            truthToken: {
+                address: '0x8f6cf6f7747e170f4768533b869c339dc3d30a3c',
+                network: 'Base',
+                status: 'deployed'
+            },
+            creatorToken: {
+                address: '0x22b0434e89882f8e6841d340b28427646c015aa7',
+                network: 'Base',
+                status: 'deployed'
+            },
+            nftContracts: {
+                theTruth: { status: 'ready_for_deployment' },
+                bonusGift: { status: 'ready_for_deployment' },
+                partThree: { status: 'ready_for_deployment' }
+            }
+        },
+        integrations: {
+            analytics: { status: 'active' },
+            payments: { status: 'configured' },
+            ipfs: { 
+                status: 'active',
+                group: 'https://app.pinata.cloud/ipfs/groups/477dfcab-ef52-4227-96f2-f9588c6294d4'
+            },
+            deployment: { status: 'github_pages_active' }
+        },
+        legal: {
+            tokenTerms: 'documented',
+            compliance: 'florida_law',
+            treasury: 'configured'
+        },
+        timestamp: new Date().toISOString()
+    };
+
+    res.json(systemStatus);
+});
+
 // Health check
 app.get('/api/health', (req, res) => {
     res.json({ 

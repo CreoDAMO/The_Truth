@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -681,13 +680,13 @@
 
     <!-- Load ethers.js -->
     <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
-    
+
     <!-- Load contract configuration -->
     <script src="/contract-config.js"></script>
-    
+
     <!-- Load deployment status checker -->
     <script src="/deployment-status.js"></script>
-    
+
     <!-- Load token integration -->
     <script src="/token-integration.js"></script>
 
@@ -696,10 +695,10 @@
         async function connectWallet() {
             try {
                 console.log('Attempting wallet connection...');
-                
+
                 // Check for various wallet providers
                 let ethereum;
-                
+
                 if (window.ethereum) {
                     if (window.ethereum.isMetaMask) {
                         ethereum = window.ethereum;
@@ -768,7 +767,7 @@
 
                 // Update UI
                 updateWalletDisplay(account);
-                
+
                 // Initialize truth tokens if available
                 if (window.truthTokens) {
                     window.truthTokens.account = account;
@@ -801,7 +800,7 @@
 
             } catch (error) {
                 console.error('Wallet connection failed:', error);
-                
+
                 // User-friendly error messages
                 let errorMessage = error.message;
                 if (error.code === 4001) {
@@ -811,7 +810,7 @@
                 } else if (error.message.includes('unlock')) {
                     errorMessage = 'Please unlock your wallet and try again.';
                 }
-                
+
                 showError(errorMessage);
                 return null;
             }
@@ -859,7 +858,7 @@
 
             try {
                 console.log('Updating token displays...');
-                
+
                 const power = await window.truthTokens.getGovernancePower();
                 const accessLevel = await window.truthTokens.getAccessLevel();
                 const revenueShare = await window.truthTokens.calculateRevenueShare(1000);
@@ -867,7 +866,7 @@
                 // Update TRUTH token display
                 document.getElementById('truthBalance').textContent = 
                     `${window.truthTokens.formatTokenAmount(power.truthBalance)} TRUTH`;
-                
+
                 document.getElementById('truthPowerBar').style.width = `${power.truthPower}%`;
                 document.getElementById('truthPowerText').textContent = 
                     `${power.truthPower.toFixed(1)}% Voting Power`;
@@ -875,10 +874,10 @@
                 // Update Creator token display
                 document.getElementById('creatorBalance').textContent = 
                     `${window.truthTokens.formatTokenAmount(power.creatorBalance)} Creator`;
-                
+
                 const accessEl = document.getElementById('accessLevel');
                 accessEl.textContent = accessLevel;
-                
+
                 // Update access level styling
                 const colorMap = {
                     'Platinum': '#E5E7EB',
@@ -1042,13 +1041,13 @@
 
                 // Execute mint transaction
                 const tx = await contract.mintTruth({ value: price });
-                
+
                 showSuccess('Transaction submitted! Waiting for confirmation...');
-                
+
                 const receipt = await tx.wait();
-                
+
                 showSuccess(`Successfully minted The Truth NFT! Transaction: ${receipt.transactionHash}`);
-                
+
                 // Update collection stats
                 await updateCollectionStats();
 
@@ -1091,13 +1090,13 @@
                 const totalPrice = price.mul(quantity);
 
                 const tx = await contract.mintBonusGift(quantity, { value: totalPrice });
-                
+
                 showSuccess('Transaction submitted! Waiting for confirmation...');
-                
+
                 const receipt = await tx.wait();
-                
+
                 showSuccess(`Successfully minted ${quantity} Bonus Gift NFT(s)! Transaction: ${receipt.transactionHash}`);
-                
+
                 await updateCollectionStats();
 
             } catch (error) {
@@ -1135,13 +1134,13 @@
                 }
 
                 const tx = await contract.mintBlackpaper({ value: price });
-                
+
                 showSuccess('Transaction submitted! Waiting for confirmation...');
-                
+
                 const receipt = await tx.wait();
-                
+
                 showSuccess(`Successfully minted Part Three - Blackpaper NFT! This contains the complete legal framework. Transaction: ${receipt.transactionHash}`);
-                
+
                 await updateCollectionStats();
 
             } catch (error) {
@@ -1160,7 +1159,7 @@
         // Auto-connect if previously connected
         window.addEventListener('load', async () => {
             console.log('Page loaded, checking for existing connection...');
-            
+
             // Check if wallet was previously connected
             if (window.ethereum && window.ethereum.selectedAddress) {
                 console.log('Previous connection detected, auto-connecting...');
