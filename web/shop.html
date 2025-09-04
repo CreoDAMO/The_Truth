@@ -317,6 +317,7 @@
                     description: '25-page philosophical demonstration narrated by the author. The complete work that captured AI systems demonstrating institutional translation gaps.',
                     price: 35,
                     type: 'audiobook',
+                    category: 'digital',
                     collection: 'The Truth',
                     file: 'ipfs://bafybeibtcjku4uce7volglh6edjw2va63usahqixoqxwkv4quvptljonw4',
                     duration: '45 minutes',
@@ -328,6 +329,7 @@
                     description: 'The complete 25-page philosophical work in its original written form. Unedited, unaltered Truth.',
                     price: 20,
                     type: 'pdf',
+                    category: 'digital',
                     collection: 'The Truth',
                     file: 'ipfs://bafybeid4w7qtpzjkjxpb5l7hw4qxh6wkzjgqgfgnqkclgzjbgbg5qw7bw4',
                     pages: '25 pages',
@@ -341,6 +343,7 @@
                     description: 'Extended analysis and commentary on the recursive demonstration. The meta-analysis preserved.',
                     price: 15,
                     type: 'audiobook',
+                    category: 'digital',
                     collection: 'Bonus Gift',
                     file: 'ipfs://bafybeibtudgvfggsjdpyikuwh67pdktqqznpcfv5b2xpwyjn62myero2wy',
                     duration: '30 minutes',
@@ -352,10 +355,91 @@
                     description: 'The five-act revelation analysis. How Truth metabolizes institutional responses.',
                     price: 10,
                     type: 'pdf',
+                    category: 'digital',
                     collection: 'Bonus Gift',
                     file: 'ipfs://bafybeid4t2jkcolfhs6zrwdv4ch6z2lnodywqpzjudpi5w24gl4rr7n5sq',
                     pages: 'Extended',
                     format: 'PDF'
+                }
+            },
+            merch: {
+                tshirt_truth: {
+                    id: 'tshirt-truth',
+                    name: 'The Truth - Statement T-Shirt',
+                    description: 'Premium cotton tee featuring "THE TRUTH" in minimalist typography. Philosophy you can wear.',
+                    price: 29,
+                    type: 'apparel',
+                    category: 'merch',
+                    collection: 'Truth Merch',
+                    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+                    colors: ['Black', 'White', 'Navy'],
+                    material: '100% Cotton',
+                    shipping: '5-7 business days'
+                },
+                hoodie_recursive: {
+                    id: 'hoodie-recursive',
+                    name: 'Recursive Truth - Premium Hoodie',
+                    description: 'Heavyweight hoodie with embroidered "RECURSIVE DEMONSTRATION" design. Comfort for deep thinkers.',
+                    price: 65,
+                    type: 'apparel',
+                    category: 'merch',
+                    collection: 'Truth Merch',
+                    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+                    colors: ['Charcoal', 'Forest Green', 'Burgundy'],
+                    material: '80% Cotton, 20% Polyester',
+                    shipping: '5-7 business days'
+                },
+                mug_philosophy: {
+                    id: 'mug-philosophy',
+                    name: 'Philosophy First - Ceramic Mug',
+                    description: '11oz ceramic mug with "Truth belongs to no one" inscription. Perfect for morning contemplation.',
+                    price: 18,
+                    type: 'accessories',
+                    category: 'merch',
+                    collection: 'Truth Merch',
+                    sizes: ['11oz'],
+                    colors: ['Matte Black', 'White'],
+                    material: 'Ceramic',
+                    shipping: '3-5 business days'
+                },
+                stickers_pack: {
+                    id: 'stickers-pack',
+                    name: 'Truth Sticker Pack',
+                    description: 'Set of 5 vinyl stickers featuring key quotes and symbols from The Truth. Spread philosophy everywhere.',
+                    price: 12,
+                    type: 'accessories',
+                    category: 'merch',
+                    collection: 'Truth Merch',
+                    sizes: ['Pack of 5'],
+                    colors: ['Full Color'],
+                    material: 'Waterproof Vinyl',
+                    shipping: '3-5 business days'
+                },
+                poster_demonstration: {
+                    id: 'poster-demonstration',
+                    name: 'The Demonstration - Art Print',
+                    description: 'Limited edition 18"x24" art print visualizing the recursive demonstration concept. Museum-quality paper.',
+                    price: 35,
+                    type: 'art',
+                    category: 'merch',
+                    collection: 'Truth Merch',
+                    sizes: ['18"x24"'],
+                    colors: ['Full Color'],
+                    material: 'Museum-quality Paper',
+                    shipping: '5-7 business days'
+                },
+                notebook_manifesto: {
+                    id: 'notebook-manifesto',
+                    name: 'Truth Manifesto - Journal',
+                    description: 'Hardcover notebook with dot grid pages and embossed cover. For capturing your own philosophical insights.',
+                    price: 24,
+                    type: 'accessories',
+                    category: 'merch',
+                    collection: 'Truth Merch',
+                    sizes: ['A5 (5.8"x8.3")'],
+                    colors: ['Black', 'Brown Leather'],
+                    material: 'Hardcover with 192 pages',
+                    shipping: '3-5 business days'
                 }
             }
         };
@@ -369,6 +453,8 @@
             const [error, setError] = useState('');
             const [stripeInstance, setStripeInstance] = useState(null);
             const [clientSecret, setClientSecret] = useState(null);
+            const [activeCategory, setActiveCategory] = useState('all');
+            const [selectedVariants, setSelectedVariants] = useState({});
 
             // Stripe initialization
             useEffect(() => {
@@ -479,32 +565,120 @@
             };
 
 
-            const ProductCard = ({ product }) => (
-                <div className="product-card rounded-xl p-6">
-                    <div className="mb-4">
-                        <h3 className="text-xl font-bold text-yellow-400 mb-2">{product.name}</h3>
-                        <p className="text-sm opacity-80 mb-3">{product.description}</p>
-                        <div className="flex justify-between items-center text-sm opacity-60 mb-4">
-                            <span>{product.collection}</span>
-                            <span>{product.type === 'audiobook' ? product.duration : product.pages}</span>
-                            <span>{product.format}</span>
+            const ProductCard = ({ product }) => {
+                const isInCart = cart.some(item => item.id === product.id);
+                const variants = selectedVariants[product.id] || {};
+                
+                const handleVariantChange = (type, value) => {
+                    setSelectedVariants(prev => ({
+                        ...prev,
+                        [product.id]: { ...prev[product.id], [type]: value }
+                    }));
+                };
+
+                const addProductToCart = () => {
+                    const productWithVariants = {
+                        ...product,
+                        variants: product.category === 'merch' ? variants : undefined
+                    };
+                    addToCart(productWithVariants);
+                };
+
+                return (
+                    <div className="product-card rounded-xl p-6">
+                        <div className="mb-4">
+                            <div className="flex justify-between items-start mb-2">
+                                <h3 className="text-xl font-bold text-yellow-400">{product.name}</h3>
+                                <span className={`px-2 py-1 text-xs rounded-full ${
+                                    product.category === 'digital' 
+                                        ? 'bg-blue-900 text-blue-200' 
+                                        : 'bg-purple-900 text-purple-200'
+                                }`}>
+                                    {product.category === 'digital' ? '📱 Digital' : '📦 Physical'}
+                                </span>
+                            </div>
+                            <p className="text-sm opacity-80 mb-3">{product.description}</p>
+                            
+                            {/* Product Details */}
+                            <div className="grid grid-cols-2 gap-2 text-xs opacity-60 mb-4">
+                                <span>📁 {product.collection}</span>
+                                {product.category === 'digital' ? (
+                                    <>
+                                        <span>⏱️ {product.duration || product.pages}</span>
+                                        <span>📄 {product.format}</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <span>🚚 {product.shipping}</span>
+                                        <span>🧵 {product.material}</span>
+                                    </>
+                                )}
+                            </div>
+
+                            {/* Variant Selection for Merch */}
+                            {product.category === 'merch' && (
+                                <div className="space-y-3 mb-4">
+                                    {product.sizes && product.sizes.length > 1 && (
+                                        <div>
+                                            <label className="text-sm font-semibold mb-2 block">Size:</label>
+                                            <div className="flex flex-wrap gap-2">
+                                                {product.sizes.map(size => (
+                                                    <button
+                                                        key={size}
+                                                        onClick={() => handleVariantChange('size', size)}
+                                                        className={`px-3 py-1 text-xs rounded border transition-all ${
+                                                            variants.size === size
+                                                                ? 'border-yellow-400 bg-yellow-400 text-black'
+                                                                : 'border-gray-600 hover:border-yellow-400'
+                                                        }`}
+                                                    >
+                                                        {size}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+                                    {product.colors && product.colors.length > 1 && (
+                                        <div>
+                                            <label className="text-sm font-semibold mb-2 block">Color:</label>
+                                            <div className="flex flex-wrap gap-2">
+                                                {product.colors.map(color => (
+                                                    <button
+                                                        key={color}
+                                                        onClick={() => handleVariantChange('color', color)}
+                                                        className={`px-3 py-1 text-xs rounded border transition-all ${
+                                                            variants.color === color
+                                                                ? 'border-yellow-400 bg-yellow-400 text-black'
+                                                                : 'border-gray-600 hover:border-yellow-400'
+                                                        }`}
+                                                    >
+                                                        {color}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                        
+                        <div className="flex justify-between items-center">
+                            <div>
+                                <span className="text-2xl font-bold text-green-400">${product.price}</span>
+                                <span className="text-sm opacity-60 ml-2">USD</span>
+                            </div>
+                            <button
+                                onClick={addProductToCart}
+                                className="btn-primary px-4 py-2 rounded-lg"
+                                disabled={isInCart || (product.category === 'merch' && product.sizes?.length > 1 && !variants.size)}
+                            >
+                                {isInCart ? 'In Cart' : 'Add to Cart'}
+                            </button>
                         </div>
                     </div>
-                    <div className="flex justify-between items-center">
-                        <div>
-                            <span className="text-2xl font-bold text-green-400">${product.price}</span>
-                            <span className="text-sm opacity-60 ml-2">USD</span>
-                        </div>
-                        <button
-                            onClick={() => addToCart(product)}
-                            className="btn-primary px-4 py-2 rounded-lg"
-                            disabled={cart.some(item => item.id === product.id)}
-                        >
-                            {cart.some(item => item.id === product.id) ? 'In Cart' : 'Add to Cart'}
-                        </button>
-                    </div>
-                </div>
-            );
+                );
+            };
 
             // This is a placeholder for updating the total based on tax.
             // In a real integration, the tax amount would be dynamically calculated
@@ -547,6 +721,27 @@
                             </p>
                         </div>
 
+                        {/* Category Navigation */}
+                        <div className="flex justify-center mb-8">
+                            <div className="glass rounded-xl p-2 flex gap-2">
+                                {['all', 'digital', 'merch'].map(category => (
+                                    <button
+                                        key={category}
+                                        onClick={() => setActiveCategory(category)}
+                                        className={`px-4 py-2 rounded-lg transition-all ${
+                                            activeCategory === category
+                                                ? 'btn-primary'
+                                                : 'btn-secondary'
+                                        }`}
+                                    >
+                                        {category === 'all' ? '🌟 All Products' : 
+                                         category === 'digital' ? '📱 Digital Content' : 
+                                         '📦 Merchandise'}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
                         {/* Cart Button */}
                         <div className="flex justify-end mb-6">
                             <button
@@ -571,12 +766,25 @@
                                 ) : (
                                     <>
                                         {cart.map(item => (
-                                            <div key={item.id} className="flex justify-between items-center py-2 border-b border-gray-600">
-                                                <div>
+                                            <div key={`${item.id}-${JSON.stringify(item.variants)}`} className="flex justify-between items-start py-3 border-b border-gray-600">
+                                                <div className="flex-1">
                                                     <p className="font-semibold">{item.name}</p>
-                                                    <p className="text-sm opacity-60">{item.collection}</p>
+                                                    <p className="text-sm opacity-60 mb-1">{item.collection}</p>
+                                                    {item.variants && (
+                                                        <div className="text-xs opacity-70 space-x-2">
+                                                            {item.variants.size && <span>Size: {item.variants.size}</span>}
+                                                            {item.variants.color && <span>Color: {item.variants.color}</span>}
+                                                        </div>
+                                                    )}
+                                                    <span className={`inline-block px-2 py-1 text-xs rounded mt-1 ${
+                                                        item.category === 'digital' 
+                                                            ? 'bg-blue-900 text-blue-200' 
+                                                            : 'bg-purple-900 text-purple-200'
+                                                    }`}>
+                                                        {item.category === 'digital' ? '📱 Digital' : '📦 Ships ' + item.shipping}
+                                                    </span>
                                                 </div>
-                                                <div className="flex items-center gap-3">
+                                                <div className="flex items-center gap-3 ml-4">
                                                     <span className="font-bold">${item.price}</span>
                                                     <button
                                                         onClick={() => removeFromCart(item.id)}
@@ -631,28 +839,61 @@
                             </div>
                         )}
 
-                        {/* The Truth Collection */}
-                        <div className="mb-12">
-                            <h2 className="text-3xl font-bold mb-6 text-center">The Truth Collection</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <ProductCard product={PRODUCTS.truth.audiobook} />
-                                <ProductCard product={PRODUCTS.truth.pdf} />
+                        {/* Dynamic Product Grid */}
+                        {(activeCategory === 'all' || activeCategory === 'digital') && (
+                            <div className="mb-12">
+                                <h2 className="text-3xl font-bold mb-6 text-center">📱 Digital Content</h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {Object.values(PRODUCTS.truth).map(product => (
+                                        <ProductCard key={product.id} product={product} />
+                                    ))}
+                                    {Object.values(PRODUCTS.bonus).map(product => (
+                                        <ProductCard key={product.id} product={product} />
+                                    ))}
+                                </div>
                             </div>
-                        </div>
+                        )}
 
-                        {/* Bonus Gift Collection */}
-                        <div className="mb-12">
-                            <h2 className="text-3xl font-bold mb-6 text-center">Bonus Gift Collection</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <ProductCard product={PRODUCTS.bonus.audiobook} />
-                                <ProductCard product={PRODUCTS.bonus.pdf} />
+                        {(activeCategory === 'all' || activeCategory === 'merch') && (
+                            <div className="mb-12">
+                                <h2 className="text-3xl font-bold mb-6 text-center">📦 Truth Merchandise</h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {Object.values(PRODUCTS.merch).map(product => (
+                                        <ProductCard key={product.id} product={product} />
+                                    ))}
+                                </div>
+                                
+                                {/* Merch Info Banner */}
+                                <div className="glass rounded-xl p-6 mt-8">
+                                    <div className="text-center">
+                                        <h3 className="text-xl font-bold mb-3 text-yellow-400">🌟 Quality Guarantee</h3>
+                                        <p className="opacity-80 mb-4">
+                                            All merchandise is printed on-demand with premium materials. 
+                                            Each item supports the philosophical mission while spreading Truth in the physical world.
+                                        </p>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                                            <div className="bg-green-900/20 rounded-lg p-3">
+                                                <strong className="text-green-400">🌱 Sustainable</strong><br/>
+                                                Eco-friendly printing and materials
+                                            </div>
+                                            <div className="bg-blue-900/20 rounded-lg p-3">
+                                                <strong className="text-blue-400">📦 Print-on-Demand</strong><br/>
+                                                No waste, made when you order
+                                            </div>
+                                            <div className="bg-purple-900/20 rounded-lg p-3">
+                                                <strong className="text-purple-400">🎯 Direct Support</strong><br/>
+                                                Revenue funds Truth ecosystem
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        )}
 
-                        {/* NFT vs Shop Comparison */}
+                        {/* Access Methods Comparison */}
                         <div className="glass rounded-xl p-6 mb-6">
-                            <h3 className="text-xl font-bold mb-4 text-center">NFT vs Digital Shop</h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <h3 className="text-xl font-bold mb-4 text-center">Truth Access Methods</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div>
                                     <h4 className="font-bold text-yellow-400 mb-3">🎯 NFT Collection (Web3)</h4>
                                     <ul className="text-sm space-y-2 opacity-80">
@@ -665,7 +906,7 @@
                                     </ul>
                                 </div>
                                 <div>
-                                    <h4 className="font-bold text-green-400 mb-3">🛒 Digital Shop (Web2)</h4>
+                                    <h4 className="font-bold text-blue-400 mb-3">📱 Digital Shop (Web2)</h4>
                                     <ul className="text-sm space-y-2 opacity-80">
                                         <li>• Individual content pieces</li>
                                         <li>• Audiobooks: $35 / $15</li>
@@ -673,6 +914,17 @@
                                         <li>• Traditional payment methods</li>
                                         <li>• Instant download access</li>
                                         <li>• No crypto knowledge required</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-purple-400 mb-3">📦 Physical Merch</h4>
+                                    <ul className="text-sm space-y-2 opacity-80">
+                                        <li>• Wearable philosophy</li>
+                                        <li>• Apparel: $29 - $65</li>
+                                        <li>• Accessories: $12 - $35</li>
+                                        <li>• Print-on-demand quality</li>
+                                        <li>• Ships worldwide</li>
+                                        <li>• Spreads Truth in physical world</li>
                                     </ul>
                                 </div>
                             </div>
