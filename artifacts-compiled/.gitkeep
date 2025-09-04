@@ -1,0 +1,3 @@
+
+# This directory contains pre-compiled contract artifacts
+# Updated by running: npm run compile && npm run compile-browser

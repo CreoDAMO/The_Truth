@@ -12,6 +12,7 @@
     "deploy:baseSepolia": "npx hardhat run scripts/deployTheTruth.js --network baseSepolia",
     "deploy:metamask": "npx hardhat run scripts/deployWithMetaMaskHardhat.js",
     "compile-browser": "npx hardhat run scripts/compileForBrowser.js",
+    "update-artifacts": "node scripts/update-artifacts.js",
     "verify": "npx hardhat run scripts/verifyContract.js --network base",
     "set-provenance": "npx hardhat run scripts/setProvenance.js --network base",
     "toggle-minting": "npx hardhat run scripts/toggleMinting.js --network base",

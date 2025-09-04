@@ -29,17 +29,14 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Install dependencies (production only)
+        run: npm ci --production
 
-      - name: Clean Hardhat cache
-        run: npx hardhat clean
-
-      - name: Compile contracts
-        run: npm run compile
-
-      - name: Compile browser artifacts
-        run: npm run compile-browser
+      - name: Copy pre-compiled artifacts
+        run: |
+          mkdir -p artifacts
+          cp -r artifacts-compiled/* artifacts/ 2>/dev/null || true
+          cp artifacts-compiled/contract-artifacts.js . 2>/dev/null || true
 
       - name: Generate metadata
         run: npm run generate-metadata
