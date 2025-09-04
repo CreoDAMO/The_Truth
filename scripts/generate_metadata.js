@@ -3,11 +3,14 @@ const fs = require('fs');
 const path = require('path');
 
 // REAL IPFS CIDs from your Pinata uploads
+// Update these with the actual CIDs from your Pinata group: 477dfcab-ef52-4227-96f2-f9588c6294d4
 const IPFS_CIDS = {
   cover: "ipfs://bafybeidgadado5nyfxkua3mkiqbxsqkvrbqctkrqap7oghnkb77qo4steq",
-  audio: "ipfs://bafybeibtcjku4uce7volglh6edjw2va63usahqixoqxwkv4quvptljonw4",
+  audio: "ipfs://bafybeibtcjku4uce7volglh6edjw2va63usahqixoqxwkv4quvptljonw4", 
   pdf: "ipfs://bafybeib2gcc7grc7umyqzdsaxpjmitexanwnwrdsygfc57wcsx6mnvtsbi",
-  meme: "ipfs://bafybeihlhi5faohkaoonpdlpiyjh2eyi3lfmvmlcoxdwovva7tvmp235we"
+  meme: "ipfs://bafybeihlhi5faohkaoonpdlpiyjh2eyi3lfmvmlcoxdwovva7tvmp235we",
+  // Once you upload the generated metadata folder, add:
+  // metadata_root: "ipfs://YOUR_METADATA_ROOT_CID_FROM_PINATA/"
 };
 
 const baseDescription = `The Truth is not interpretation — it is pure witness.

@@ -13,12 +13,12 @@ const TRUTH_CONTRACTS = {
 
     // Deployed contract addresses (update after deployment)
     ADDRESSES: {
-        TheTruth: '0x...', // Main Truth NFT contract
+        TheTruth: '0x...', // Main Truth NFT contract - Deploy first
         TruthBonusGift: '0x...', // Bonus Gift collection contract  
         TruthPartThree: '0x...', // Part Three Blackpaper contract
         PaymentSplitter: '0x...', // Payment splitter contract
-        TruthToken: '0x8f6cf6f7747e170f4768533b869c339dc3d30a3c', // TRUTH governance token
-        CreatorToken: '0x22b0434e89882f8e6841d340b28427646c015aa7' // Creator coin
+        TruthToken: '0x8f6cf6f7747e170f4768533b869c339dc3d30a3c', // TRUTH governance token (already deployed)
+        CreatorToken: '0x22b0434e89882f8e6841d340b28427646c015aa7' // Creator coin (already deployed)
     },
 
     // Contract ABIs (minimal interface for UI)
