@@ -51,6 +51,31 @@ class TruthTokenIntegration {
         this.runHealthCheck();
     }
 
+    // Initialize the token integration system
+    init() {
+        console.log('TruthTokenIntegration initializing...');
+        
+        // Set up event listeners for wallet connection changes
+        if (typeof window !== 'undefined' && window.ethereum) {
+            window.ethereum.on('accountsChanged', (accounts) => {
+                if (accounts.length === 0) {
+                    this.account = null;
+                    this.isConnected = false;
+                } else {
+                    this.account = accounts[0];
+                    this.isConnected = true;
+                }
+            });
+
+            window.ethereum.on('chainChanged', (chainId) => {
+                console.log('Network changed to:', chainId);
+                // Optionally reload or handle network change
+            });
+        }
+        
+        console.log('TruthTokenIntegration initialization complete');
+    }
+
     // Initialize Web3 connection
     async connect() {
         if (typeof window.ethereum !== 'undefined') {
