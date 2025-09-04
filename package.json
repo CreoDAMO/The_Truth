@@ -32,20 +32,20 @@
     "deploy:all": "echo 'Choose specific platform with deploy:[platform]'"
   },
   "devDependencies": {
-    "@nomicfoundation/hardhat-chai-matchers": "^1.0.0",
-    "@nomicfoundation/hardhat-network-helpers": "^1.0.0",
-    "@nomicfoundation/hardhat-toolbox": "^2.0.0",
-    "@nomiclabs/hardhat-ethers": "^2.0.0",
-    "@nomiclabs/hardhat-etherscan": "^3.0.0",
-    "@openzeppelin/contracts": "^4.9.3",
+    "@nomicfoundation/hardhat-chai-matchers": "^1.0.6",
+    "@nomicfoundation/hardhat-network-helpers": "^1.1.0",
+    "@nomicfoundation/hardhat-toolbox": "^2.0.2",
+    "@nomiclabs/hardhat-ethers": "^2.2.3",
+    "@nomiclabs/hardhat-etherscan": "^3.1.8",
+    "@openzeppelin/contracts": "^4.9.6",
     "dotenv": "^16.6.1",
     "ethers": "^5.8.0",
-    "hardhat": "^2.22.6"
+    "hardhat": "^2.26.3"
   },
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.21.2",
-    "express-rate-limit": "^8.0.1",
+    "express-rate-limit": "^8.1.0",
     "stripe": "^14.25.0"
   }
 }

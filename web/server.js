@@ -739,12 +739,15 @@ app.get('*', (req, res) => {
 // Start server with error handling
 const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`✅ The Truth NFT server running on port ${PORT}`);
-  console.log(`🔗 Access: http://localhost:${PORT}`);
-  console.log(`📊 Analytics: http://localhost:${PORT}/analytics`);
-  console.log(`🗳️ Governance: http://localhost:${PORT}/governance`);
-  console.log(`👥 Community: http://localhost:${PORT}/community-dashboard`);
-  console.log(`💳 Payments: http://localhost:${PORT}/payments`);
-  console.log(`⚖️ Legal: http://localhost:${PORT}/lawful-dashboard`);
+  console.log(`🔗 Access: http://0.0.0.0:${PORT}`);
+  console.log(`📊 Analytics: http://0.0.0.0:${PORT}/analytics`);
+  console.log(`🗳️ Governance: http://0.0.0.0:${PORT}/governance`);
+  console.log(`👥 Community: http://0.0.0.0:${PORT}/community`);
+  console.log(`💳 Payments: http://0.0.0.0:${PORT}/payments`);
+  console.log(`⚖️ Legal: http://0.0.0.0:${PORT}/lawful`);
+  console.log(`🛍️ Shop: http://0.0.0.0:${PORT}/shop`);
+  console.log(`🤖 AI Insights: http://0.0.0.0:${PORT}/ai`);
+  console.log(`🚀 Deploy: http://0.0.0.0:${PORT}/deploy`);
 });
 
 server.on('error', (err) => {
