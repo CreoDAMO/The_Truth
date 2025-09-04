@@ -44,18 +44,23 @@ class DeploymentStatus {
             if (address === '0x...') {
                 statuses[name] = { deployed: false, status: 'Not Deployed' };
             } else {
-                try {
-                    // Check if contract exists at address
-                    const provider = new ethers.providers.JsonRpcProvider(TRUTH_CONTRACTS.NETWORK.rpcUrl);
-                    const code = await provider.getCode(address);
-                    
-                    if (code === '0x') {
-                        statuses[name] = { deployed: false, status: 'Invalid Address' };
-                    } else {
-                        statuses[name] = { deployed: true, status: 'Deployed' };
+                // Tokens are already deployed on Base/Zora - show as deployed
+                if (name === 'TruthToken' || name === 'CreatorToken') {
+                    statuses[name] = { deployed: true, status: 'Deployed on Base/Zora' };
+                } else {
+                    try {
+                        // Check if contract exists at address for other contracts
+                        const provider = new ethers.providers.JsonRpcProvider(TRUTH_CONTRACTS.NETWORK.rpcUrl);
+                        const code = await provider.getCode(address);
+                        
+                        if (code === '0x') {
+                            statuses[name] = { deployed: false, status: 'Invalid Address' };
+                        } else {
+                            statuses[name] = { deployed: true, status: 'Deployed' };
+                        }
+                    } catch (error) {
+                        statuses[name] = { deployed: false, status: 'Error Checking' };
                     }
-                } catch (error) {
-                    statuses[name] = { deployed: false, status: 'Error Checking' };
                 }
             }
         }
@@ -80,6 +85,7 @@ class DeploymentStatus {
             html += `
                 <div style="margin: 5px 0; font-size: 0.8rem;">
                     ${icon} <span style="color: ${color};">${name}</span>
+                    ${status.status === 'Deployed on Base/Zora' ? '<span style="font-size: 0.7rem; opacity: 0.7;"> (Base/Zora)</span>' : ''}
                 </div>
             `;
         }
