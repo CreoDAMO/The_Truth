@@ -21,6 +21,7 @@
     "start": "node web/server.js",
     "dev": "node web/server.js",
     "build": "npm run compile && npm run generate-metadata",
+    "build:static": "./build-static.sh",
     "update-contract": "node deployment/update-contract.js",
     "deploy:vercel": "./deployment/deploy-everywhere.sh vercel",
     "deploy:railway": "./deployment/deploy-everywhere.sh railway",
