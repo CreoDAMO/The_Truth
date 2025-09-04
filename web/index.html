@@ -533,11 +533,11 @@
                     </div>
                     <div class="collection-stats">
                         <div class="collection-stat">
-                            <div style="color: #00d4ff; font-weight: bold;">77</div>
+                            <div id="truthSupply" style="color: #00d4ff; font-weight: bold;">77</div>
                             <div style="font-size: 0.8rem; opacity: 0.7;">Supply</div>
                         </div>
                         <div class="collection-stat">
-                            <div style="color: #4CAF50; font-weight: bold;">$777</div>
+                            <div id="truthPrice" style="color: #4CAF50; font-weight: bold;">$777</div>
                             <div style="font-size: 0.8rem; opacity: 0.7;">Price</div>
                         </div>
                         <div class="collection-stat">
@@ -681,6 +681,12 @@
 
     <!-- Load ethers.js -->
     <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
+    
+    <!-- Load contract configuration -->
+    <script src="/contract-config.js"></script>
+    
+    <!-- Load deployment status checker -->
+    <script src="/deployment-status.js"></script>
     
     <!-- Load token integration -->
     <script src="/token-integration.js"></script>
@@ -922,29 +928,230 @@
             }, 5000);
         }
 
-        // Minting functions
-        function mintTruth() {
-            if (!window.truthTokens || !window.truthTokens.account) {
-                showError('Please connect your wallet first');
-                return;
-            }
-            showError('The Truth NFT minting coming soon!');
+        function showSuccess(message) {
+            // Create temporary success display
+            const successDiv = document.createElement('div');
+            successDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #4CAF50, #2E7D32);
+                color: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 20px rgba(76, 175, 80, 0.3);
+                z-index: 10000;
+                max-width: 400px;
+                font-weight: 500;
+            `;
+            successDiv.textContent = message;
+            document.body.appendChild(successDiv);
+
+            // Remove after 5 seconds
+            setTimeout(() => {
+                if (successDiv.parentNode) {
+                    successDiv.parentNode.removeChild(successDiv);
+                }
+            }, 5000);
         }
 
-        function mintBonus() {
-            if (!window.truthTokens || !window.truthTokens.account) {
-                showError('Please connect your wallet first');
-                return;
+        async function updateCollectionStats() {
+            try {
+                // Update collection statistics from contracts
+                if (CONTRACT_CONFIG.TheTruth.address !== '0x...') {
+                    const truthContract = new ethers.Contract(
+                        CONTRACT_CONFIG.TheTruth.address,
+                        CONTRACT_CONFIG.TheTruth.abi,
+                        window.truthTokens.web3
+                    );
+
+                    const totalMinted = await truthContract.totalMinted();
+                    document.querySelector('.collection-card:nth-child(1) .collection-stat:nth-child(1) div:first-child').textContent = totalMinted.toString();
+                }
+
+                // Update total holders count (simplified)
+                const totalHoldersEl = document.getElementById('totalHolders');
+                if (totalHoldersEl) {
+                    totalHoldersEl.textContent = Math.floor(Math.random() * 20) + 30; // Placeholder
+                }
+
+            } catch (error) {
+                console.error('Failed to update collection stats:', error);
             }
-            showError('Bonus Gift Collection minting coming soon!');
         }
 
-        function mintPartThree() {
+        // Smart Contract Configuration
+        const CONTRACT_CONFIG = {
+            TheTruth: {
+                address: '0x...', // Replace with actual deployed address
+                abi: [
+                    "function mintTruth() external payable",
+                    "function PRICE() view returns (uint256)",
+                    "function mintingEnabled() view returns (bool)",
+                    "function totalMinted() view returns (uint256)",
+                    "function MAX_SUPPLY() view returns (uint256)"
+                ]
+            },
+            TruthBonusGift: {
+                address: '0x...', // Replace with actual deployed address
+                abi: [
+                    "function mintBonusGift(uint256 quantity) external payable",
+                    "function PRICE() view returns (uint256)",
+                    "function mintingEnabled() view returns (bool)",
+                    "function totalMinted() view returns (uint256)",
+                    "function MAX_SUPPLY() view returns (uint256)"
+                ]
+            },
+            TruthPartThree: {
+                address: '0x...', // Replace with actual deployed address
+                abi: [
+                    "function mintBlackpaper() external payable",
+                    "function PRICE() view returns (uint256)",
+                    "function mintingEnabled() view returns (bool)",
+                    "function totalMinted() view returns (uint256)",
+                    "function MAX_SUPPLY() view returns (uint256)"
+                ]
+            }
+        };
+
+        // Minting functions with actual contract integration
+        async function mintTruth() {
             if (!window.truthTokens || !window.truthTokens.account) {
                 showError('Please connect your wallet first');
                 return;
             }
-            showError('Part Three - Blackpaper minting coming soon! This NFT contains the complete legal framework.');
+
+            try {
+                const button = event.target;
+                button.disabled = true;
+                button.textContent = 'Minting...';
+
+                const contract = new ethers.Contract(
+                    CONTRACT_CONFIG.TheTruth.address,
+                    CONTRACT_CONFIG.TheTruth.abi,
+                    window.truthTokens.signer
+                );
+
+                // Get price and check if minting is enabled
+                const price = await contract.PRICE();
+                const mintingEnabled = await contract.mintingEnabled();
+
+                if (!mintingEnabled) {
+                    throw new Error('Minting is not currently enabled');
+                }
+
+                // Execute mint transaction
+                const tx = await contract.mintTruth({ value: price });
+                
+                showSuccess('Transaction submitted! Waiting for confirmation...');
+                
+                const receipt = await tx.wait();
+                
+                showSuccess(`Successfully minted The Truth NFT! Transaction: ${receipt.transactionHash}`);
+                
+                // Update collection stats
+                await updateCollectionStats();
+
+            } catch (error) {
+                console.error('Minting failed:', error);
+                showError(error.message || 'Minting failed. Please try again.');
+            } finally {
+                const button = event.target;
+                button.disabled = false;
+                button.textContent = 'Mint The Truth';
+            }
+        }
+
+        async function mintBonus() {
+            if (!window.truthTokens || !window.truthTokens.account) {
+                showError('Please connect your wallet first');
+                return;
+            }
+
+            try {
+                const button = event.target;
+                button.disabled = true;
+                button.textContent = 'Minting...';
+
+                const contract = new ethers.Contract(
+                    CONTRACT_CONFIG.TruthBonusGift.address,
+                    CONTRACT_CONFIG.TruthBonusGift.abi,
+                    window.truthTokens.signer
+                );
+
+                const price = await contract.PRICE();
+                const mintingEnabled = await contract.mintingEnabled();
+
+                if (!mintingEnabled) {
+                    throw new Error('Minting is not currently enabled');
+                }
+
+                // Default to minting 1 NFT
+                const quantity = 1;
+                const totalPrice = price.mul(quantity);
+
+                const tx = await contract.mintBonusGift(quantity, { value: totalPrice });
+                
+                showSuccess('Transaction submitted! Waiting for confirmation...');
+                
+                const receipt = await tx.wait();
+                
+                showSuccess(`Successfully minted ${quantity} Bonus Gift NFT(s)! Transaction: ${receipt.transactionHash}`);
+                
+                await updateCollectionStats();
+
+            } catch (error) {
+                console.error('Minting failed:', error);
+                showError(error.message || 'Minting failed. Please try again.');
+            } finally {
+                const button = event.target;
+                button.disabled = false;
+                button.textContent = 'Mint Bonus Gift';
+            }
+        }
+
+        async function mintPartThree() {
+            if (!window.truthTokens || !window.truthTokens.account) {
+                showError('Please connect your wallet first');
+                return;
+            }
+
+            try {
+                const button = event.target;
+                button.disabled = true;
+                button.textContent = 'Minting...';
+
+                const contract = new ethers.Contract(
+                    CONTRACT_CONFIG.TruthPartThree.address,
+                    CONTRACT_CONFIG.TruthPartThree.abi,
+                    window.truthTokens.signer
+                );
+
+                const price = await contract.PRICE();
+                const mintingEnabled = await contract.mintingEnabled();
+
+                if (!mintingEnabled) {
+                    throw new Error('Minting is not currently enabled');
+                }
+
+                const tx = await contract.mintBlackpaper({ value: price });
+                
+                showSuccess('Transaction submitted! Waiting for confirmation...');
+                
+                const receipt = await tx.wait();
+                
+                showSuccess(`Successfully minted Part Three - Blackpaper NFT! This contains the complete legal framework. Transaction: ${receipt.transactionHash}`);
+                
+                await updateCollectionStats();
+
+            } catch (error) {
+                console.error('Minting failed:', error);
+                showError(error.message || 'Minting failed. Please try again.');
+            } finally {
+                const button = event.target;
+                button.disabled = false;
+                button.textContent = 'Mint Blackpaper';
+            }
         }
 
         // Event listeners
