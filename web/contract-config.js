@@ -17,8 +17,8 @@ const TRUTH_CONTRACTS = {
         TruthBonusGift: '0x...', // Bonus Gift collection contract  
         TruthPartThree: '0x...', // Part Three Blackpaper contract
         PaymentSplitter: '0x...', // Payment splitter contract
-        TruthToken: '0x8f6cf6f7747e170f4768533b869c339dc3d30a3c', // TRUTH governance token (already deployed)
-        CreatorToken: '0x22b0434e89882f8e6841d340b28427646c015aa7' // Creator coin (already deployed)
+        TruthToken: '0x8f6cf6f7747e170f4768533b869c339dc3d30a3c', // TRUTH governance token (deployed on Base/Zora)
+        CreatorToken: '0x22b0434e89882f8e6841d340b28427646c015aa7' // Creator coin (deployed on Base/Zora)
     },
 
     // Contract ABIs (minimal interface for UI)
@@ -101,9 +101,15 @@ const TRUTH_CONTRACTS = {
 const ContractHelpers = {
     // Check if contracts are deployed
     areContractsDeployed() {
-        return Object.values(TRUTH_CONTRACTS.ADDRESSES)
-            .filter(addr => addr !== '0x...')
-            .length > 0;
+        const deployedAddresses = Object.values(TRUTH_CONTRACTS.ADDRESSES)
+            .filter(addr => addr !== '0x...');
+        return deployedAddresses.length > 0;
+    },
+    
+    // Check specifically if tokens are deployed (they are!)
+    areTokensDeployed() {
+        return TRUTH_CONTRACTS.ADDRESSES.TruthToken !== '0x...' && 
+               TRUTH_CONTRACTS.ADDRESSES.CreatorToken !== '0x...';
     },
 
     // Get contract instance
