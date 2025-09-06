@@ -678,24 +678,51 @@
         </p>
     </footer>
 
-    <!-- Load dependencies in correct order with error handling -->
+    <!-- Load dependencies with robust error handling and fallbacks -->
     <script>
-        console.log('Page loaded, checking for existing connection...');
+        console.log('Page loaded, initializing application...');
         
-        // Load scripts sequentially with better error handling
-        function loadScriptSequentially(src) {
+        // Ethers.js CDN fallbacks
+        const ETHERS_CDNS = [
+            'https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js',
+            'https://unpkg.com/ethers@5.7.2/dist/ethers.umd.min.js',
+            'https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js'
+        ];
+
+        // Load script with multiple fallback URLs
+        function loadScriptWithFallbacks(urls, scriptName = 'script') {
+            return new Promise(async (resolve, reject) => {
+                for (let i = 0; i < urls.length; i++) {
+                    try {
+                        await loadSingleScript(urls[i]);
+                        console.log(`✅ Successfully loaded ${scriptName} from: ${urls[i]}`);
+                        resolve();
+                        return;
+                    } catch (error) {
+                        console.warn(`⚠️ Failed to load ${scriptName} from ${urls[i]}, trying next...`);
+                        if (i === urls.length - 1) {
+                            reject(new Error(`Failed to load ${scriptName} from all sources`));
+                        }
+                    }
+                }
+            });
+        }
+
+        function loadSingleScript(src) {
             return new Promise((resolve, reject) => {
                 const script = document.createElement('script');
                 script.src = src;
-                script.onload = () => {
-                    console.log(`✅ Successfully loaded: ${src}`);
-                    resolve();
-                };
-                script.onerror = (error) => {
-                    console.error(`❌ Failed to load: ${src}`, error);
-                    reject(new Error(`Failed to load ${src}`));
-                };
+                script.onload = resolve;
+                script.onerror = reject;
+                script.timeout = 10000; // 10 second timeout
                 document.head.appendChild(script);
+                
+                // Set timeout for loading
+                setTimeout(() => {
+                    if (!script.onload.called) {
+                        reject(new Error('Script loading timeout'));
+                    }
+                }, 10000);
             });
         }
 
@@ -703,45 +730,67 @@
             try {
                 console.log('🚀 Starting application initialization...');
 
-                // Load ethers.js first
-                await loadScriptSequentially('https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js');
+                // Load ethers.js with fallbacks
+                await loadScriptWithFallbacks(ETHERS_CDNS, 'ethers.js');
+                
+                // Wait a moment for ethers to be available
+                await new Promise(resolve => setTimeout(resolve, 100));
                 
                 if (typeof ethers === 'undefined') {
-                    throw new Error('Ethers.js failed to initialize');
+                    throw new Error('Ethers.js failed to initialize after loading');
                 }
-                console.log('✅ Ethers.js loaded successfully:', ethers.version);
+                console.log('✅ Ethers.js loaded successfully');
 
-                // Load React libraries
-                await loadScriptSequentially('https://unpkg.com/react@18/umd/react.production.min.js');
-                await loadScriptSequentially('https://unpkg.com/react-dom@18/umd/react-dom.production.min.js');
-                
-                if (typeof React === 'undefined' || typeof ReactDOM === 'undefined') {
-                    throw new Error('React libraries failed to initialize');
+                // Load application scripts (these are local, so should be more reliable)
+                try {
+                    await loadSingleScript('contract-config.js');
+                    console.log('✅ Contract config loaded');
+                } catch (error) {
+                    console.warn('⚠️ Contract config failed to load, using defaults');
                 }
-                console.log('✅ React libraries loaded successfully');
 
-                // Load application scripts
-                await loadScriptSequentially('contract-config.js');
-                await loadScriptSequentially('token-integration.js');
-                await loadScriptSequentially('deployment-status.js');
+                try {
+                    await loadSingleScript('token-integration.js');
+                    console.log('✅ Token integration loaded');
+                } catch (error) {
+                    console.warn('⚠️ Token integration failed to load');
+                }
 
-                console.log('✅ All application scripts loaded');
+                try {
+                    await loadSingleScript('deployment-status.js');
+                    console.log('✅ Deployment status loaded');
+                } catch (error) {
+                    console.warn('⚠️ Deployment status failed to load');
+                }
+
+                console.log('✅ Application initialization completed');
 
                 // Check for existing wallet connection
                 setTimeout(checkWalletConnection, 500);
 
+                // Initialize basic functionality even if some scripts failed
+                initializeBasicFunctionality();
+
             } catch (error) {
                 console.error('❌ Application initialization failed:', error);
-                // Show user-friendly error
-                const errorDiv = document.createElement('div');
-                errorDiv.style.cssText = `
-                    position: fixed; top: 20px; right: 20px; background: #ff4444; 
-                    color: white; padding: 15px; border-radius: 10px; z-index: 10000;
-                    max-width: 300px; font-size: 14px;
-                `;
-                errorDiv.textContent = 'Some features may not work properly. Please refresh the page.';
-                document.body.appendChild(errorDiv);
-                setTimeout(() => errorDiv.remove(), 8000);
+                
+                // Show user-friendly error with retry option
+                showErrorWithRetry('Unable to load required libraries. This may be due to network issues.', () => {
+                    window.location.reload();
+                });
+                
+                // Initialize basic functionality without Web3
+                initializeBasicFunctionality();
+            }
+        }
+
+        function initializeBasicFunctionality() {
+            // Ensure basic wallet connection still works even if some scripts fail
+            const connectBtn = document.getElementById('connectWallet');
+            if (connectBtn && typeof connectWallet === 'undefined') {
+                connectBtn.onclick = () => {
+                    showError('Web3 libraries are still loading. Please wait a moment and try again.');
+                };
             }
         }
 
@@ -750,11 +799,34 @@
                 // Check if wallet was previously connected
                 if (window.ethereum && window.ethereum.selectedAddress) {
                     console.log('Previous wallet connection detected, auto-connecting...');
-                    await connectWallet();
+                    if (typeof connectWallet !== 'undefined') {
+                        await connectWallet();
+                    }
                 }
             } catch (error) {
                 console.log('Auto-connect failed:', error.message);
             }
+        }
+
+        function showErrorWithRetry(message, retryCallback) {
+            const errorDiv = document.createElement('div');
+            errorDiv.style.cssText = `
+                position: fixed; top: 20px; right: 20px; background: #ff4444; 
+                color: white; padding: 15px; border-radius: 10px; z-index: 10000;
+                max-width: 350px; font-size: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            `;
+            errorDiv.innerHTML = `
+                <div style="margin-bottom: 10px;">${message}</div>
+                <button onclick="this.parentElement.remove(); (${retryCallback.toString()})()" 
+                        style="background: white; color: #ff4444; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                    Retry
+                </button>
+                <button onclick="this.parentElement.remove()" 
+                        style="background: transparent; color: white; border: 1px solid white; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-left: 5px;">
+                    Close
+                </button>
+            `;
+            document.body.appendChild(errorDiv);
         }
 
         // Initialize when DOM is ready

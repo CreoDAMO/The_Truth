@@ -8,7 +8,7 @@ class DeploymentStatus {
 
     async waitForDependencies() {
         let attempts = 0;
-        const maxAttempts = 50; // 5 seconds max wait
+        const maxAttempts = 100; // 10 seconds max wait
         
         // Wait for ethers.js to load
         while (typeof ethers === 'undefined' && attempts < maxAttempts) {
@@ -17,7 +17,8 @@ class DeploymentStatus {
         }
         
         if (typeof ethers === 'undefined') {
-            console.error('Ethers.js failed to load after 5 seconds');
+            console.error('Ethers.js failed to load after 10 seconds - deployment status will be limited');
+            this.showLimitedStatus();
             return;
         }
         
@@ -29,11 +30,47 @@ class DeploymentStatus {
         }
         
         if (typeof TRUTH_CONTRACTS === 'undefined') {
-            console.error('TRUTH_CONTRACTS config failed to load');
-            return;
+            console.error('TRUTH_CONTRACTS config failed to load - using fallback config');
+            this.initializeFallbackConfig();
         }
         
         console.log('✅ Deployment status checker dependencies loaded successfully');
+    }
+
+    showLimitedStatus() {
+        this.createStatusDisplay();
+        this.statusElement.innerHTML = `
+            <div style="font-weight: bold; margin-bottom: 10px; color: #ff6b6b;">
+                ⚠️ Contract Status (Limited)
+            </div>
+            <div style="margin: 5px 0; font-size: 0.8rem; color: #ff6b6b;">
+                Unable to check contract status - network issues detected
+            </div>
+            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.2);">
+                <button onclick="window.location.reload()" 
+                        style="background: linear-gradient(135deg, #ff6b6b, #ff4444); 
+                               color: white; border: none; padding: 8px 12px; 
+                               border-radius: 5px; cursor: pointer; font-size: 0.8rem;">
+                    Reload Page
+                </button>
+            </div>
+        `;
+    }
+
+    initializeFallbackConfig() {
+        // Fallback configuration if TRUTH_CONTRACTS fails to load
+        window.TRUTH_CONTRACTS = {
+            ADDRESSES: {
+                TruthToken: '0x8f6cf6f7747e170f4768533b869c339dc3d30a3c',
+                CreatorToken: '0x22b0434e89882f8e6841d340b28427646c015aa7',
+                TheTruth: '0x...',
+                TruthBonusGift: '0x...',
+                TruthPartThree: '0x...'
+            },
+            NETWORK: {
+                rpcUrl: 'https://mainnet.base.org'
+            }
+        };
     }
 
     init() {

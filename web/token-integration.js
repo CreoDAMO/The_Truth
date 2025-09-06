@@ -361,12 +361,29 @@ class TruthTokenIntegration {
 // Initialize when DOM loads and ethers is available
 function initializeTruthTokens() {
     if (typeof ethers !== 'undefined') {
-        window.truthTokens = new TruthTokenIntegration();
-        console.log('TruthTokenIntegration initialized successfully');
+        try {
+            window.truthTokens = new TruthTokenIntegration();
+            console.log('✅ TruthTokenIntegration initialized successfully');
+        } catch (error) {
+            console.error('❌ Failed to initialize TruthTokenIntegration:', error);
+        }
     } else {
-        console.log('Waiting for ethers.js to load...');
-        setTimeout(initializeTruthTokens, 100);
+        // Only wait for 10 seconds total
+        const startTime = Date.now();
+        if (Date.now() - startTime < 10000) {
+            console.log('Waiting for ethers.js to load...');
+            setTimeout(initializeTruthTokens, 200);
+        } else {
+            console.error('❌ Timeout waiting for ethers.js - token integration will be limited');
+        }
     }
 }
 
-document.addEventListener('DOMContentLoaded', initializeTruthTokens);
+// Initialize with a delay to ensure dependencies load
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(initializeTruthTokens, 1000);
+    });
+} else {
+    setTimeout(initializeTruthTokens, 1000);
+}
