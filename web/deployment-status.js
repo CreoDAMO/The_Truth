@@ -122,7 +122,20 @@ class DeploymentStatus {
     }
 }
 
-// Initialize when DOM loads
-document.addEventListener('DOMContentLoaded', () => {
-    new DeploymentStatus();
-});
+// Initialize deployment status checker
+function initializeDeploymentStatus() {
+    if (typeof DeploymentStatus !== 'undefined') {
+        console.log('Initializing deployment status checker...');
+        new DeploymentStatus();
+    } else {
+        console.log('DeploymentStatus class not ready, retrying...');
+        setTimeout(initializeDeploymentStatus, 1000);
+    }
+}
+
+// Initialize when DOM loads or immediately if already loaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeDeploymentStatus);
+} else {
+    initializeDeploymentStatus();
+}
