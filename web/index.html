@@ -682,15 +682,41 @@
     <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
 
     <!-- Load React and other dependencies -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react@18/react-dom.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-    <!-- Load our contracts configuration -->
-    <script src="/contract-config.js"></script>
+    <script>
+        // Wait for ethers to be fully loaded before loading other scripts
+        window.addEventListener('load', function() {
+            if (typeof ethers === 'undefined') {
+                console.error('Ethers.js failed to load');
+                return;
+            }
+            console.log('Ethers.js loaded successfully');
 
-    <!-- Load token integration after ethers -->
-    <script src="/token-integration.js"></script>
+            // Load other scripts in order
+            const scripts = [
+                'contract-config.js',
+                'token-integration.js', 
+                'deployment-status.js'
+            ];
+
+            function loadScript(src) {
+                return new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = src;
+                    script.onload = resolve;
+                    script.onerror = reject;
+                    document.head.appendChild(script);
+                });
+            }
+
+            scripts.reduce((promise, src) => {
+                return promise.then(() => loadScript(src));
+            }, Promise.resolve());
+        });
+    </script>
 
     <script>
         // Enhanced cross-browser wallet connection

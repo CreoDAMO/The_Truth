@@ -3,7 +3,21 @@
 class DeploymentStatus {
     constructor() {
         this.statusElement = null;
-        this.init();
+        this.waitForDependencies().then(() => this.init());
+    }
+
+    async waitForDependencies() {
+        // Wait for ethers.js to load
+        while (typeof ethers === 'undefined') {
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        
+        // Wait for TRUTH_CONTRACTS to load
+        while (typeof TRUTH_CONTRACTS === 'undefined') {
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        
+        console.log('Deployment status checker dependencies loaded');
     }
 
     init() {

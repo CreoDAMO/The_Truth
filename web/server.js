@@ -83,6 +83,10 @@ app.get('/lawful', (req, res) => {
     res.sendFile(path.join(__dirname, 'lawful-dashboard.html'));
 });
 
+app.get('/contracts', (req, res) => {
+  res.sendFile(path.join(__dirname, 'contract-deployment.html'));
+});
+
 // Event tracking endpoint
 app.post('/api/track-event', (req, res) => {
     const { event, page, timestamp, userAgent } = req.body;
