@@ -1,6 +1,12 @@
 // Token Integration Utilities for The Truth Ecosystem
 class TruthTokenIntegration {
     constructor() {
+        // Check if ethers is available
+        this.ethersAvailable = typeof ethers !== 'undefined';
+        if (!this.ethersAvailable) {
+            console.warn('Ethers.js not yet loaded, will retry when available');
+        }
+
         // Truth ecosystem token contracts on Base
         this.contracts = {
             truth: {
@@ -55,6 +61,12 @@ class TruthTokenIntegration {
     init() {
         console.log('TruthTokenIntegration initializing...');
         
+        // Wait for ethers to be available
+        if (!this.ethersAvailable && typeof ethers !== 'undefined') {
+            this.ethersAvailable = true;
+            console.log('Ethers.js now available');
+        }
+        
         // Set up event listeners for wallet connection changes
         if (typeof window !== 'undefined' && window.ethereum) {
             window.ethereum.on('accountsChanged', (accounts) => {
@@ -78,6 +90,10 @@ class TruthTokenIntegration {
 
     // Initialize Web3 connection
     async connect() {
+        if (!this.ethersAvailable && typeof ethers === 'undefined') {
+            throw new Error('Ethers.js library not loaded. Please wait for the page to fully load.');
+        }
+        
         if (typeof window.ethereum !== 'undefined') {
             try {
                 this.web3 = new ethers.providers.Web3Provider(window.ethereum);
@@ -277,6 +293,13 @@ class TruthTokenIntegration {
     // System Health Monitoring
     async runHealthCheck() {
         try {
+            // Check if ethers is available
+            if (!this.ethersAvailable && typeof ethers === 'undefined') {
+                console.log('Ethers.js not yet loaded, deferring health check');
+                setTimeout(() => this.runHealthCheck(), 2000);
+                return;
+            }
+
             // Check RPC connectivity
             const provider = new ethers.providers.JsonRpcProvider('https://mainnet.base.org');
             await provider.getNetwork();
@@ -335,10 +358,15 @@ class TruthTokenIntegration {
     }
 }
 
-// Initialize when DOM loads
-document.addEventListener('DOMContentLoaded', () => {
-    if (typeof window !== 'undefined') {
+// Initialize when DOM loads and ethers is available
+function initializeTruthTokens() {
+    if (typeof ethers !== 'undefined') {
         window.truthTokens = new TruthTokenIntegration();
         console.log('TruthTokenIntegration initialized successfully');
+    } else {
+        console.log('Waiting for ethers.js to load...');
+        setTimeout(initializeTruthTokens, 100);
     }
-});
+}
+
+document.addEventListener('DOMContentLoaded', initializeTruthTokens);

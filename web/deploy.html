@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Deploy The Truth NFT - MetaMask</title>
     <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
+    <script>
+        // Wait for ethers to be fully loaded before loading other scripts
+        window.addEventListener('load', function() {
+            if (typeof ethers === 'undefined') {
+                console.error('Ethers.js failed to load');
+                return;
+            }
+            console.log('Ethers.js loaded successfully');
+        });
+    </script>
     <script src="contract-artifacts.js"></script>
     <script src="deploy-with-metamask.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">

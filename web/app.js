@@ -141,6 +141,12 @@ function App() {
     // Connect wallet with improved MetaMask detection
     const connectWallet = async () => {
         try {
+            // Check if ethers is available
+            if (typeof ethers === 'undefined') {
+                setError("Ethers.js library not loaded. Please refresh the page and try again.");
+                return null;
+            }
+
             let ethereum;
 
             // Check for MetaMask in multiple ways
