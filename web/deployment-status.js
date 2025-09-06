@@ -7,17 +7,33 @@ class DeploymentStatus {
     }
 
     async waitForDependencies() {
+        let attempts = 0;
+        const maxAttempts = 50; // 5 seconds max wait
+        
         // Wait for ethers.js to load
-        while (typeof ethers === 'undefined') {
+        while (typeof ethers === 'undefined' && attempts < maxAttempts) {
             await new Promise(resolve => setTimeout(resolve, 100));
+            attempts++;
+        }
+        
+        if (typeof ethers === 'undefined') {
+            console.error('Ethers.js failed to load after 5 seconds');
+            return;
         }
         
         // Wait for TRUTH_CONTRACTS to load
-        while (typeof TRUTH_CONTRACTS === 'undefined') {
+        attempts = 0;
+        while (typeof TRUTH_CONTRACTS === 'undefined' && attempts < maxAttempts) {
             await new Promise(resolve => setTimeout(resolve, 100));
+            attempts++;
         }
         
-        console.log('Deployment status checker dependencies loaded');
+        if (typeof TRUTH_CONTRACTS === 'undefined') {
+            console.error('TRUTH_CONTRACTS config failed to load');
+            return;
+        }
+        
+        console.log('✅ Deployment status checker dependencies loaded successfully');
     }
 
     init() {
@@ -122,20 +138,29 @@ class DeploymentStatus {
     }
 }
 
-// Initialize deployment status checker
+// Initialize deployment status checker with better error handling
 function initializeDeploymentStatus() {
-    if (typeof DeploymentStatus !== 'undefined') {
-        console.log('Initializing deployment status checker...');
+    try {
+        console.log('🔍 Initializing deployment status checker...');
         new DeploymentStatus();
-    } else {
-        console.log('DeploymentStatus class not ready, retrying...');
-        setTimeout(initializeDeploymentStatus, 1000);
+    } catch (error) {
+        console.error('❌ Failed to initialize deployment status checker:', error);
+        // Retry once after a longer delay
+        setTimeout(() => {
+            try {
+                new DeploymentStatus();
+            } catch (retryError) {
+                console.error('❌ Deployment status checker retry failed:', retryError);
+            }
+        }, 3000);
     }
 }
 
-// Initialize when DOM loads or immediately if already loaded
+// Initialize with proper delay to ensure all dependencies are loaded
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeDeploymentStatus);
+    document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(initializeDeploymentStatus, 2000);
+    });
 } else {
-    initializeDeploymentStatus();
+    setTimeout(initializeDeploymentStatus, 2000);
 }

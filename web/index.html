@@ -678,57 +678,83 @@
         </p>
     </footer>
 
-    <!-- Load ethers.js first -->
-    <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
-
-    <!-- Load React and other dependencies -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
+    <!-- Load dependencies in correct order with error handling -->
     <script>
-        // Enhanced script loading with better error handling
-        function initializeApp() {
-            console.log('Initializing application...');
-            
-            // Check if ethers is loaded
-            if (typeof ethers === 'undefined') {
-                console.error('Ethers.js failed to load - retrying in 2 seconds...');
-                setTimeout(initializeApp, 2000);
-                return;
-            }
-            
-            console.log('Ethers.js loaded successfully:', ethers.version);
-
-            // Load other scripts in sequence
-            const scripts = [
-                'contract-config.js',
-                'token-integration.js', 
-                'deployment-status.js'
-            ];
-
-            function loadScript(src) {
-                return new Promise((resolve, reject) => {
-                    const script = document.createElement('script');
-                    script.src = src;
-                    script.onload = () => {
-                        console.log(`✅ Loaded: ${src}`);
-                        resolve();
-                    };
-                    script.onerror = (error) => {
-                        console.error(`❌ Failed to load: ${src}`, error);
-                        resolve(); // Continue loading other scripts
-                    };
-                    document.head.appendChild(script);
-                });
-            }
-
-            scripts.reduce((promise, src) => {
-                return promise.then(() => loadScript(src));
-            }, Promise.resolve()).then(() => {
-                console.log('All scripts loaded, initializing wallet check...');
-                setTimeout(checkWalletConnection, 1000);
+        console.log('Page loaded, checking for existing connection...');
+        
+        // Load scripts sequentially with better error handling
+        function loadScriptSequentially(src) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = () => {
+                    console.log(`✅ Successfully loaded: ${src}`);
+                    resolve();
+                };
+                script.onerror = (error) => {
+                    console.error(`❌ Failed to load: ${src}`, error);
+                    reject(new Error(`Failed to load ${src}`));
+                };
+                document.head.appendChild(script);
             });
+        }
+
+        async function initializeApp() {
+            try {
+                console.log('🚀 Starting application initialization...');
+
+                // Load ethers.js first
+                await loadScriptSequentially('https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js');
+                
+                if (typeof ethers === 'undefined') {
+                    throw new Error('Ethers.js failed to initialize');
+                }
+                console.log('✅ Ethers.js loaded successfully:', ethers.version);
+
+                // Load React libraries
+                await loadScriptSequentially('https://unpkg.com/react@18/umd/react.production.min.js');
+                await loadScriptSequentially('https://unpkg.com/react-dom@18/umd/react-dom.production.min.js');
+                
+                if (typeof React === 'undefined' || typeof ReactDOM === 'undefined') {
+                    throw new Error('React libraries failed to initialize');
+                }
+                console.log('✅ React libraries loaded successfully');
+
+                // Load application scripts
+                await loadScriptSequentially('contract-config.js');
+                await loadScriptSequentially('token-integration.js');
+                await loadScriptSequentially('deployment-status.js');
+
+                console.log('✅ All application scripts loaded');
+
+                // Check for existing wallet connection
+                setTimeout(checkWalletConnection, 500);
+
+            } catch (error) {
+                console.error('❌ Application initialization failed:', error);
+                // Show user-friendly error
+                const errorDiv = document.createElement('div');
+                errorDiv.style.cssText = `
+                    position: fixed; top: 20px; right: 20px; background: #ff4444; 
+                    color: white; padding: 15px; border-radius: 10px; z-index: 10000;
+                    max-width: 300px; font-size: 14px;
+                `;
+                errorDiv.textContent = 'Some features may not work properly. Please refresh the page.';
+                document.body.appendChild(errorDiv);
+                setTimeout(() => errorDiv.remove(), 8000);
+            }
+        }
+
+        async function checkWalletConnection() {
+            try {
+                // Check if wallet was previously connected
+                if (window.ethereum && window.ethereum.selectedAddress) {
+                    console.log('Previous wallet connection detected, auto-connecting...');
+                    await connectWallet();
+                }
+            } catch (error) {
+                console.log('Auto-connect failed:', error.message);
+            }
         }
 
         // Initialize when DOM is ready
@@ -736,18 +762,6 @@
             document.addEventListener('DOMContentLoaded', initializeApp);
         } else {
             initializeApp();
-        }
-
-        async function checkWalletConnection() {
-            // Check if wallet was previously connected
-            if (window.ethereum && window.ethereum.selectedAddress) {
-                console.log('Previous wallet connection detected, auto-connecting...');
-                try {
-                    await connectWallet();
-                } catch (error) {
-                    console.log('Auto-connect failed:', error.message);
-                }
-            }
         }
     </script>
 
