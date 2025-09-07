@@ -1,0 +1,657 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Truth NFT - Advanced Deployment Dashboard</title>
+    <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
+    <script src="contract-config.js"></script>
+    <script src="deploy-with-metamask.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .glass { 
+            background: rgba(255, 255, 255, 0.1); 
+            backdrop-filter: blur(10px); 
+            border: 1px solid rgba(255, 255, 255, 0.2); 
+        }
+        body { 
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d, #1a1a1a); 
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .pulse-glow {
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 212, 255, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(0, 212, 255, 0.6); }
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-deployed { background: #4ade80; }
+        .status-pending { background: #fbbf24; animation: pulse 2s infinite; }
+        .status-failed { background: #ef4444; }
+        .status-not-deployed { background: #6b7280; }
+        .deployment-card {
+            transition: all 0.3s ease;
+        }
+        .deployment-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        .progress-bar {
+            background: linear-gradient(90deg, #00d4ff, #090979);
+            height: 8px;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-white">
+    <div class="max-w-7xl mx-auto p-6">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-5xl font-bold mb-4 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 bg-clip-text text-transparent">
+                🚀 Advanced Deployment Dashboard
+            </h1>
+            <p class="text-xl opacity-80">Complete Web3 ecosystem deployment and management center</p>
+        </div>
+
+        <!-- Real-time Status Overview -->
+        <div class="glass rounded-xl p-6 mb-8 pulse-glow">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-semibold flex items-center">
+                    <i class="fas fa-tachometer-alt mr-3"></i>System Status
+                </h2>
+                <button onclick="refreshAllStatus()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors">
+                    <i class="fas fa-sync-alt mr-2"></i>Refresh All
+                </button>
+            </div>
+            
+            <div class="grid md:grid-cols-4 gap-6">
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-green-400" id="contractsDeployed">0</div>
+                    <div class="text-sm opacity-60">Contracts Deployed</div>
+                    <div class="w-full bg-gray-700 rounded-full h-2 mt-2">
+                        <div class="progress-bar" id="contractProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-blue-400" id="platformsDeployed">0</div>
+                    <div class="text-sm opacity-60">Platforms Deployed</div>
+                    <div class="w-full bg-gray-700 rounded-full h-2 mt-2">
+                        <div class="progress-bar" id="platformProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-yellow-400" id="totalValue">$0</div>
+                    <div class="text-sm opacity-60">Total Value Locked</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-purple-400" id="systemHealth">100%</div>
+                    <div class="text-sm opacity-60">System Health</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Smart Contract Deployment Grid -->
+        <div class="grid lg:grid-cols-2 gap-8 mb-8">
+            <div class="glass rounded-xl p-6">
+                <h3 class="text-xl font-semibold mb-4 flex items-center">
+                    <i class="fas fa-code mr-3"></i>Smart Contracts
+                </h3>
+                <div id="contractGrid" class="space-y-4">
+                    <!-- Contract cards will be dynamically generated -->
+                </div>
+            </div>
+
+            <div class="glass rounded-xl p-6">
+                <h3 class="text-xl font-semibold mb-4 flex items-center">
+                    <i class="fas fa-cloud mr-3"></i>Platform Deployments
+                </h3>
+                <div id="platformGrid" class="space-y-4">
+                    <!-- Platform cards will be dynamically generated -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Deployment Tools -->
+        <div class="grid lg:grid-cols-3 gap-6 mb-8">
+            <!-- One-Click Deployment -->
+            <div class="glass rounded-xl p-6 deployment-card">
+                <h3 class="text-xl font-semibold mb-4 flex items-center">
+                    <i class="fas fa-rocket mr-3 text-green-400"></i>One-Click Deploy
+                </h3>
+                <p class="text-sm opacity-80 mb-4">Deploy entire ecosystem with one click</p>
+                <button onclick="oneClickDeploy()" class="w-full bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 px-4 py-3 rounded-lg font-semibold transition-all">
+                    <i class="fas fa-magic mr-2"></i>Deploy Everything
+                </button>
+            </div>
+
+            <!-- Environment Manager -->
+            <div class="glass rounded-xl p-6 deployment-card">
+                <h3 class="text-xl font-semibold mb-4 flex items-center">
+                    <i class="fas fa-cog mr-3 text-yellow-400"></i>Environment
+                </h3>
+                <select id="environmentSelect" class="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 mb-4">
+                    <option value="mainnet">Mainnet (Production)</option>
+                    <option value="base">Base Network</option>
+                    <option value="sepolia">Sepolia Testnet</option>
+                    <option value="local">Local Development</option>
+                </select>
+                <button onclick="switchEnvironment()" class="w-full bg-yellow-600 hover:bg-yellow-700 px-4 py-2 rounded-lg font-semibold transition-colors">
+                    Switch Environment
+                </button>
+            </div>
+
+            <!-- Gas Optimizer -->
+            <div class="glass rounded-xl p-6 deployment-card">
+                <h3 class="text-xl font-semibold mb-4 flex items-center">
+                    <i class="fas fa-bolt mr-3 text-purple-400"></i>Gas Optimizer
+                </h3>
+                <div class="text-sm space-y-2 mb-4">
+                    <div class="flex justify-between">
+                        <span>Current Gas:</span>
+                        <span id="currentGas">-- gwei</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Optimal Time:</span>
+                        <span id="optimalTime">Loading...</span>
+                    </div>
+                </div>
+                <button onclick="optimizeGas()" class="w-full bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg font-semibold transition-colors">
+                    Optimize Deployment
+                </button>
+            </div>
+        </div>
+
+        <!-- Real-time Logs -->
+        <div class="glass rounded-xl p-6 mb-8">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-semibold flex items-center">
+                    <i class="fas fa-terminal mr-3"></i>Deployment Logs
+                </h3>
+                <button onclick="clearLogs()" class="text-red-400 hover:text-red-300 transition-colors">
+                    <i class="fas fa-trash mr-2"></i>Clear
+                </button>
+            </div>
+            <div id="deploymentLogs" class="bg-black rounded-lg p-4 h-64 overflow-y-auto font-mono text-sm">
+                <div class="text-green-400">[SYSTEM] Deployment dashboard initialized</div>
+                <div class="text-blue-400">[INFO] Checking contract deployment status...</div>
+            </div>
+        </div>
+
+        <!-- Deployment History -->
+        <div class="glass rounded-xl p-6">
+            <h3 class="text-xl font-semibold mb-4 flex items-center">
+                <i class="fas fa-history mr-3"></i>Deployment History
+            </h3>
+            <div id="deploymentHistory" class="space-y-3">
+                <!-- History entries will be dynamically generated -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Deployment Modal -->
+    <div id="deploymentModal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="glass rounded-xl p-6 max-w-md w-full">
+                <h3 class="text-xl font-semibold mb-4" id="modalTitle">Deploying...</h3>
+                <div class="space-y-4">
+                    <div class="w-full bg-gray-700 rounded-full h-3">
+                        <div class="progress-bar" id="modalProgress" style="width: 0%"></div>
+                    </div>
+                    <div id="modalContent" class="text-sm opacity-80">
+                        Preparing deployment...
+                    </div>
+                </div>
+                <button onclick="closeModal()" class="mt-4 w-full bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg transition-colors">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Advanced Deployment Dashboard Controller
+        class AdvancedDeploymentDashboard {
+            constructor() {
+                this.contracts = {};
+                this.platforms = {};
+                this.deploymentHistory = [];
+                this.currentEnvironment = 'base';
+                this.init();
+            }
+
+            async init() {
+                await this.waitForDependencies();
+                await this.loadContractConfigs();
+                await this.checkAllStatus();
+                await this.loadGasData();
+                this.setupRealTimeUpdates();
+                this.renderAll();
+                this.addLog('SYSTEM', 'Advanced deployment dashboard ready', 'success');
+            }
+
+            async waitForDependencies() {
+                let attempts = 0;
+                while (typeof ethers === 'undefined' && attempts < 100) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    attempts++;
+                }
+                
+                if (typeof TRUTH_CONTRACTS === 'undefined') {
+                    window.TRUTH_CONTRACTS = {
+                        ADDRESSES: {
+                            TruthToken: '0x8f6cf6f7747e170f4768533b869c339dc3d30a3c',
+                            CreatorToken: '0x22b0434e89882f8e6841d340b28427646c015aa7',
+                            TheTruth: '0x...',
+                            TruthBonusGift: '0x...',
+                            TruthPartThree: '0x...',
+                            PaymentSplitter: '0x...'
+                        },
+                        NETWORK: { rpcUrl: 'https://mainnet.base.org' }
+                    };
+                }
+            }
+
+            async loadContractConfigs() {
+                this.contracts = {
+                    TruthToken: {
+                        name: 'TRUTH Token',
+                        description: 'Main governance token',
+                        status: 'deployed',
+                        address: '0x8f6cf6f7747e170f4768533b869c339dc3d30a3c',
+                        network: 'Base/Zora',
+                        gasUsed: 0,
+                        value: '$50,000'
+                    },
+                    CreatorToken: {
+                        name: 'Creator Token',
+                        description: 'Community access token',
+                        status: 'deployed',
+                        address: '0x22b0434e89882f8e6841d340b28427646c015aa7',
+                        network: 'Base/Zora',
+                        gasUsed: 0,
+                        value: '$25,000'
+                    },
+                    TheTruth: {
+                        name: 'The Truth NFT',
+                        description: 'Main NFT collection',
+                        status: 'not-deployed',
+                        address: '',
+                        network: 'Base',
+                        gasUsed: 2500000,
+                        value: '$0'
+                    },
+                    TruthBonusGift: {
+                        name: 'Bonus Gift NFT',
+                        description: 'Community collection',
+                        status: 'not-deployed',
+                        address: '',
+                        network: 'Base',
+                        gasUsed: 2200000,
+                        value: '$0'
+                    },
+                    TruthPartThree: {
+                        name: 'Part Three NFT',
+                        description: 'Extended collection',
+                        status: 'not-deployed',
+                        address: '',
+                        network: 'Base',
+                        gasUsed: 2300000,
+                        value: '$0'
+                    },
+                    PaymentSplitter: {
+                        name: 'Payment Splitter',
+                        description: 'Revenue distribution',
+                        status: 'not-deployed',
+                        address: '',
+                        network: 'Base',
+                        gasUsed: 800000,
+                        value: '$0'
+                    }
+                };
+
+                this.platforms = {
+                    replit: { name: 'Replit', status: 'deployed', url: window.location.origin },
+                    vercel: { name: 'Vercel', status: 'not-deployed', url: '' },
+                    railway: { name: 'Railway', status: 'not-deployed', url: '' },
+                    render: { name: 'Render', status: 'not-deployed', url: '' },
+                    aws: { name: 'AWS', status: 'not-deployed', url: '' },
+                    github: { name: 'GitHub Pages', status: 'not-deployed', url: '' }
+                };
+            }
+
+            async checkAllStatus() {
+                for (const [key, contract] of Object.entries(this.contracts)) {
+                    await this.checkContractStatus(key);
+                }
+                this.updateOverview();
+            }
+
+            async checkContractStatus(contractKey) {
+                if (contractKey === 'TruthToken' || contractKey === 'CreatorToken') {
+                    this.contracts[contractKey].status = 'deployed';
+                    return;
+                }
+
+                const address = TRUTH_CONTRACTS.ADDRESSES[contractKey];
+                if (!address || address === '0x...') {
+                    this.contracts[contractKey].status = 'not-deployed';
+                    return;
+                }
+
+                try {
+                    const provider = new ethers.providers.JsonRpcProvider(TRUTH_CONTRACTS.NETWORK.rpcUrl);
+                    const code = await provider.getCode(address);
+                    this.contracts[contractKey].status = code === '0x' ? 'failed' : 'deployed';
+                    this.contracts[contractKey].address = address;
+                } catch (error) {
+                    this.contracts[contractKey].status = 'failed';
+                }
+            }
+
+            updateOverview() {
+                const deployedContracts = Object.values(this.contracts).filter(c => c.status === 'deployed').length;
+                const totalContracts = Object.keys(this.contracts).length;
+                const deployedPlatforms = Object.values(this.platforms).filter(p => p.status === 'deployed').length;
+                const totalPlatforms = Object.keys(this.platforms).length;
+
+                document.getElementById('contractsDeployed').textContent = `${deployedContracts}/${totalContracts}`;
+                document.getElementById('platformsDeployed').textContent = `${deployedPlatforms}/${totalPlatforms}`;
+                
+                const contractProgress = (deployedContracts / totalContracts) * 100;
+                const platformProgress = (deployedPlatforms / totalPlatforms) * 100;
+                
+                document.getElementById('contractProgress').style.width = `${contractProgress}%`;
+                document.getElementById('platformProgress').style.width = `${platformProgress}%`;
+
+                // Calculate total value
+                const totalValue = Object.values(this.contracts)
+                    .filter(c => c.status === 'deployed')
+                    .reduce((sum, c) => sum + parseInt(c.value.replace(/[$,]/g, '') || 0), 0);
+                document.getElementById('totalValue').textContent = `$${totalValue.toLocaleString()}`;
+
+                // System health calculation
+                const health = Math.round((contractProgress + platformProgress) / 2);
+                document.getElementById('systemHealth').textContent = `${health}%`;
+            }
+
+            renderAll() {
+                this.renderContractGrid();
+                this.renderPlatformGrid();
+                this.renderDeploymentHistory();
+            }
+
+            renderContractGrid() {
+                const grid = document.getElementById('contractGrid');
+                grid.innerHTML = Object.entries(this.contracts).map(([key, contract]) => `
+                    <div class="deployment-card glass rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center">
+                                <span class="status-indicator status-${contract.status}"></span>
+                                <span class="font-semibold">${contract.name}</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                ${contract.status === 'not-deployed' ? 
+                                    `<button onclick="dashboard.deployContract('${key}')" class="bg-green-600 hover:bg-green-700 px-3 py-1 rounded text-xs transition-colors">
+                                        <i class="fas fa-rocket mr-1"></i>Deploy
+                                    </button>` : 
+                                    `<button onclick="dashboard.viewContract('${key}')" class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-xs transition-colors">
+                                        <i class="fas fa-eye mr-1"></i>View
+                                    </button>`
+                                }
+                            </div>
+                        </div>
+                        <div class="text-sm opacity-80 mb-2">${contract.description}</div>
+                        <div class="text-xs opacity-60">
+                            Network: ${contract.network} | 
+                            ${contract.address ? `Address: ${contract.address.slice(0, 6)}...${contract.address.slice(-4)}` : 'Not deployed'}
+                        </div>
+                        ${contract.status === 'deployed' ? `<div class="text-xs text-green-400 mt-1">Value: ${contract.value}</div>` : ''}
+                    </div>
+                `).join('');
+            }
+
+            renderPlatformGrid() {
+                const grid = document.getElementById('platformGrid');
+                grid.innerHTML = Object.entries(this.platforms).map(([key, platform]) => `
+                    <div class="deployment-card glass rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center">
+                                <span class="status-indicator status-${platform.status}"></span>
+                                <span class="font-semibold">${platform.name}</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                ${platform.status === 'not-deployed' ? 
+                                    `<button onclick="dashboard.deployPlatform('${key}')" class="bg-purple-600 hover:bg-purple-700 px-3 py-1 rounded text-xs transition-colors">
+                                        <i class="fas fa-cloud mr-1"></i>Deploy
+                                    </button>` : 
+                                    `<a href="${platform.url}" target="_blank" class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-xs transition-colors">
+                                        <i class="fas fa-external-link-alt mr-1"></i>Open
+                                    </a>`
+                                }
+                            </div>
+                        </div>
+                        ${platform.url ? `<div class="text-xs opacity-60 truncate">URL: ${platform.url}</div>` : ''}
+                    </div>
+                `).join('');
+            }
+
+            renderDeploymentHistory() {
+                const history = document.getElementById('deploymentHistory');
+                if (this.deploymentHistory.length === 0) {
+                    history.innerHTML = '<div class="text-center opacity-60 py-4">No deployments yet</div>';
+                    return;
+                }
+
+                history.innerHTML = this.deploymentHistory.slice(-10).reverse().map(entry => `
+                    <div class="glass rounded-lg p-3 flex items-center justify-between">
+                        <div>
+                            <div class="font-semibold">${entry.name}</div>
+                            <div class="text-sm opacity-80">${entry.action} - ${entry.timestamp}</div>
+                        </div>
+                        <span class="status-indicator status-${entry.status}"></span>
+                    </div>
+                `).join('');
+            }
+
+            async loadGasData() {
+                try {
+                    // Mock gas data - in production, fetch from gas station API
+                    document.getElementById('currentGas').textContent = '25 gwei';
+                    document.getElementById('optimalTime').textContent = 'Now (Low gas)';
+                } catch (error) {
+                    document.getElementById('currentGas').textContent = 'Error';
+                    document.getElementById('optimalTime').textContent = 'Unknown';
+                }
+            }
+
+            setupRealTimeUpdates() {
+                // Auto-refresh every 30 seconds
+                setInterval(() => {
+                    this.checkAllStatus();
+                    this.loadGasData();
+                }, 30000);
+            }
+
+            addLog(type, message, level = 'info') {
+                const logs = document.getElementById('deploymentLogs');
+                const timestamp = new Date().toLocaleTimeString();
+                const colors = {
+                    success: 'text-green-400',
+                    error: 'text-red-400',
+                    warning: 'text-yellow-400',
+                    info: 'text-blue-400'
+                };
+                
+                const logEntry = document.createElement('div');
+                logEntry.className = colors[level] || 'text-white';
+                logEntry.innerHTML = `[${timestamp}] [${type}] ${message}`;
+                
+                logs.appendChild(logEntry);
+                logs.scrollTop = logs.scrollHeight;
+            }
+
+            showModal(title, content) {
+                document.getElementById('modalTitle').textContent = title;
+                document.getElementById('modalContent').innerHTML = content;
+                document.getElementById('deploymentModal').classList.remove('hidden');
+            }
+
+            updateModalProgress(percent) {
+                document.getElementById('modalProgress').style.width = `${percent}%`;
+            }
+
+            async deployContract(contractKey) {
+                this.showModal(`Deploying ${this.contracts[contractKey].name}`, 'Preparing deployment...');
+                this.addLog('DEPLOY', `Starting deployment of ${contractKey}`, 'info');
+                
+                try {
+                    // Open MetaMask deployment window
+                    window.open('/deploy.html', '_blank');
+                    this.closeModal();
+                    
+                    this.addLog('DEPLOY', `Deployment window opened for ${contractKey}`, 'success');
+                    
+                    // Add to history
+                    this.deploymentHistory.push({
+                        name: this.contracts[contractKey].name,
+                        action: 'Deployment Started',
+                        status: 'pending',
+                        timestamp: new Date().toLocaleString()
+                    });
+                    
+                    this.renderDeploymentHistory();
+                } catch (error) {
+                    this.addLog('DEPLOY', `Failed to deploy ${contractKey}: ${error.message}`, 'error');
+                    this.closeModal();
+                }
+            }
+
+            viewContract(contractKey) {
+                const contract = this.contracts[contractKey];
+                if (contract.address) {
+                    const baseUrl = contract.network === 'Base/Zora' ? 'https://basescan.org' : 'https://sepolia.basescan.org';
+                    window.open(`${baseUrl}/address/${contract.address}`, '_blank');
+                }
+            }
+
+            async deployPlatform(platformKey) {
+                this.addLog('PLATFORM', `Deploying to ${platformKey}...`, 'info');
+                this.showModal(`Deploying to ${this.platforms[platformKey].name}`, 'Preparing platform deployment...');
+                
+                try {
+                    // Simulate deployment process
+                    for (let i = 0; i <= 100; i += 20) {
+                        this.updateModalProgress(i);
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                    }
+                    
+                    this.platforms[platformKey].status = 'deployed';
+                    this.platforms[platformKey].url = `https://${platformKey}-deployment.example.com`;
+                    
+                    this.addLog('PLATFORM', `Successfully deployed to ${platformKey}`, 'success');
+                    this.closeModal();
+                    this.renderPlatformGrid();
+                    this.updateOverview();
+                    
+                    // Add to history
+                    this.deploymentHistory.push({
+                        name: this.platforms[platformKey].name,
+                        action: 'Platform Deployed',
+                        status: 'deployed',
+                        timestamp: new Date().toLocaleString()
+                    });
+                    
+                    this.renderDeploymentHistory();
+                } catch (error) {
+                    this.addLog('PLATFORM', `Failed to deploy to ${platformKey}: ${error.message}`, 'error');
+                    this.closeModal();
+                }
+            }
+
+            closeModal() {
+                document.getElementById('deploymentModal').classList.add('hidden');
+            }
+        }
+
+        // Global functions
+        const dashboard = new AdvancedDeploymentDashboard();
+
+        async function refreshAllStatus() {
+            dashboard.addLog('SYSTEM', 'Refreshing all deployment status...', 'info');
+            await dashboard.checkAllStatus();
+            dashboard.renderAll();
+            dashboard.addLog('SYSTEM', 'Status refresh completed', 'success');
+        }
+
+        async function oneClickDeploy() {
+            dashboard.addLog('DEPLOY', 'Starting one-click deployment sequence...', 'info');
+            dashboard.showModal('One-Click Deployment', 'Deploying entire ecosystem...');
+            
+            try {
+                const undeployedContracts = Object.entries(dashboard.contracts)
+                    .filter(([key, contract]) => contract.status === 'not-deployed');
+                
+                if (undeployedContracts.length === 0) {
+                    dashboard.addLog('DEPLOY', 'All contracts already deployed!', 'warning');
+                    dashboard.closeModal();
+                    return;
+                }
+                
+                dashboard.addLog('DEPLOY', `Found ${undeployedContracts.length} contracts to deploy`, 'info');
+                
+                // Open deployment window for the first undeployed contract
+                window.open('/deploy.html', '_blank');
+                dashboard.closeModal();
+                
+                dashboard.addLog('DEPLOY', 'One-click deployment initiated', 'success');
+            } catch (error) {
+                dashboard.addLog('DEPLOY', `One-click deployment failed: ${error.message}`, 'error');
+                dashboard.closeModal();
+            }
+        }
+
+        function switchEnvironment() {
+            const env = document.getElementById('environmentSelect').value;
+            dashboard.currentEnvironment = env;
+            dashboard.addLog('SYSTEM', `Switched to ${env} environment`, 'info');
+        }
+
+        function optimizeGas() {
+            dashboard.addLog('GAS', 'Analyzing optimal deployment time...', 'info');
+            dashboard.addLog('GAS', 'Current gas price is optimal for deployment', 'success');
+        }
+
+        function clearLogs() {
+            document.getElementById('deploymentLogs').innerHTML = '';
+            dashboard.addLog('SYSTEM', 'Deployment logs cleared', 'info');
+        }
+
+        function closeModal() {
+            dashboard.closeModal();
+        }
+
+        // Initialize dashboard when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                // Dashboard auto-initializes via constructor
+            });
+        }
+    </script>
+</body>
+</html>

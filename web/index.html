@@ -681,7 +681,7 @@
     <!-- Load dependencies with robust error handling and fallbacks -->
     <script>
         console.log('Page loaded, initializing application...');
-        
+
         // Ethers.js CDN fallbacks
         const ETHERS_CDNS = [
             'https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js',
@@ -716,7 +716,7 @@
                 script.onerror = reject;
                 script.timeout = 10000; // 10 second timeout
                 document.head.appendChild(script);
-                
+
                 // Set timeout for loading
                 setTimeout(() => {
                     if (!script.onload.called) {
@@ -732,10 +732,10 @@
 
                 // Load ethers.js with fallbacks
                 await loadScriptWithFallbacks(ETHERS_CDNS, 'ethers.js');
-                
+
                 // Wait a moment for ethers to be available
                 await new Promise(resolve => setTimeout(resolve, 100));
-                
+
                 if (typeof ethers === 'undefined') {
                     throw new Error('Ethers.js failed to initialize after loading');
                 }
@@ -773,12 +773,12 @@
 
             } catch (error) {
                 console.error('❌ Application initialization failed:', error);
-                
+
                 // Show user-friendly error with retry option
                 showErrorWithRetry('Unable to load required libraries. This may be due to network issues.', () => {
                     window.location.reload();
                 });
-                
+
                 // Initialize basic functionality without Web3
                 initializeBasicFunctionality();
             }
