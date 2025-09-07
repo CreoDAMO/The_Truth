@@ -500,7 +500,7 @@
                 
                 const logEntry = document.createElement('div');
                 logEntry.className = colors[level] || 'text-white';
-                logEntry.innerHTML = `[${timestamp}] [${type}] ${message}`;
+                logEntry.textContent = `[${timestamp}] [${type}] ${message}`;
                 
                 logs.appendChild(logEntry);
                 logs.scrollTop = logs.scrollHeight;
