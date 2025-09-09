@@ -83,11 +83,13 @@
             font-size: 0.7rem;
         }
         .contract-selector {
-            background: rgba(0, 0, 0, 0.5);
-            border: 2px solid #333;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00d4ff;
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 20px;
+            min-height: 200px;
+            position: relative;
         }
         .contract-option {
             background: rgba(255, 255, 255, 0.05);
@@ -138,6 +140,11 @@
 
             <div class="grid lg:grid-cols-2 gap-6" id="contractSelection">
                 <!-- Contract options will be populated here -->
+                <div class="text-center py-8 text-gray-400">
+                    <div class="animate-spin text-2xl mb-2">⏳</div>
+                    <p>Loading contract options...</p>
+                    <p class="text-xs mt-2">If this persists, check browser console for errors</p>
+                </div>
             </div>
         </div>
 
@@ -312,11 +319,34 @@
 
         // Initialize the interface
         function initializeInterface() {
-            renderContractSelection();
+            console.log('🔄 Initializing deployment dashboard interface...');
+            try {
+                renderContractSelection();
+                console.log('✅ Contract selection rendered successfully');
+            } catch (error) {
+                console.error('❌ Failed to initialize interface:', error);
+                document.getElementById('contractSelection').innerHTML = `
+                    <div class="text-red-400 p-4 border border-red-600 rounded-lg">
+                        <h3 class="font-bold mb-2">Initialization Error</h3>
+                        <p>Failed to load deployment interface: ${error.message}</p>
+                        <button onclick="window.location.reload()" class="mt-2 px-4 py-2 bg-red-600 rounded">
+                            Reload Page
+                        </button>
+                    </div>
+                `;
+            }
         }
 
         function renderContractSelection() {
             const container = document.getElementById('contractSelection');
+            
+            if (!container) {
+                console.error('❌ Contract selection container not found!');
+                return;
+            }
+            
+            console.log('📋 Rendering contracts:', Object.keys(CONTRACTS));
+            
             container.innerHTML = Object.entries(CONTRACTS).map(([key, contract]) => `
                 <div class="contract-option" onclick="selectContract('${key}')" id="contract-${key}">
                     <div class="flex items-start justify-between mb-3">
@@ -539,8 +569,51 @@
             }
         }
 
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', initializeInterface);
+        // Check dependencies and initialize
+        function checkDependencies() {
+            console.log('🔍 Checking dependencies...');
+            
+            const checks = {
+                ethers: typeof ethers !== 'undefined',
+                contractConfig: typeof CONTRACTS !== 'undefined',
+                tailwind: typeof tailwindcss !== 'undefined' || document.querySelector('[href*="tailwind"]') !== null,
+                fontAwesome: document.querySelector('[href*="font-awesome"]') !== null
+            };
+            
+            console.log('Dependency check results:', checks);
+            
+            if (!checks.ethers) {
+                console.warn('⚠️ Ethers.js not loaded - some features may be limited');
+            }
+            
+            return checks;
+        }
+
+        // Initialize with dependency check
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('📄 DOM Content Loaded');
+            
+            // Add loading indicator
+            const loadingDiv = document.createElement('div');
+            loadingDiv.id = 'loadingIndicator';
+            loadingDiv.className = 'fixed top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-lg z-50';
+            loadingDiv.textContent = '⏳ Loading deployment dashboard...';
+            document.body.appendChild(loadingDiv);
+            
+            // Check dependencies
+            checkDependencies();
+            
+            // Initialize after short delay to ensure all scripts loaded
+            setTimeout(() => {
+                initializeInterface();
+                
+                // Remove loading indicator
+                const loader = document.getElementById('loadingIndicator');
+                if (loader) {
+                    loader.remove();
+                }
+            }, 1000);
+        });
     </script>
 </body>
 </html>
