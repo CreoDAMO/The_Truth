@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -286,14 +285,59 @@
                 }
             },
             TruthPartThree: {
-                name: "Part Three Blackpaper NFT",
-                description: "Extended collection",
+                name: "Truth Part Three - Blackpaper NFT",
+                description: "Foundation-first legal architecture",
                 supply: "444 editions",
-                price: "0.0444 ETH (~$177)",
+                price: "0.4787 ETH (~$1777)",
                 ipfsAssets: {
                     metadata: "ipfs://YOUR_PART_THREE_METADATA_ROOT_CID",
-                    coverImage: "ipfs://YOUR_PART_THREE_COVER_CID",
-                    documentPDF: "ipfs://YOUR_PART_THREE_PDF_CID"
+                    coverImage: "ipfs://bafybeib2ujzv6k3m5t4acypn7xs3nufobsiytyrcnxh6aeevrodbuuinwu",
+                    audioMP3: "ipfs://bafybeihzptekqfp7fxcfwzi7bkh6ggwo3lmuzsrczv3k7gslktj6fh25di",
+                    documentPDF: "ipfs://bafybeicrpqrpazlwhyi4dzgw45ol2rmoo6sg4sjmbd4av53wk7zgzzxbiy",
+                    comic1: "ipfs://bafybeih4fwch34ot7wiz2m5wc5cvvwez5itpnkqanhcehyj4735kg4yntq",
+                    comic2: "ipfs://bafybeianuakdbawhlygcdx6dn5oqpifms7j3va4h4dwsbvjljr4cmqnuzm",
+                    comic3: "ipfs://bafybeihimxklbqmdi7ugtkvorblvzxers253le2lgvaqxxnfrhhzfuuyii"
+                }
+            },
+            BlackPrintNFT: {
+                name: "The BlackPrint NFT",
+                description: "Complete blueprint documentation",
+                supply: "TBD editions",
+                price: "TBD",
+                status: "Ready for Contract Creation",
+                ipfsAssets: {
+                    metadata: "ipfs://YOUR_BLACKPRINT_METADATA_ROOT_CID",
+                    coverImage: "ipfs://bafybeidlcofglxdcnzpvzx5bbfbbp4ck6lqr2xdajz6fcgxeiwxkbwvgra",
+                    documentPDF: "ipfs://bafybeibnhgzzujrlrplwmcdqydnrqwz3hy6kbfkdbxohdqfv7vq4ikdh6y",
+                    audioMP3: "ipfs://bafybeieadirqo7w7jlzlfyekvjotdyh5gvqjgryqgowepn26y77m3tqm2a",
+                    videoMP4: "ipfs://bafybeibtftxgpxjhtqwbfbubhqzptnxmq6wpj3jkllp2cxeq7mqjy5uqku"
+                }
+            },
+            FiveActsNFT: {
+                name: "The Five Acts NFT",
+                description: "Complete five-act narrative",
+                supply: "TBD editions", 
+                price: "TBD",
+                status: "Ready for Contract Creation",
+                ipfsAssets: {
+                    metadata: "ipfs://YOUR_FIVE_ACTS_METADATA_ROOT_CID",
+                    coverImage: "ipfs://bafybeihe4k2vqobbmqnhfimqxpbpddbcv4h5r4j7sxhj3dqwfhtncmrfzu",
+                    audioMP3: "ipfs://bafybeidz5c2azvk77mjfwnjphxtlnpvxnefzjmvglnwqdlmm374hwqk6ra",
+                    videoMP4: "ipfs://bafybeihmgc5jvr6cq3jlhtdvscj5y77hv5afvbnhdvoydjawfuzlj6faqm"
+                }
+            },
+            ImmortalizedDocsNFT: {
+                name: "Immortalized Documentations NFT",
+                description: "Permanent documentation archive",
+                supply: "TBD editions",
+                price: "TBD", 
+                status: "Ready for Contract Creation",
+                ipfsAssets: {
+                    metadata: "ipfs://YOUR_IMMORTALIZED_METADATA_ROOT_CID",
+                    coverImage: "ipfs://bafybeidx5z3avjtxkupvdtv6nqd3uy3e4j2nvqwzd6khpfrfnxzqobgaeu",
+                    centerImage: "ipfs://bafybeifd3pzgkgzadfgitqqxxgpbp4aedvslpzqpazgvkajl6zt3xxrwdm",
+                    documentPDF: "ipfs://bafybeif5lhqmz7e6f6hvbz3cfszcdj66qeofixplcnqrjzf5uvvwkrntjy",
+                    videoMP4: "ipfs://bafybeife4wnjldltpljyqkm6d7vbzdnpccvewvqeev7j2aw5jxh2plygei"
                 }
             },
             PaymentSplitter: {
@@ -320,14 +364,14 @@
 
         function renderContractSelection() {
             const container = document.getElementById('contractSelection');
-            
+
             if (!container) {
                 console.error('❌ Contract selection container not found!');
                 return;
             }
-            
+
             console.log('📋 Rendering contracts:', Object.keys(CONTRACTS));
-            
+
             container.innerHTML = Object.entries(CONTRACTS).map(([key, contract]) => `
                 <div class="contract-option deployment-card" onclick="selectContract('${key}')" id="contract-${key}">
                     <div class="flex items-start justify-between mb-3">
@@ -530,7 +574,7 @@
         function addLog(type, message, level = 'info') {
             const container = document.getElementById('deploymentLogs');
             if (!container) return;
-            
+
             const time = new Date().toLocaleTimeString();
             const colors = {
                 success: 'text-green-400',
