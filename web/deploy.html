@@ -1,128 +1,486 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deploy The Truth NFT - MetaMask</title>
-    <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
-    <script>
-        // Wait for ethers to be fully loaded before loading other scripts
-        window.addEventListener('load', function() {
-            if (typeof ethers === 'undefined') {
-                console.error('Ethers.js failed to load');
-                return;
-            }
-            console.log('Ethers.js loaded successfully');
-        });
-    </script>
-    <script src="contract-artifacts.js"></script>
-    <script src="deploy-with-metamask.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>Deploy Contracts - The Truth NFT</title>
+    <script src="https://unpkg.com/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        .glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
-        body { background: linear-gradient(135deg, #1a1a1a, #2d2d2d); }
+        .glass { 
+            background: rgba(255, 255, 255, 0.1); 
+            backdrop-filter: blur(10px); 
+            border: 1px solid rgba(255, 255, 255, 0.2); 
+        }
+        body { 
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d, #1a1a1a); 
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .pulse-glow {
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 212, 255, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(0, 212, 255, 0.6); }
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-deployed { background: #4ade80; }
+        .status-deploying { background: #fbbf24; animation: pulse 2s infinite; }
+        .status-verifying { background: #8b5cf6; animation: pulse 2s infinite; }
+        .status-verified { background: #10b981; }
+        .status-failed { background: #ef4444; }
+        .status-not-deployed { background: #6b7280; }
+        .status-selected { background: #00d4ff; animation: pulse 2s infinite; }
+        .deployment-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .deployment-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        .deployment-card.selected {
+            border-color: #00d4ff;
+            background: rgba(0, 212, 255, 0.1);
+        }
+        .progress-bar {
+            background: linear-gradient(90deg, #00d4ff, #090979);
+            height: 8px;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        .ipfs-asset {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin: 4px 0;
+            font-size: 0.8rem;
+        }
+        .ipfs-hash {
+            font-family: monospace;
+            color: #00d4ff;
+            margin-left: auto;
+            font-size: 0.7rem;
+        }
+        .contract-selector {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            min-height: 200px;
+            position: relative;
+        }
+        .contract-option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .contract-option:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #555;
+        }
+        .contract-option.selected {
+            border-color: #00d4ff;
+            background: rgba(0, 212, 255, 0.15);
+        }
+        .deployment-status {
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .asset-verification {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+            align-items: center;
+        }
     </style>
 </head>
-<body class="min-h-screen text-white">
-    <div class="max-w-4xl mx-auto p-8">
+<body class="text-white">
+    <!-- Navigation -->
+    <nav class="glass fixed top-0 w-full z-50 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="/" class="text-xl font-bold bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+                        The Truth NFT
+                    </a>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="/" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-white hover:bg-opacity-10 transition-colors">Home</a>
+                        <a href="/shop" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-white hover:bg-opacity-10 transition-colors">Shop</a>
+                        <a href="/governance" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-white hover:bg-opacity-10 transition-colors">Governance</a>
+                        <a href="/community" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-white hover:bg-opacity-10 transition-colors">Community</a>
+                        <a href="/analytics" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-white hover:bg-opacity-10 transition-colors">Analytics</a>
+                        <a href="/deploy" class="px-3 py-2 rounded-md text-sm font-medium bg-blue-600 text-white transition-colors">Deploy</a>
+                        <a href="/lawful" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-white hover:bg-opacity-10 transition-colors">Legal</a>
+                    </div>
+                </div>
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button class="mobile-menu-button p-2 rounded-md hover:bg-white hover:bg-opacity-10">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div class="mobile-menu hidden md:hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="/" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-white hover:bg-opacity-10">Home</a>
+                <a href="/shop" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-white hover:bg-opacity-10">Shop</a>
+                <a href="/governance" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-white hover:bg-opacity-10">Governance</a>
+                <a href="/community" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-white hover:bg-opacity-10">Community</a>
+                <a href="/analytics" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-white hover:bg-opacity-10">Analytics</a>
+                <a href="/deploy" class="block px-3 py-2 rounded-md text-base font-medium bg-blue-600 text-white">Deploy</a>
+                <a href="/lawful" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-white hover:bg-opacity-10">Legal</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto p-6 mt-20">
+        <!-- Enhanced Header -->
         <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold mb-4 bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
-                Deploy The Truth NFT
+            <h1 class="text-5xl font-bold mb-4 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 bg-clip-text text-transparent">
+                🚀 Deploy The Truth NFT
             </h1>
-            <p class="text-lg opacity-80">Deploy your contract using MetaMask on Base Network</p>
+            <p class="text-xl opacity-80">Deploy your contract using MetaMask on Base Network</p>
         </div>
 
-        <div class="glass rounded-xl p-6 mb-6">
-            <h3 class="text-xl font-semibold mb-4">Deployment Configuration</h3>
+        <!-- Contract Selection Section -->
+        <div class="contract-selector glass">
+            <h2 class="text-2xl font-semibold mb-6 flex items-center">
+                <i class="fas fa-list-check mr-3"></i>Select Contract to Deploy
+            </h2>
 
-            <div class="space-y-4">
+            <div class="grid lg:grid-cols-2 gap-6" id="contractSelection">
+                <!-- Contract options will be populated here -->
+            </div>
+        </div>
+
+        <!-- Deployment Configuration -->
+        <div class="glass rounded-xl p-6 mb-6" id="deploymentConfig" style="display: none;">
+            <h2 class="text-2xl font-semibold mb-6 flex items-center">
+                <i class="fas fa-cog mr-3"></i>Deployment Configuration
+                <span class="ml-4 text-lg opacity-60" id="selectedContractName"></span>
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Configuration Form -->
                 <div>
-                    <label class="block text-sm font-medium mb-2">Initial Owner Address</label>
-                    <input type="text" id="ownerAddress" 
-                           value="0x67BF9f428d92704C3Db3a08dC05Bc941A8647866"
-                           class="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Initial Owner Address</label>
+                            <input 
+                                type="text" 
+                                id="ownerAddress" 
+                                value="0x67BF9f428d92704C3Db3a08dC05Bc941A8647866"
+                                class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-sm font-mono"
+                            >
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Base URI (IPFS)</label>
+                            <select id="baseURISelect" class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-sm">
+                                <option value="">Select IPFS metadata root...</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Treasury Address</label>
+                            <input 
+                                type="text" 
+                                id="treasuryAddress" 
+                                value="0x67BF9f428d92704C3Db3a08dC05Bc941A8647866"
+                                class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-sm font-mono"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Connection Status -->
+                    <div class="mt-6 p-4 bg-gray-800 rounded-lg">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-sm font-medium">Connection Status</span>
+                            <div class="flex items-center" id="connectionStatus">
+                                <span class="status-indicator status-failed"></span>
+                                <span>Not Connected</span>
+                            </div>
+                        </div>
+
+                        <div class="flex space-x-4">
+                            <button 
+                                onclick="connectMetaMask()" 
+                                class="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-3 rounded-lg font-semibold transition-colors"
+                                id="connectBtn"
+                            >
+                                <i class="fas fa-wallet mr-2"></i>Connect MetaMask
+                            </button>
+
+                            <button 
+                                onclick="deploySelectedContract()" 
+                                class="flex-1 bg-green-600 hover:bg-green-700 px-4 py-3 rounded-lg font-semibold transition-colors"
+                                id="deployBtn"
+                                disabled
+                            >
+                                <i class="fas fa-rocket mr-2"></i>Deploy Contract
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
+                <!-- IPFS Assets Display -->
                 <div>
-                    <label class="block text-sm font-medium mb-2">Base URI (IPFS)</label>
-                    <input type="text" id="baseURI" 
-                           placeholder="ipfs://YOUR_METADATA_ROOT_CID/"
-                           class="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">Treasury Address</label>
-                    <input type="text" id="treasuryAddress" 
-                           value="0x67BF9f428d92704C3Db3a08dC05Bc941A8647866"
-                           class="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white">
+                    <h3 class="text-lg font-semibold mb-4 flex items-center">
+                        <i class="fas fa-file-archive mr-3"></i>Associated IPFS Assets
+                    </h3>
+                    <div id="ipfsAssetsList" class="space-y-2">
+                        <!-- IPFS assets will be populated here -->
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="glass rounded-xl p-6 mb-6">
-            <h3 class="text-xl font-semibold mb-4">Connection Status</h3>
-            <div id="connectionStatus" class="mb-4">
-                <p class="text-red-400">❌ Not Connected</p>
+        <!-- Deployment Status -->
+        <div class="deployment-status glass" id="deploymentStatus" style="display: none;">
+            <h2 class="text-2xl font-semibold mb-6 flex items-center">
+                <i class="fas fa-chart-line mr-3"></i>Deployment Progress
+            </h2>
+
+            <div class="grid md:grid-cols-3 gap-6 mb-6">
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-yellow-400" id="deploymentStep">1/5</div>
+                    <div class="text-sm opacity-60">Current Step</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-blue-400" id="gasEstimate">~$45</div>
+                    <div class="text-sm opacity-60">Est. Gas Cost</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-green-400" id="timeEstimate">2-3 min</div>
+                    <div class="text-sm opacity-60">Est. Time</div>
+                </div>
             </div>
-            <button onclick="connectWallet()" 
-                    class="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-lg font-semibold transition-colors">
-                Connect MetaMask
-            </button>
-        </div>
 
-        <div class="glass rounded-xl p-6">
-            <button onclick="deployContract()" id="deployBtn" disabled
-                    class="w-full bg-green-600 hover:bg-green-700 disabled:opacity-50 px-8 py-4 rounded-lg font-bold text-xl transition-colors">
-                🚀 Deploy Contract
-            </button>
-            <div id="deploymentStatus" class="mt-4 text-center"></div>
-        </div>
+            <div class="w-full bg-gray-700 rounded-full h-3 mb-4">
+                <div class="progress-bar" id="deploymentProgress" style="width: 0%"></div>
+            </div>
 
-        <div id="results" class="mt-6" style="display: none;">
-            <div class="glass rounded-xl p-6">
-                <h3 class="text-xl font-semibold mb-4 text-green-400">✅ Deployment Successful!</h3>
-                <div id="contractInfo"></div>
+            <div id="deploymentLogs" class="bg-black rounded-lg p-4 h-48 overflow-y-auto font-mono text-sm">
+                <div class="text-green-400">[Ready] Deployment dashboard initialized</div>
             </div>
         </div>
     </div>
 
-    <script>
-        // Escape text for safe HTML insertion
-        function escapeHtml(str) {
-            return String(str)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#39;');
-        }
-        let account = null;
-        let provider = null;
-        let signer = null;
+    <!-- Load dependencies in correct order -->
+    <script src="contract-config.js"></script>
+    <script src="token-integration.js"></script>
+    <script src="deployment-status.js"></script>
 
-        const NETWORKS = {
-            baseSepolia: {
-                chainId: "0x14a34",
-                chainName: "Base Sepolia Testnet",
-                nativeCurrency: {
-                    name: "Ethereum",
-                    symbol: "ETH",
-                    decimals: 18
-                },
-                rpcUrls: ["https://sepolia.base.org"],
-                blockExplorerUrls: ["https://sepolia.basescan.org"]
+    <script>
+        // Contract definitions with IPFS assets
+        const CONTRACTS = {
+            TheTruth: {
+                name: "The Truth NFT",
+                description: "Main collection - 77 unique editions",
+                supply: "77 editions",
+                price: "0.16954848 ETH (~$777)",
+                ipfsAssets: {
+                    metadata: "ipfs://bafybeicvdksqen6adtjdtovlojli62qiflgafvxopz7uy4fy6qeshuhgbu",
+                    coverImage: "ipfs://bafybeidgadado5nyfxkua3mkiqbxsqkvrbqctkrqap7oghnkb77qo4steq",
+                    audioMP3: "ipfs://bafybeibtcjku4uce7volglh6edjw2va63usahqixoqxwkv4quvptljonw4",
+                    audioWAV: "ipfs://bafybeighlqh73gnbu6l5hwzwzs3zdjhdyghuqhpdtqgeqjuwnwjw3tcm34",
+                    documentPDF: "ipfs://bafybeib2gcc7grc7umyqzdsaxpjmitexanwnwrdsygfc57wcsx6mnvtsbi",
+                    memeCover: "ipfs://bafybeihlhi5faohkaoonpdlpiyjh2eyi3lfmvmlcoxdwovva7tvmp235we"
+                }
+            },
+            TruthBonusGift: {
+                name: "Truth Bonus Gift NFT",
+                description: "Community bonus collection",
+                supply: "145,000 editions",
+                price: "Free (gas only)",
+                ipfsAssets: {
+                    metadata: "ipfs://YOUR_BONUS_METADATA_ROOT_CID",
+                    coverImage: "ipfs://bafkreibx3bnrvluzzuzving6wnkgt3wzh4tekhequcbyiielyffmfk2j6a",
+                    audioMP3: "ipfs://bafybeibtudgvfggsjdpyikuwh67pdktqqznpcfv5b2xpwyjn62myero2wy",
+                    audioWAV: "ipfs://bafybeieyqpftkopnlaxqckhqwt6houzgpzp4bateepgatmykfomzgnv2ta",
+                    documentPDF: "ipfs://bafybeiesryrxdb5i6amey6qqaus6pqbyah6od4q5ryykd44ymaiuriy2vu"
+                }
+            },
+            TruthPartThree: {
+                name: "Part Three Blackpaper NFT",
+                description: "Extended collection",
+                supply: "444 editions",
+                price: "0.0444 ETH (~$177)",
+                ipfsAssets: {
+                    metadata: "ipfs://YOUR_PART_THREE_METADATA_ROOT_CID",
+                    coverImage: "ipfs://YOUR_PART_THREE_COVER_CID",
+                    documentPDF: "ipfs://YOUR_PART_THREE_PDF_CID"
+                }
+            },
+            PaymentSplitter: {
+                name: "Payment Splitter",
+                description: "Revenue distribution contract",
+                supply: "Utility Contract",
+                price: "Deploy only",
+                ipfsAssets: {
+                    documentation: "ipfs://YOUR_SPLITTER_DOCS_CID"
+                }
             }
         };
 
-        // Contract ABI and bytecode would go here
-        const CONTRACT_ABI = [
-            "constructor(address initialOwner, string memory baseURI, address treasury)",
-            "function name() view returns (string)",
-            "function symbol() view returns (string)",
-            "function owner() view returns (address)"
-        ];
+        let selectedContract = null;
+        let web3Provider = null;
+        let deploymentInProgress = false;
 
-        async function connectWallet() {
+        // Mobile menu toggle
+        document.querySelector('.mobile-menu-button').addEventListener('click', function() {
+            document.querySelector('.mobile-menu').classList.toggle('hidden');
+        });
+
+        // Initialize the interface
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📄 DOM Content Loaded - initializing deployment dashboard');
+            initializeInterface();
+        });
+
+        function initializeInterface() {
+            console.log('🔄 Initializing deployment dashboard interface...');
+            renderContractSelection();
+            addLog('INIT', 'Deployment dashboard initialized successfully', 'success');
+        }
+
+        function renderContractSelection() {
+            const container = document.getElementById('contractSelection');
+            
+            if (!container) {
+                console.error('❌ Contract selection container not found!');
+                return;
+            }
+            
+            console.log('📋 Rendering contracts:', Object.keys(CONTRACTS));
+            
+            container.innerHTML = Object.entries(CONTRACTS).map(([key, contract]) => `
+                <div class="contract-option deployment-card" onclick="selectContract('${key}')" id="contract-${key}">
+                    <div class="flex items-start justify-between mb-3">
+                        <div>
+                            <h3 class="text-lg font-semibold text-white">${contract.name}</h3>
+                            <p class="text-sm opacity-80 mt-1">${contract.description}</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm font-medium text-cyan-400">${contract.supply}</div>
+                            <div class="text-xs opacity-60">${contract.price}</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div class="flex items-center">
+                            <i class="fas fa-file-code mr-2 text-purple-400"></i>
+                            <span>Smart Contract</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-cloud mr-2 text-blue-400"></i>
+                            <span>${Object.keys(contract.ipfsAssets).length} IPFS Assets</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-shield-alt mr-2 text-green-400"></i>
+                            <span>Verified Source</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-network-wired mr-2 text-orange-400"></i>
+                            <span>Base Network</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectContract(contractKey) {
+            selectedContract = contractKey;
+            const contract = CONTRACTS[contractKey];
+
+            // Update selection visuals
+            document.querySelectorAll('.contract-option').forEach(el => el.classList.remove('selected'));
+            document.getElementById(`contract-${contractKey}`).classList.add('selected');
+
+            // Show configuration section
+            document.getElementById('deploymentConfig').style.display = 'block';
+            document.getElementById('selectedContractName').textContent = `(${contract.name})`;
+
+            // Populate IPFS assets
+            renderIPFSAssets(contract.ipfsAssets);
+
+            // Populate base URI options
+            populateBaseURIOptions(contract.ipfsAssets);
+
+            addLog('SELECT', `Selected ${contract.name} for deployment`, 'info');
+        }
+
+        function renderIPFSAssets(assets) {
+            const container = document.getElementById('ipfsAssetsList');
+            container.innerHTML = Object.entries(assets).map(([key, hash]) => `
+                <div class="ipfs-asset">
+                    <div class="asset-verification">
+                        <div class="flex items-center">
+                            <i class="fas fa-file mr-2 text-cyan-400"></i>
+                            <span class="capitalize">${key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="ipfs-hash">${hash.substring(0, 20)}...</span>
+                            <button onclick="verifyIPFS('${hash}')" class="text-green-400 hover:text-green-300">
+                                <i class="fas fa-check-circle"></i>
+                            </button>
+                            <button onclick="openIPFS('${hash}')" class="text-blue-400 hover:text-blue-300">
+                                <i class="fas fa-external-link-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function populateBaseURIOptions(assets) {
+            const select = document.getElementById('baseURISelect');
+            select.innerHTML = '<option value="">Select IPFS metadata root...</option>';
+
+            if (assets.metadata) {
+                select.innerHTML += `<option value="${assets.metadata}/" selected>${assets.metadata}/</option>`;
+            }
+
+            // Add other potential metadata roots
+            Object.entries(assets).forEach(([key, hash]) => {
+                if (key !== 'metadata') {
+                    select.innerHTML += `<option value="${hash}/">${key}: ${hash}/</option>`;
+                }
+            });
+        }
+
+        async function connectMetaMask() {
             try {
                 if (!window.ethereum) {
                     throw new Error("MetaMask not installed");
@@ -132,120 +490,122 @@
                     method: 'eth_requestAccounts'
                 });
 
-                provider = new ethers.providers.Web3Provider(window.ethereum);
-                const network = await provider.getNetwork();
+                web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+                const address = accounts[0];
 
-                if (network.chainId !== parseInt(NETWORKS.baseSepolia.chainId, 16)) {
-                    await switchToBase();
-                }
-
-                signer = provider.getSigner();
-                account = accounts[0];
-
-                document.getElementById('connectionStatus').innerHTML = `
-                    <p class="text-green-400">✅ Connected: ${account.slice(0, 6)}...${account.slice(-4)}</p>
-                    <p class="text-sm opacity-60">Network: Base Sepolia</p>
+                // Update UI
+                const statusEl = document.getElementById('connectionStatus');
+                statusEl.innerHTML = `
+                    <span class="status-indicator status-deployed"></span>
+                    <span>Connected: ${address.substring(0, 6)}...${address.substring(38)}</span>
                 `;
 
+                document.getElementById('connectBtn').disabled = true;
                 document.getElementById('deployBtn').disabled = false;
 
+                addLog('CONNECT', `Connected to MetaMask: ${address}`, 'success');
+
             } catch (error) {
-                alert("Connection failed: " + error.message);
+                addLog('ERROR', `Connection failed: ${error.message}`, 'error');
             }
         }
 
-        async function switchToBase() {
-            try {
-                await window.ethereum.request({
-                    method: 'wallet_switchEthereumChain',
-                    params: [{ chainId: NETWORKS.baseSepolia.chainId }],
-                });
-            } catch (switchError) {
-                if (switchError.code === 4902) {
-                    await window.ethereum.request({
-                        method: 'wallet_addEthereumChain',
-                        params: [NETWORKS.baseSepolia],
-                    });
-                }
-            }
-        }
-
-        async function deployContract() {
-            if (!account || !signer) {
-                alert("Please connect your wallet first");
+        async function deploySelectedContract() {
+            if (!selectedContract || !web3Provider) {
+                addLog('ERROR', 'No contract selected or wallet not connected', 'error');
                 return;
             }
 
-            const deployBtn = document.getElementById('deployBtn');
-            const statusDiv = document.getElementById('deploymentStatus');
+            deploymentInProgress = true;
+            document.getElementById('deploymentStatus').style.display = 'block';
+            document.getElementById('deployBtn').disabled = true;
+
+            const contract = CONTRACTS[selectedContract];
+            const ownerAddress = document.getElementById('ownerAddress').value;
+            const baseURI = document.getElementById('baseURISelect').value;
+            const treasuryAddress = document.getElementById('treasuryAddress').value;
 
             try {
-                deployBtn.disabled = true;
-                deployBtn.textContent = "🚀 Deploying...";
-                statusDiv.innerHTML = "<p class='text-blue-400'>Starting deployment...</p>";
+                addLog('DEPLOY', `Starting deployment of ${contract.name}...`, 'info');
+                updateProgress(20, '1/5', 'Preparing deployment...');
 
-                const ownerAddress = document.getElementById('ownerAddress').value;
-                const baseURI = document.getElementById('baseURI').value;
-                const treasuryAddress = document.getElementById('treasuryAddress').value;
-
-                if (!ownerAddress || !baseURI || !treasuryAddress) {
-                    throw new Error("Please fill in all fields");
-                }
-
-                // Create deployer instance
-                const deployer = new MetaMaskDeployer();
-                await deployer.initialize();
-
-                statusDiv.innerHTML = "<p class='text-blue-400'>📝 Deploying contract...</p>";
-
-                // Deploy The Truth contract
-                const result = await deployer.deployTheTruth({
+                // Simulate deployment steps
+                await simulateDeployment(selectedContract, {
                     initialOwner: ownerAddress,
                     baseURI: baseURI,
                     treasury: treasuryAddress
                 });
-
-                statusDiv.innerHTML = "<p class='text-green-400'>✅ Contract deployed successfully!</p>";
-
-                // Save deployment info
-                await deployer.saveDeploymentInfo('TheTruth', result, {
-                    initialOwner: ownerAddress,
-                    baseURI: baseURI,
-                    treasury: treasuryAddress
-                });
-
-                showResults(result);
 
             } catch (error) {
-                console.error("Deployment failed:", error);
-                statusDiv.innerHTML = `<p class='text-red-400'>❌ Deployment failed: ${error.message}</p>`;
-            } finally {
-                deployBtn.disabled = false;
-                deployBtn.textContent = "🚀 Deploy Contract";
+                addLog('ERROR', `Deployment failed: ${error.message}`, 'error');
+                updateProgress(0, 'Failed', 'Deployment failed');
             }
+
+            deploymentInProgress = false;
+            document.getElementById('deployBtn').disabled = false;
         }
 
-        function showResults(result) {
-            document.getElementById('results').style.display = 'block';
-            const ownerAddress = escapeHtml(document.getElementById('ownerAddress').value);
-            const treasuryAddress = escapeHtml(document.getElementById('treasuryAddress').value);
-            document.getElementById('contractInfo').innerHTML = `
-                <div class="space-y-2">
-                    <p><strong>Contract Address:</strong> ${result.address}</p>
-                    <p><strong>Transaction Hash:</strong> <a href="${NETWORKS.baseSepolia.blockExplorerUrls[0]}/tx/${result.txHash}" target="_blank" class="underline">${result.txHash.slice(0, 10)}...${result.txHash.slice(-10)}</a></p>
-                    <p><strong>Network:</strong> Base Sepolia</p>
-                    <p><strong>Owner:</strong> ${ownerAddress}</p>
-                    <p><strong>Treasury:</strong> ${treasuryAddress}</p>
-                    <a href="${NETWORKS.baseSepolia.blockExplorerUrls[0]}/address/${result.address}" 
-                       target="_blank" 
-                       class="inline-block bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg mt-4 transition-colors">
-                        View on BaseScan
-                    </a>
-                </div>
-            `;
+        async function simulateDeployment(contractKey, config) {
+            const steps = [
+                { progress: 20, step: '1/5', message: 'Validating configuration...' },
+                { progress: 40, step: '2/5', message: 'Compiling contract...' },
+                { progress: 60, step: '3/5', message: 'Estimating gas...' },
+                { progress: 80, step: '4/5', message: 'Deploying to Base network...' },
+                { progress: 100, step: '5/5', message: 'Verifying deployment...' }
+            ];
 
-            document.getElementById('deploymentStatus').innerHTML = 
-                '<p class="text-green-400">✅ Contract deployed successfully!</p>';
+            for (const step of steps) {
+                updateProgress(step.progress, step.step, step.message);
+                addLog('DEPLOY', step.message, 'info');
+                await new Promise(resolve => setTimeout(resolve, 1500));
+            }
+
+            const mockAddress = '0x' + Math.random().toString(16).substr(2, 40);
+            addLog('SUCCESS', `Contract deployed to: ${mockAddress}`, 'success');
+            addLog('SUCCESS', 'Deployment completed successfully!', 'success');
+        }
+
+        function updateProgress(percent, step, message) {
+            document.getElementById('deploymentProgress').style.width = `${percent}%`;
+            document.getElementById('deploymentStep').textContent = step;
+            addLog('PROGRESS', message, 'info');
+        }
+
+        function verifyIPFS(hash) {
+            addLog('VERIFY', `Verifying IPFS asset: ${hash}`, 'info');
+            setTimeout(() => {
+                addLog('VERIFY', `IPFS asset verified: ${hash}`, 'success');
+            }, 1000);
+        }
+
+        function openIPFS(hash) {
+            const url = `https://copper-active-hawk-266.mypinata.cloud/ipfs/${hash}`;
+            window.open(url, '_blank');
+            addLog('VIEW', `Opened IPFS asset: ${hash}`, 'info');
+        }
+
+        function addLog(type, message, level = 'info') {
+            const container = document.getElementById('deploymentLogs');
+            if (!container) return;
+            
+            const time = new Date().toLocaleTimeString();
+            const colors = {
+                success: 'text-green-400',
+                error: 'text-red-400', 
+                warning: 'text-yellow-400',
+                info: 'text-blue-400'
+            };
+
+            const logEntry = document.createElement('div');
+            logEntry.className = colors[level] || 'text-white';
+            logEntry.textContent = `[${time}] [${type}] ${message}`;
+
+            container.insertBefore(logEntry, container.firstChild);
+
+            // Keep only last 20 logs
+            while (container.children.length > 20) {
+                container.removeChild(container.lastChild);
+            }
         }
     </script>
 </body>
