@@ -77,5 +77,9 @@ args = "echo \"🔗 Enable GitHub Pages in your repo settings to deploy from /di
 localPort = 5000
 externalPort = 80
 
+[[ports]]
+localPort = 5001
+externalPort = 3000
+
 [agent]
 expertMode = true
