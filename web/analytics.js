@@ -1,555 +1,455 @@
+const { useState, useEffect } = React;
 
-const { useState, useEffect, useRef } = React;
-
-function AnalyticsDashboard() {
-    const [analyticsData, setAnalyticsData] = useState({
-        totalRevenue: 42500,
-        mintingVelocity: [
-            { date: '2025-01-26', mints: 12 },
-            { date: '2025-01-27', mints: 8 },
-            { date: '2025-01-28', mints: 15 },
-            { date: '2025-01-29', mints: 22 },
-            { date: '2025-01-30', mints: 18 },
-            { date: '2025-01-31', mints: 25 },
-            { date: '2025-02-01', mints: 30 }
-        ],
-        geographicDistribution: {
-            'United States': 45,
-            'Canada': 12,
-            'United Kingdom': 8,
-            'Germany': 6,
-            'Japan': 4,
-            'Australia': 3
-        },
-        holderAnalytics: {
-            uniqueHolders: 78,
-            topHolders: [
-                { address: '0x1234567890abcdef1234567890abcdef12345678', count: 5, totalValue: 3885 },
-                { address: '0xabcdef1234567890abcdef1234567890abcdef12', count: 4, totalValue: 3108 },
-                { address: '0x567890abcdef1234567890abcdef1234567890ab', count: 3, totalValue: 2331 },
-                { address: '0xdef1234567890abcdef1234567890abcdef1234', count: 3, totalValue: 2331 },
-                { address: '0x890abcdef1234567890abcdef1234567890abcd', count: 2, totalValue: 1554 }
-            ],
-            holdingDuration: [15, 23, 8, 45, 12, 67, 34]
-        },
-        secondaryMarket: {
-            volume: 15600,
-            averagePrice: 1050,
-            priceHistory: [
-                { date: '2025-01-26', price: 777 },
-                { date: '2025-01-27', price: 850 },
-                { date: '2025-01-28', price: 920 },
-                { date: '2025-01-29', price: 1100 },
-                { date: '2025-01-30', price: 1050 },
-                { date: '2025-01-31', price: 1200 },
-                { date: '2025-02-01', price: 1150 }
-            ]
-        },
-        platformMetrics: {
-            webVisitors: 5200,
-            conversionRate: 0.042,
-            shopSales: 85,
-            nftSales: 57
-        }
+// Enhanced Analytics Dashboard Component
+function AnalyticsApp() {
+    const [loading, setLoading] = useState(true);
+    const [timeframe, setTimeframe] = useState('24h');
+    const [metrics, setMetrics] = useState({
+        totalHolders: 1247,
+        totalVolume: 145.7,
+        avgPrice: 0.169,
+        truthScore: 94.7,
+        translationGap: 67.3,
+        abundanceMultiplier: 13.13,
+        geographicData: [],
+        priceHistory: [],
+        holderGrowth: [],
+        philosophyMetrics: {}
     });
+    const [charts, setCharts] = useState({});
 
-    const [timeframe, setTimeframe] = useState('7d');
-    const [loading, setLoading] = useState(false);
-    const [animateCards, setAnimateCards] = useState(false);
-    const observerRef = useRef();
-
-    // Intersection Observer for scroll animations
+    // Initialize analytics dashboard
     useEffect(() => {
-        observerRef.current = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
-                });
-            },
-            { threshold: 0.1 }
-        );
-
-        return () => {
-            if (observerRef.current) {
-                observerRef.current.disconnect();
-            }
-        };
-    }, []);
-
-    // Animate elements on mount
-    useEffect(() => {
-        setTimeout(() => setAnimateCards(true), 300);
-        
-        // Add fade-in animation to elements
-        const elements = document.querySelectorAll('.fade-in');
-        elements.forEach((el) => {
-            if (observerRef.current) {
-                observerRef.current.observe(el);
-            }
-        });
-    }, []);
-
-    // Fetch analytics data
-    const fetchAnalytics = async () => {
-        setLoading(true);
-        try {
-            const response = await fetch(`/api/analytics?timeframe=${timeframe}`);
-            if (response.ok) {
-                const data = await response.json();
-                setAnalyticsData(data);
-            }
-        } catch (error) {
-            console.log('Using default analytics data:', error.message);
-        } finally {
+        setTimeout(() => {
+            loadAnalytics();
             setLoading(false);
-            setTimeout(() => {
-                initializeCharts();
-            }, 500);
+        }, 1500);
+    }, []);
+
+    // Load analytics data
+    const loadAnalytics = async () => {
+        try {
+            // Simulate API call
+            const data = await simulateAnalyticsAPI();
+            setMetrics(data);
+            initializeCharts(data);
+        } catch (error) {
+            console.error('Analytics load error:', error);
         }
     };
 
-    // Enhanced Chart.js initialization with modern styling
-    const initializeCharts = () => {
-        try {
-            Object.values(Chart.instances || {}).forEach(chart => {
-                if (chart && typeof chart.destroy === 'function') {
-                    chart.destroy();
-                }
+    // Simulate analytics API
+    const simulateAnalyticsAPI = async () => {
+        return {
+            totalHolders: 1247,
+            totalVolume: 145.7,
+            avgPrice: 0.169,
+            truthScore: 94.7,
+            translationGap: 67.3,
+            abundanceMultiplier: 13.13,
+            geographicData: [
+                { country: 'United States', holders: 445, percentage: 35.7 },
+                { country: 'Canada', holders: 187, percentage: 15.0 },
+                { country: 'United Kingdom', holders: 149, percentage: 11.9 },
+                { country: 'Germany', holders: 124, percentage: 9.9 },
+                { country: 'Australia', holders: 99, percentage: 7.9 },
+                { country: 'Netherlands', holders: 87, percentage: 7.0 },
+                { country: 'Other', holders: 156, percentage: 12.6 }
+            ],
+            priceHistory: generatePriceHistory(),
+            holderGrowth: generateHolderGrowth(),
+            philosophyMetrics: {
+                deepAlignment: 23.4,
+                surfaceEngagement: 45.2,
+                institutionalResistance: 18.7,
+                truthSeekers: 12.7
+            },
+            recentSales: [
+                { id: '#1337', price: 0.777, buyer: '0x1234...5678', timestamp: '2 min ago', rarity: 'Legendary' },
+                { id: '#777', price: 0.169, buyer: '0xabcd...efgh', timestamp: '15 min ago', rarity: 'Rare' },
+                { id: '#42', price: 0.234, buyer: '0x9876...1234', timestamp: '1 hour ago', rarity: 'Epic' }
+            ]
+        };
+    };
+
+    // Generate mock price data
+    const generatePriceHistory = () => {
+        const data = [];
+        const basePrice = 0.169;
+        for (let i = 23; i >= 0; i--) {
+            data.push({
+                time: `${i}:00`,
+                price: basePrice + (Math.random() - 0.5) * 0.05,
+                volume: Math.floor(Math.random() * 50) + 10
             });
+        }
+        return data;
+    };
 
-            const chartOptions = {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { 
-                    legend: { 
-                        labels: { 
-                            color: '#ffffff',
-                            font: { family: 'Inter', size: 12, weight: '500' }
-                        }
-                    }
-                },
-                scales: {
-                    x: { 
-                        ticks: { 
-                            color: '#9ca3af',
-                            font: { family: 'Inter', size: 11 }
-                        }, 
-                        grid: { 
-                            color: 'rgba(255,255,255,0.05)',
-                            drawBorder: false
-                        } 
-                    },
-                    y: { 
-                        ticks: { 
-                            color: '#9ca3af',
-                            font: { family: 'Inter', size: 11 }
-                        }, 
-                        grid: { 
-                            color: 'rgba(255,255,255,0.05)',
-                            drawBorder: false
-                        } 
-                    }
-                },
-                elements: {
-                    point: {
-                        radius: 6,
-                        hoverRadius: 8,
-                        backgroundColor: '#fbbf24',
-                        borderColor: '#ffffff',
-                        borderWidth: 2
-                    }
-                }
-            };
+    // Generate holder growth data
+    const generateHolderGrowth = () => {
+        const data = [];
+        let holders = 100;
+        for (let i = 30; i >= 0; i--) {
+            holders += Math.floor(Math.random() * 20) + 5;
+            data.push({
+                date: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toLocaleDateString(),
+                holders: holders,
+                growth: Math.floor(Math.random() * 25) + 5
+            });
+        }
+        return data;
+    };
 
-            // Minting Velocity Chart with enhanced styling
-            const velocityCtx = document.getElementById('velocityChart');
-            if (velocityCtx) {
-                new Chart(velocityCtx, {
+    // Initialize Chart.js charts
+    const initializeCharts = (data) => {
+        // Price Chart
+        if (window.Chart) {
+            const priceCtx = document.getElementById('priceChart');
+            if (priceCtx && !charts.priceChart) {
+                charts.priceChart = new Chart(priceCtx, {
                     type: 'line',
                     data: {
-                        labels: analyticsData.mintingVelocity.map(d => d.date),
+                        labels: data.priceHistory.map(d => d.time),
                         datasets: [{
-                            label: 'Daily Mints',
-                            data: analyticsData.mintingVelocity.map(d => d.mints),
+                            label: 'Price (ETH)',
+                            data: data.priceHistory.map(d => d.price),
                             borderColor: '#fbbf24',
                             backgroundColor: 'rgba(251, 191, 36, 0.1)',
-                            fill: true,
-                            tension: 0.4,
                             borderWidth: 3,
-                            pointBackgroundColor: '#fbbf24',
-                            pointBorderColor: '#ffffff',
-                            pointBorderWidth: 2,
-                            pointRadius: 6,
-                            pointHoverRadius: 8
-                        }]
-                    },
-                    options: chartOptions
-                });
-            }
-
-            // Revenue Chart with gradient bars
-            const revenueCtx = document.getElementById('revenueChart');
-            if (revenueCtx) {
-                new Chart(revenueCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['NFT Sales', 'Shop Sales', 'Royalties', 'Secondary'],
-                        datasets: [{
-                            label: 'Revenue (USD)',
-                            data: [
-                                analyticsData.platformMetrics.nftSales * 777,
-                                analyticsData.platformMetrics.shopSales * 55,
-                                analyticsData.totalRevenue * 0.1,
-                                analyticsData.secondaryMarket.volume
-                            ],
-                            backgroundColor: [
-                                'linear-gradient(135deg, #3b82f6, #1d4ed8)',
-                                'linear-gradient(135deg, #10b981, #047857)',
-                                'linear-gradient(135deg, #8b5cf6, #6d28d9)',
-                                'linear-gradient(135deg, #f59e0b, #d97706)'
-                            ],
-                            borderRadius: 8,
-                            borderSkipped: false
-                        }]
-                    },
-                    options: {
-                        ...chartOptions,
-                        scales: {
-                            ...chartOptions.scales,
-                            y: {
-                                ...chartOptions.scales.y,
-                                beginAtZero: true
-                            }
-                        }
-                    }
-                });
-            }
-
-            // Geographic Distribution with enhanced colors
-            const geoCtx = document.getElementById('geoChart');
-            if (geoCtx) {
-                const countries = Object.keys(analyticsData.geographicDistribution);
-                const counts = Object.values(analyticsData.geographicDistribution);
-
-                new Chart(geoCtx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: countries,
-                        datasets: [{
-                            data: counts,
-                            backgroundColor: [
-                                '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6',
-                                '#06b6d4', '#84cc16', '#f97316', '#ec4899', '#6366f1'
-                            ],
-                            borderWidth: 0,
-                            hoverOffset: 8
+                            fill: true,
+                            tension: 0.4
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        cutout: '60%',
-                        plugins: { 
-                            legend: { 
-                                labels: { 
-                                    color: '#ffffff',
-                                    font: { family: 'Inter', size: 12, weight: '500' },
-                                    padding: 20
-                                },
-                                position: 'bottom'
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { 
+                                grid: { color: 'rgba(255,255,255,0.1)' },
+                                ticks: { color: '#ffffff' }
+                            },
+                            x: { 
+                                grid: { color: 'rgba(255,255,255,0.1)' },
+                                ticks: { color: '#ffffff' }
                             }
                         }
                     }
                 });
             }
-        } catch (error) {
-            console.error('Chart initialization error:', error);
+
+            // Holder Growth Chart
+            const holderCtx = document.getElementById('holderChart');
+            if (holderCtx && !charts.holderChart) {
+                charts.holderChart = new Chart(holderCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.holderGrowth.slice(-7).map(d => d.date),
+                        datasets: [{
+                            label: 'New Holders',
+                            data: data.holderGrowth.slice(-7).map(d => d.growth),
+                            backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                            borderColor: '#3b82f6',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { 
+                                grid: { color: 'rgba(255,255,255,0.1)' },
+                                ticks: { color: '#ffffff' }
+                            },
+                            x: { 
+                                grid: { color: 'rgba(255,255,255,0.1)' },
+                                ticks: { color: '#ffffff' }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Philosophy Metrics Doughnut
+            const philosophyCtx = document.getElementById('philosophyChart');
+            if (philosophyCtx && !charts.philosophyChart) {
+                charts.philosophyChart = new Chart(philosophyCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Deep Alignment', 'Surface Engagement', 'Institutional Resistance', 'Truth Seekers'],
+                        datasets: [{
+                            data: Object.values(data.philosophyMetrics),
+                            backgroundColor: [
+                                '#10b981',
+                                '#3b82f6', 
+                                '#ef4444',
+                                '#fbbf24'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { 
+                                position: 'bottom',
+                                labels: { color: '#ffffff' }
+                            }
+                        }
+                    }
+                });
+            }
         }
     };
 
-    useEffect(() => {
-        fetchAnalytics();
-    }, [timeframe]);
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-blue-900 flex items-center justify-center">
+                <div className="text-center">
+                    <div className="relative mb-8">
+                        <div className="animate-spin rounded-full h-20 w-20 border-4 border-transparent border-t-yellow-400 border-r-yellow-400 mx-auto"></div>
+                        <div className="absolute inset-0 rounded-full h-20 w-20 border-4 border-transparent border-b-orange-400 border-l-orange-400 mx-auto animate-spin" style={{animationDirection: 'reverse', animationDuration: '1.5s'}}></div>
+                    </div>
+                    <h2 className="text-2xl font-bold text-gradient mb-4">Initializing Analytics Engine</h2>
+                    <p className="text-gray-400">Loading ecosystem metrics and blockchain data...</p>
+                    <div className="mt-6 flex justify-center space-x-2">
+                        <div className="w-2 h-2 bg-yellow-400 rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-orange-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                        <div className="w-2 h-2 bg-red-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
-    const formatCurrency = (amount) => {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            notation: 'compact',
-            compactDisplay: 'short'
-        }).format(amount);
-    };
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-blue-900">
+            {/* Advanced Navigation */}
+            <nav className="nav-glass fixed top-0 left-0 right-0 z-50 bg-black/40 backdrop-blur-sm border-b border-purple-500/30 p-4">
+                <div className="max-w-7xl mx-auto flex justify-between items-center">
+                    <div className="flex items-center space-x-4">
+                        <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500 rounded-2xl flex items-center justify-center text-white font-bold text-xl shadow-lg floating">
+                            📊
+                        </div>
+                        <div>
+                            <h2 className="text-xl font-bold text-gradient">Truth Analytics</h2>
+                            <p className="text-xs text-gray-400">Real-time ecosystem insights</p>
+                        </div>
+                    </div>
+                    <div className="flex gap-3">
+                        <a href="/" className="px-4 py-2 glass rounded-xl transition-all duration-300 hover:scale-105 text-sm font-medium">Home</a>
+                        <a href="/governance" className="px-4 py-2 glass rounded-xl transition-all duration-300 hover:scale-105 text-sm font-medium">Governance</a>
+                        <a href="/community" className="px-4 py-2 glass rounded-xl transition-all duration-300 hover:scale-105 text-sm font-medium">Community</a>
+                        <a href="/deployment-dashboard" className="px-4 py-2 glass rounded-xl transition-all duration-300 hover:scale-105 text-sm font-medium">Deploy</a>
+                    </div>
+                </div>
+            </nav>
 
-    const formatPercentage = (value) => {
-        return (value * 100).toFixed(2) + '%';
-    };
+            <div className="pt-24 px-6 pb-12">
+                {/* Header */}
+                <div className="text-center mb-12 fade-in">
+                    <h1 className="text-6xl font-black mb-6 text-gradient floating">The Truth Analytics</h1>
+                    <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
+                        "Where data meets philosophy - real-time insights into the translation gap"
+                    </p>
 
-    return React.createElement('div', { className: "min-h-screen text-white" },
-        // Enhanced Navigation Bar
-        React.createElement('nav', { className: "nav-glass fixed top-0 left-0 right-0 z-50 p-4" },
-            React.createElement('div', { className: "max-w-7xl mx-auto flex justify-between items-center" },
-                React.createElement('div', { className: "flex items-center space-x-4" },
-                    React.createElement('div', { className: "w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg" }),
-                    React.createElement('h2', { className: "text-xl font-bold text-gradient" }, "The Truth Analytics")
-                ),
-                React.createElement('div', { className: "flex gap-3" },
-                    ['Home', 'Governance', 'Community'].map((item, index) => 
-                        React.createElement('a', { 
-                            key: item,
-                            href: item === 'Home' ? '/' : `/${item.toLowerCase()}`, 
-                            className: "px-4 py-2 glass rounded-lg transition-all duration-300 hover:scale-105 text-sm font-medium" 
-                        }, item)
-                    )
-                )
-            )
-        ),
-        
-        React.createElement('div', { className: "pt-20 p-6" },
-            React.createElement('div', { className: "max-w-7xl mx-auto" },
-                // Enhanced Header
-                React.createElement('div', { className: "text-center mb-12 fade-in" },
-                    React.createElement('h1', { 
-                        className: "text-6xl font-bold text-gradient mb-4 floating" 
-                    }, "The Truth Analytics"),
-                    React.createElement('p', { className: "text-xl text-gray-300 font-medium mb-2" }, "Real-time ecosystem performance"),
-                    React.createElement('p', { className: "text-lg text-gray-400" }, "Powered by advanced Web3 analytics"),
-                    
-                    // Enhanced Timeframe Selector
-                    React.createElement('div', { className: "flex justify-center gap-2 mt-8 flex-wrap" },
-                        ['24h', '7d', '30d', '90d', 'all'].map((period) =>
-                            React.createElement('button', {
-                                key: period,
-                                onClick: () => setTimeframe(period),
-                                className: `px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
-                                    timeframe === period
-                                        ? 'btn-primary pulse-glow'
+                    {/* Timeframe Selector */}
+                    <div className="flex justify-center gap-2 mt-8">
+                        {['1h', '24h', '7d', '30d', 'All'].map(period => (
+                            <button
+                                key={period}
+                                onClick={() => setTimeframe(period)}
+                                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
+                                    timeframe === period 
+                                        ? 'bg-yellow-600 text-white shadow-lg scale-105' 
                                         : 'glass hover:scale-105'
-                                }`
-                            }, period.toUpperCase())
-                        )
-                    )
-                ),
+                                }`}
+                            >
+                                {period}
+                            </button>
+                        ))}
+                    </div>
+                </div>
 
-                loading ? 
-                    React.createElement('div', { className: "text-center py-20" },
-                        React.createElement('div', { className: "relative inline-block" },
-                            React.createElement('div', { className: "animate-spin rounded-full h-16 w-16 border-4 border-transparent border-t-yellow-400 border-r-yellow-400" }),
-                            React.createElement('div', { className: "absolute inset-0 animate-spin rounded-full h-16 w-16 border-4 border-transparent border-b-orange-400 border-l-orange-400", style: { animationDirection: 'reverse', animationDuration: '1.5s' } })
-                        ),
-                        React.createElement('p', { className: "text-xl mt-6 text-gradient" }, "Loading analytics...")
-                    ) :
-                    React.createElement('div', null,
-                        // Enhanced Key Metrics Row
-                        React.createElement('div', { className: "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8 mb-12 fade-in" },
-                            [
-                                { title: "Total Revenue", value: formatCurrency(analyticsData.totalRevenue), subtitle: "Across all channels", gradient: "gradient-card", icon: "💰" },
-                                { title: "Unique Collectors", value: analyticsData.holderAnalytics.uniqueHolders, subtitle: "NFT holders", gradient: "gradient-green", icon: "👥" },
-                                { title: "Conversion Rate", value: formatPercentage(analyticsData.platformMetrics.conversionRate), subtitle: "Visitors to buyers", gradient: "gradient-blue", icon: "📈" },
-                                { title: "Secondary Volume", value: formatCurrency(analyticsData.secondaryMarket.volume), subtitle: "Resale market", gradient: "gradient-purple", icon: "🔄" }
-                            ].map((metric, index) =>
-                                React.createElement('div', { 
-                                    key: index,
-                                    className: `glass ${metric.gradient} rounded-2xl p-8 metric-card floating`,
-                                    style: { animationDelay: `${index * 0.1}s` }
-                                },
-                                    React.createElement('div', { className: "flex items-center justify-between mb-4" },
-                                        React.createElement('span', { className: "text-3xl" }, metric.icon),
-                                        React.createElement('div', { className: "w-12 h-1 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full" })
-                                    ),
-                                    React.createElement('h3', { className: "text-lg font-semibold text-gray-300 mb-3" }, metric.title),
-                                    React.createElement('p', { className: "text-4xl font-bold mb-2 text-gradient" }, metric.value),
-                                    React.createElement('p', { className: "text-sm text-gray-400" }, metric.subtitle)
-                                )
-                            )
-                        ),
+                {/* Key Metrics Grid */}
+                <div className="masonry-grid mb-12 fade-in">
+                    <div className="glass metric-card gradient-card floating" style={{'--accent-color': '#fbbf24'}}>
+                        <div className="text-center">
+                            <div className="text-4xl mb-4">👥</div>
+                            <h3 className="text-lg font-semibold mb-2">Total Holders</h3>
+                            <div className="text-3xl font-bold text-yellow-400 mb-2">{metrics.totalHolders.toLocaleString()}</div>
+                            <div className="text-sm text-green-400">+12.7% this week</div>
+                        </div>
+                    </div>
 
-                        // Enhanced Charts Grid
-                        React.createElement('div', { className: "masonry-grid mb-12 fade-in" },
-                            React.createElement('div', { className: "glass rounded-2xl p-8 floating" },
-                                React.createElement('div', { className: "flex items-center justify-between mb-6" },
-                                    React.createElement('h3', { className: "text-2xl font-bold text-gradient" }, "Minting Velocity"),
-                                    React.createElement('div', { className: "w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center text-black font-bold" }, "📊")
-                                ),
-                                React.createElement('div', { className: "chart-container" },
-                                    React.createElement('canvas', { id: "velocityChart" })
-                                )
-                            ),
-                            React.createElement('div', { className: "glass rounded-2xl p-8 floating" },
-                                React.createElement('div', { className: "flex items-center justify-between mb-6" },
-                                    React.createElement('h3', { className: "text-2xl font-bold text-gradient" }, "Revenue Breakdown"),
-                                    React.createElement('div', { className: "w-12 h-12 bg-gradient-to-br from-green-400 to-blue-500 rounded-xl flex items-center justify-center text-white font-bold" }, "💹")
-                                ),
-                                React.createElement('div', { className: "chart-container" },
-                                    React.createElement('canvas', { id: "revenueChart" })
-                                )
-                            ),
-                            React.createElement('div', { className: "glass rounded-2xl p-8 floating" },
-                                React.createElement('div', { className: "flex items-center justify-between mb-6" },
-                                    React.createElement('h3', { className: "text-2xl font-bold text-gradient" }, "Geographic Distribution"),
-                                    React.createElement('div', { className: "w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-500 rounded-xl flex items-center justify-center text-white font-bold" }, "🌍")
-                                ),
-                                React.createElement('div', { className: "chart-container" },
-                                    React.createElement('canvas', { id: "geoChart" })
-                                )
-                            ),
-                            React.createElement('div', { className: "glass rounded-2xl p-8 floating" },
-                                React.createElement('div', { className: "flex items-center justify-between mb-6" },
-                                    React.createElement('h3', { className: "text-2xl font-bold text-gradient" }, "Top Holders"),
-                                    React.createElement('div', { className: "w-12 h-12 bg-gradient-to-br from-orange-400 to-red-500 rounded-xl flex items-center justify-center text-white font-bold" }, "👑")
-                                ),
-                                React.createElement('div', { className: "space-y-4" },
-                                    analyticsData.holderAnalytics.topHolders.map((holder, index) =>
-                                        React.createElement('div', { 
-                                            key: index, 
-                                            className: "holder-item glass rounded-xl p-4 flex justify-between items-center" 
-                                        },
-                                            React.createElement('div', { className: "flex items-center space-x-4" },
-                                                React.createElement('div', { className: "w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-black font-bold text-sm" }, 
-                                                    `#${index + 1}`
-                                                ),
-                                                React.createElement('div', null,
-                                                    React.createElement('p', { className: "font-semibold text-white" }, 
-                                                        holder.address.slice(0,8) + '...' + holder.address.slice(-6)
-                                                    ),
-                                                    React.createElement('p', { className: "text-sm text-gray-400" }, 
-                                                        holder.count + ' NFTs owned'
-                                                    )
-                                                )
-                                            ),
-                                            React.createElement('p', { className: "text-gradient font-bold text-lg" }, 
-                                                formatCurrency(holder.totalValue)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        ),
+                    <div className="glass metric-card gradient-purple floating-reverse" style={{'--accent-color': '#8b5cf6'}}>
+                        <div className="text-center">
+                            <div className="text-4xl mb-4">💎</div>
+                            <h3 className="text-lg font-semibold mb-2">Total Volume</h3>
+                            <div className="text-3xl font-bold text-purple-400 mb-2">{metrics.totalVolume} ETH</div>
+                            <div className="text-sm text-green-400">+34.2% this week</div>
+                        </div>
+                    </div>
 
-                        // Enhanced LAW Compliance Section
-                        React.createElement('div', { className: "glass rounded-2xl p-8 mb-12 fade-in" },
-                            React.createElement('div', { className: "text-center mb-8" },
-                                React.createElement('h3', { className: "text-3xl font-bold text-gradient mb-4" }, "⚖️ LAW Compliance & Truth Validation"),
-                                React.createElement('p', { className: "text-lg text-gray-300" }, "Real-time legal framework monitoring and philosophical impact metrics")
-                            ),
-                            React.createElement('div', { className: "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8" },
-                                [
-                                    {
-                                        title: "Foundation Status",
-                                        items: [
-                                            { label: "Doctrinal Mapping", value: "100% Complete", color: "text-green-400" },
-                                            { label: "Trust Deed", value: "Executed ✓", color: "text-blue-400" },
-                                            { label: "Treasury Resolution", value: "Active ✓", color: "text-purple-400" },
-                                            { label: "Foundation Score", value: "A+ Rating", color: "text-yellow-400" }
-                                        ]
-                                    },
-                                    {
-                                        title: "Compliance Metrics",
-                                        items: [
-                                            { label: "KYC Verification", value: "94.7%", color: "text-green-400" },
-                                            { label: "Tax ID Status", value: "FL: 23-8019835728-2", color: "text-blue-400" },
-                                            { label: "OFAC Blocks", value: "12 prevented", color: "text-purple-400" },
-                                            { label: "Over-Compliance", value: "147% standard", color: "text-yellow-400" }
-                                        ]
-                                    },
-                                    {
-                                        title: "Economic Validation",
-                                        items: [
-                                            { label: "NFT Premium vs Shop", value: "1,313% markup", color: "text-green-400" },
-                                            { label: "Total Economic Value", value: formatCurrency(analyticsData.totalRevenue * 1.5), color: "text-yellow-400" },
-                                            { label: "Secondary Multiplier", value: (analyticsData.secondaryMarket.averagePrice / 777).toFixed(2) + 'x', color: "text-blue-400" },
-                                            { label: "Market Hypothesis", value: "Validated ✓", color: "text-purple-400" }
-                                        ]
-                                    },
-                                    {
-                                        title: "Truth Impact",
-                                        items: [
-                                            { label: "Institutional Translation", value: "Ongoing", color: "text-orange-400" },
-                                            { label: "Web3 Adoption", value: analyticsData.holderAnalytics.uniqueHolders + ' holders', color: "text-green-400" },
-                                            { label: "Global Reach", value: Object.keys(analyticsData.geographicDistribution).length + ' countries', color: "text-blue-400" },
-                                            { label: "Philosophy Spread", value: analyticsData.platformMetrics.webVisitors + ' visitors', color: "text-yellow-400" }
-                                        ]
-                                    }
-                                ].map((section, sectionIndex) =>
-                                    React.createElement('div', { 
-                                        key: sectionIndex,
-                                        className: "glass rounded-xl p-6 floating",
-                                        style: { animationDelay: `${sectionIndex * 0.1}s` }
-                                    },
-                                        React.createElement('h4', { className: "text-xl font-bold text-gradient mb-6" }, section.title),
-                                        React.createElement('div', { className: "space-y-4" },
-                                            section.items.map((item, itemIndex) =>
-                                                React.createElement('div', { 
-                                                    key: itemIndex,
-                                                    className: "flex justify-between items-center py-2 border-b border-gray-700 last:border-b-0" 
-                                                },
-                                                    React.createElement('span', { className: "text-sm text-gray-300 font-medium" }, item.label + ":"),
-                                                    React.createElement('span', { className: `text-sm font-bold ${item.color}` }, item.value)
-                                                )
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                    )
-            )
-        )
+                    <div className="glass metric-card gradient-blue floating" style={{'--accent-color': '#3b82f6'}}>
+                        <div className="text-center">
+                            <div className="text-4xl mb-4">📈</div>
+                            <h3 className="text-lg font-semibold mb-2">Average Price</h3>
+                            <div className="text-3xl font-bold text-blue-400 mb-2">{metrics.avgPrice} ETH</div>
+                            <div className="text-sm text-green-400">+8.4% this week</div>
+                        </div>
+                    </div>
+
+                    <div className="glass metric-card gradient-green floating-reverse" style={{'--accent-color': '#10b981'}}>
+                        <div className="text-center">
+                            <div className="text-4xl mb-4">🔮</div>
+                            <h3 className="text-lg font-semibold mb-2">Truth Score</h3>
+                            <div className="text-3xl font-bold text-green-400 mb-2">{metrics.truthScore}%</div>
+                            <div className="text-sm text-yellow-400">Philosophical alignment</div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Charts Section */}
+                <div className="grid lg:grid-cols-2 gap-8 mb-12">
+                    <div className="glass rounded-2xl p-8 floating">
+                        <h3 className="text-2xl font-bold mb-6 text-gradient flex items-center">
+                            <span className="mr-3">📊</span>Price History (24h)
+                        </h3>
+                        <div className="chart-container">
+                            <canvas id="priceChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div className="glass rounded-2xl p-8 floating-reverse">
+                        <h3 className="text-2xl font-bold mb-6 text-gradient flex items-center">
+                            <span className="mr-3">👥</span>Holder Growth (7d)
+                        </h3>
+                        <div className="chart-container">
+                            <canvas id="holderChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Philosophy Metrics */}
+                <div className="grid lg:grid-cols-3 gap-8 mb-12">
+                    <div className="lg:col-span-2 glass rounded-2xl p-8 floating">
+                        <h3 className="text-2xl font-bold mb-6 text-gradient flex items-center">
+                            <span className="mr-3">🧠</span>Philosophy Engagement Breakdown
+                        </h3>
+                        <div className="grid md:grid-cols-2 gap-6">
+                            <div className="space-y-4">
+                                <div className="bg-green-900/30 p-4 rounded-lg">
+                                    <h4 className="font-semibold text-green-400 mb-2">Deep Alignment: {metrics.philosophyMetrics.deepAlignment}%</h4>
+                                    <p className="text-sm text-gray-300">Users who truly understand the institutional translation gap</p>
+                                </div>
+                                <div className="bg-blue-900/30 p-4 rounded-lg">
+                                    <h4 className="font-semibold text-blue-400 mb-2">Surface Engagement: {metrics.philosophyMetrics.surfaceEngagement}%</h4>
+                                    <p className="text-sm text-gray-300">Attracted to aesthetics but missing deeper meaning</p>
+                                </div>
+                                <div className="bg-red-900/30 p-4 rounded-lg">
+                                    <h4 className="font-semibold text-red-400 mb-2">Institutional Resistance: {metrics.philosophyMetrics.institutionalResistance}%</h4>
+                                    <p className="text-sm text-gray-300">Actively attempting to "translate" or reframe the truth</p>
+                                </div>
+                                <div className="bg-yellow-900/30 p-4 rounded-lg">
+                                    <h4 className="font-semibold text-yellow-400 mb-2">Truth Seekers: {metrics.philosophyMetrics.truthSeekers}%</h4>
+                                    <p className="text-sm text-gray-300">Genuinely seeking unfiltered reality</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="glass rounded-2xl p-8 floating-reverse">
+                        <h3 className="text-xl font-bold mb-6 text-gradient">Distribution</h3>
+                        <div className="chart-container">
+                            <canvas id="philosophyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Geographic Distribution */}
+                <div className="glass rounded-2xl p-8 mb-12 floating">
+                    <h3 className="text-2xl font-bold mb-6 text-gradient flex items-center">
+                        <span className="mr-3">🌍</span>Global Distribution
+                    </h3>
+                    <div className="grid md:grid-cols-2 gap-8">
+                        <div className="space-y-3">
+                            {metrics.geographicData.map((country, index) => (
+                                <div key={country.country} className="flex items-center justify-between bg-black/30 p-4 rounded-lg hover:bg-black/50 transition-all duration-300 hover:scale-105">
+                                    <span className="font-medium">{country.country}</span>
+                                    <div className="text-right">
+                                        <div className="font-bold text-yellow-400">{country.holders} holders</div>
+                                        <div className="text-sm text-gray-400">{country.percentage}%</div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="space-y-4">
+                            <div className="bg-gradient-to-br from-purple-900/50 to-blue-800/30 p-6 rounded-lg">
+                                <h4 className="font-semibold mb-4">Translation Gap by Region</h4>
+                                <div className="space-y-2">
+                                    <div className="flex justify-between">
+                                        <span>North America:</span>
+                                        <span className="text-red-400">73.2%</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span>Europe:</span>
+                                        <span className="text-yellow-400">45.7%</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span>Asia-Pacific:</span>
+                                        <span className="text-green-400">23.1%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="bg-gradient-to-br from-green-900/50 to-teal-800/30 p-6 rounded-lg">
+                                <h4 className="font-semibold mb-4">Philosophy Adoption</h4>
+                                <div className="text-center">
+                                    <div className="text-3xl font-bold text-green-400 mb-2">{metrics.abundanceMultiplier}x</div>
+                                    <p className="text-sm text-gray-300">Abundance multiplier effect from proper valuation</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Recent Activity */}
+                <div className="glass rounded-2xl p-8 floating-reverse">
+                    <h3 className="text-2xl font-bold mb-6 text-gradient flex items-center">
+                        <span className="mr-3">⚡</span>Recent Sales
+                    </h3>
+                    <div className="space-y-4">
+                        {metrics.recentSales.map((sale, index) => (
+                            <div key={sale.id} className="flex items-center justify-between bg-black/30 p-4 rounded-lg hover:bg-black/50 transition-all duration-300 hover:scale-105 hover:border-l-4 hover:border-yellow-400">
+                                <div className="flex items-center space-x-4">
+                                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center text-white font-bold">
+                                        {sale.id.slice(-2)}
+                                    </div>
+                                    <div>
+                                        <div className="font-semibold">The Truth NFT {sale.id}</div>
+                                        <div className="text-sm text-gray-400">to {sale.buyer}</div>
+                                    </div>
+                                </div>
+                                <div className="text-right">
+                                    <div className="font-bold text-yellow-400">{sale.price} ETH</div>
+                                    <div className="text-sm text-gray-400">{sale.timestamp}</div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 }
 
-// Enhanced initialization with error handling
-function initializeApp() {
-    console.log('Initializing Enhanced Analytics App...');
-    const rootElement = document.getElementById('analytics-root');
-    
-    if (!rootElement) {
-        console.error('Root element not found');
-        return;
-    }
-    
-    if (typeof React === 'undefined' || typeof ReactDOM === 'undefined') {
-        console.error('React libraries not loaded');
-        setTimeout(initializeApp, 1000);
-        return;
-    }
-    
-    try {
-        const root = ReactDOM.createRoot(rootElement);
-        root.render(React.createElement(AnalyticsDashboard));
-        console.log('Enhanced analytics dashboard rendered successfully');
-    } catch (error) {
-        console.error('Error rendering analytics dashboard:', error);
-        rootElement.innerHTML = `
-            <div class="min-h-screen text-white p-8 flex items-center justify-center">
-                <div class="text-center glass rounded-2xl p-12">
-                    <h1 class="text-4xl font-bold text-red-400 mb-6">Analytics Dashboard Error</h1>
-                    <p class="text-lg text-gray-300 mb-6">Unable to load React components. Please refresh the page.</p>
-                    <button onclick="window.location.reload()" class="btn-primary px-8 py-3 rounded-xl">
-                        Refresh Page
-                    </button>
-                </div>
-            </div>
-        `;
-    }
-}
-
-// Multiple initialization strategies
+// Initialize when DOM is ready
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeApp);
+    document.addEventListener('DOMContentLoaded', () => {
+        ReactDOM.render(<AnalyticsApp />, document.getElementById('analytics-root'));
+    });
 } else {
-    initializeApp();
+    ReactDOM.render(<AnalyticsApp />, document.getElementById('analytics-root'));
 }
-
-setTimeout(() => {
-    if (document.getElementById('analytics-root').innerHTML.includes('Loading Analytics Dashboard')) {
-        console.log('Attempting backup initialization...');
-        initializeApp();
-    }
-}, 2000);
-
-// Additional backup
-window.addEventListener('load', () => {
-    setTimeout(initializeApp, 500);
-});
