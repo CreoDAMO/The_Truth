@@ -537,66 +537,57 @@ app.post('/api/create-tax-transaction', async (req, res) => {
 });
 
 // Analytics endpoint
-app.get('/api/analytics', async (req, res) => {
+app.get('/api/analytics/geographic', async (req, res) => {
     try {
-        const { timeframe = '7d' } = req.query;
+        // This would connect to blockchain analytics in production
+        // For now, return empty data structure that will be populated as holders grow
+        const geographicData = [
+            { country: 'United States', holders: 0, percentage: 0 },
+            { country: 'Canada', holders: 0, percentage: 0 },
+            { country: 'United Kingdom', holders: 0, percentage: 0 },
+            { country: 'Germany', holders: 0, percentage: 0 },
+            { country: 'Australia', holders: 0, percentage: 0 },
+            { country: 'Netherlands', holders: 0, percentage: 0 },
+            { country: 'Other', holders: 0, percentage: 0 }
+        ];
 
-        // Mock analytics data with proper structure
-        const analyticsData = {
-            totalRevenue: 42500,
-            mintingVelocity: [
-                { date: '2025-01-26', mints: 12 },
-                { date: '2025-01-27', mints: 8 },
-                { date: '2025-01-28', mints: 15 },
-                { date: '2025-01-29', mints: 22 },
-                { date: '2025-01-30', mints: 18 },
-                { date: '2025-01-31', mints: 25 },
-                { date: '2025-02-01', mints: 30 }
-            ],
-            geographicDistribution: {
-                'United States': 45,
-                'Canada': 12,
-                'United Kingdom': 8,
-                'Germany': 6,
-                'Japan': 4,
-                'Australia': 3
+        res.json(geographicData);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get('/api/analytics/recent-activity', async (req, res) => {
+    try {
+        // This would connect to blockchain events in production
+        // Return empty array until contracts are deployed and events start flowing
+        const recentActivity = [];
+
+        res.json(recentActivity);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get('/api/analytics/contract-data', async (req, res) => {
+    try {
+        // Real contract data from Base network
+        const contractData = {
+            truthToken: {
+                address: '0x8f6cf6f7747e170f4768533b869c339dc3d30a3c',
+                network: 'Base',
+                verified: true
             },
-            holderAnalytics: {
-                uniqueHolders: 78,
-                topHolders: [
-                    { address: '0x1234567890abcdef1234567890abcdef12345678', count: 5, totalValue: 3885 },
-                    { address: '0xabcdef1234567890abcdef1234567890abcdef12', count: 4, totalValue: 3108 },
-                    { address: '0x567890abcdef1234567890abcdef1234567890ab', count: 3, totalValue: 2331 },
-                    { address: '0xdef1234567890abcdef1234567890abcdef1234', count: 3, totalValue: 2331 },
-                    { address: '0x890abcdef1234567890abcdef1234567890abcd', count: 2, totalValue: 1554 }
-                ],
-                holdingDuration: [15, 23, 8, 45, 12, 67, 34]
-            },
-            secondaryMarket: {
-                volume: 15600,
-                averagePrice: 1050,
-                priceHistory: [
-                    { date: '2025-01-26', price: 777 },
-                    { date: '2025-01-27', price: 850 },
-                    { date: '2025-01-28', price: 920 },
-                    { date: '2025-01-29', price: 1100 },
-                    { date: '2025-01-30', price: 1050 },
-                    { date: '2025-01-31', price: 1200 },
-                    { date: '2025-02-01', price: 1150 }
-                ]
-            },
-            platformMetrics: {
-                webVisitors: 5200,
-                conversionRate: 0.042,
-                shopSales: 85,
-                nftSales: 57
+            creatorToken: {
+                address: '0x22b0434e89882f8e6841d340b28427646c015aa7',
+                network: 'Base', 
+                verified: true
             }
         };
 
-        res.json(analyticsData);
+        res.json(contractData);
     } catch (error) {
-        console.error('Analytics error:', error);
-        res.status(500).json({ success: false, error: error.message });
+        res.status(500).json({ error: error.message });
     }
 });
 
