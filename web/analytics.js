@@ -103,8 +103,14 @@ function AnalyticsApp() {
 
     // Initialize Chart.js charts
     const initializeCharts = (data) => {
-        // Price Chart
-        if (window.Chart) {
+        // Wait for Chart.js to be available
+        const tryInitCharts = () => {
+            if (!window.Chart) {
+                setTimeout(tryInitCharts, 100);
+                return;
+            }
+            
+            // Price Chart
             const priceCtx = document.getElementById('priceChart');
             if (priceCtx && !charts.priceChart) {
                 charts.priceChart = new Chart(priceCtx, {
@@ -201,7 +207,9 @@ function AnalyticsApp() {
                     }
                 });
             }
-        }
+        };
+        
+        tryInitCharts();
     };
 
     if (loading) {

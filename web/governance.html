@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Truth - Community Governance</title>
+    <title>The Truth - Lawful Governance Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
     <style>
         * {
             margin: 0;
@@ -14,414 +16,842 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: radial-gradient(ellipse at top, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #1a1a2e 100%);
+            background: radial-gradient(ellipse at center, #0a0a0a 0%, #1a1a2e 20%, #16213e 40%, #0f3460 60%, #1a1a2e 80%, #0a0a0a 100%);
             color: #ffffff;
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* Advanced Glassmorphism */
+        /* Ultra-Modern Glassmorphism */
         .glass {
             background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.125);
+            backdrop-filter: blur(28px) saturate(200%) brightness(1.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             box-shadow: 
-                0 8px 32px rgba(0, 0, 0, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                0 15px 60px rgba(0, 0, 0, 0.5),
+                inset 0 2px 0 rgba(255, 255, 255, 0.12),
+                0 0 0 1px rgba(255, 255, 255, 0.08);
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.320, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+            transition: left 1.2s ease;
         }
 
         .glass:hover {
             background: rgba(255, 255, 255, 0.12);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transform: translateY(-4px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            transform: translateY(-15px) scale(1.02);
             box-shadow: 
-                0 16px 48px rgba(0, 0, 0, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+                0 30px 100px rgba(0, 0, 0, 0.7),
+                inset 0 2px 0 rgba(255, 255, 255, 0.2),
+                0 0 80px rgba(0, 212, 255, 0.3);
         }
 
-        /* Floating Animations */
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-12px); }
+        .glass:hover::before {
+            left: 100%;
         }
 
-        .floating { 
-            animation: float 6s ease-in-out infinite; 
-        }
-
-        /* Pulse Glow Effect */
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 20px rgba(0, 212, 255, 0.3); }
-            50% { box-shadow: 0 0 40px rgba(0, 212, 255, 0.6), 0 0 60px rgba(0, 212, 255, 0.3); }
-        }
-
-        .pulse-glow { 
-            animation: pulse-glow 2s ease-in-out infinite; 
-        }
-
-        /* Modern Typography */
-        .text-gradient {
-            background: linear-gradient(135deg, #00d4ff 0%, #090979 50%, #4CAF50 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        /* Advanced Navigation */
+        /* Enhanced Navigation */
         .nav-glass {
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(20px) saturate(200%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(30px) saturate(250%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            z-index: 50;
-            padding: 1rem;
+            z-index: 100;
+            padding: 1rem 0;
         }
 
-        .governance-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 100px 20px 20px;
+        /* Advanced Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-15px) rotate(0.5deg); }
+            50% { transform: translateY(-10px) rotate(0deg); }
+            75% { transform: translateY(-18px) rotate(-0.5deg); }
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 60px;
-            position: relative;
+        @keyframes floatReverse {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(18px) rotate(-0.5deg); }
+            50% { transform: translateY(10px) rotate(0deg); }
+            75% { transform: translateY(15px) rotate(0.5deg); }
         }
 
-        .header h1 {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            font-weight: 800;
-            letter-spacing: -0.02em;
+        @keyframes pulse {
+            0%, 100% { 
+                box-shadow: 0 0 40px rgba(255, 215, 0, 0.4);
+                transform: scale(1);
+            }
+            50% { 
+                box-shadow: 0 0 80px rgba(255, 215, 0, 0.8);
+                transform: scale(1.03);
+            }
         }
 
-        .header::before {
-            content: '';
-            position: absolute;
-            top: -50px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 4px;
-            background: linear-gradient(90deg, transparent, #00d4ff, transparent);
-            border-radius: 2px;
+        .floating { animation: float 12s ease-in-out infinite; }
+        .floating-reverse { animation: floatReverse 14s ease-in-out infinite; }
+        .pulse-glow { animation: pulse 4s ease-in-out infinite; }
+
+        /* Advanced Gradient Text */
+        .text-gradient {
+            background: linear-gradient(135deg, #FFD700 0%, #00d4ff 25%, #4CAF50 50%, #ff6b6b 75%, #8b5cf6 100%);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientFlow 10s ease-in-out infinite;
         }
 
-        .token-stats {
+        @keyframes gradientFlow {
+            0%, 100% { background-position: 0% 50%; }
+            25% { background-position: 100% 50%; }
+            50% { background-position: 200% 50%; }
+            75% { background-position: 300% 50%; }
+        }
+
+        /* Modern Grid Layout */
+        .governance-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 30px;
-            margin-bottom: 60px;
+            grid-template-columns: 2fr 1fr;
+            grid-gap: 30px;
         }
 
-        .token-card {
-            position: relative;
-            overflow: hidden;
-            border-radius: 20px;
-            padding: 30px;
-            transition: all 0.4s ease;
-        }
-
-        .token-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, 
-                transparent 0%, 
-                #00d4ff 50%, 
-                transparent 100%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .token-card:hover::before {
-            opacity: 1;
-        }
-
-        .governance-sections {
+        .proposals-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
+            grid-template-columns: 1fr;
+            grid-gap: 25px;
         }
 
-        .proposals-section, .community-section {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            padding: 30px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .proposal-item {
+        /* Enhanced Proposal Cards */
+        .proposal-card {
             position: relative;
-            border-radius: 16px;
-            padding: 25px;
-            margin-bottom: 20px;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            border-left: 4px solid transparent;
+            border-radius: 24px;
+            padding: 35px;
             overflow: hidden;
+            border-left: 5px solid transparent;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.320, 1);
         }
 
-        .proposal-item::before {
+        .proposal-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.05), rgba(76, 175, 80, 0.05));
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.05), rgba(0, 212, 255, 0.05));
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.4s ease;
         }
 
-        .proposal-item:hover {
-            transform: translateY(-6px) translateX(8px);
-            border-left-color: #00d4ff;
+        .proposal-card:hover {
+            transform: translateY(-10px) translateX(12px);
+            border-left-color: var(--accent-color, #FFD700);
             box-shadow: 
-                0 20px 40px rgba(0, 0, 0, 0.4),
-                0 0 20px rgba(0, 212, 255, 0.2);
+                0 25px 60px rgba(0, 0, 0, 0.5),
+                0 0 40px rgba(255, 215, 0, 0.2);
         }
 
-        .proposal-item:hover::before {
+        .proposal-card:hover::before {
             opacity: 1;
         }
 
+        /* Advanced Voting Interface */
+        .vote-section {
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
         .vote-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
         }
 
         .vote-btn {
-            padding: 10px 20px;
+            padding: 15px 25px;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
+            font-weight: 700;
+            font-size: 16px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .vote-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .vote-btn:hover::before {
+            left: 100%;
         }
 
         .vote-yes {
-            background: #4CAF50;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
             color: white;
+        }
+
+        .vote-yes:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(76, 175, 80, 0.4);
         }
 
         .vote-no {
-            background: #f44336;
+            background: linear-gradient(135deg, #f44336, #da190b);
             color: white;
         }
 
-        .vote-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        .vote-no:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(244, 67, 54, 0.4);
         }
 
-        .community-feature {
-            background: rgba(0, 212, 255, 0.1);
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-left: 4px solid #00d4ff;
-        }
-
-        .wallet-connect-btn {
-            background: linear-gradient(45deg, #00d4ff, #090979);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
+        /* Progress Bars for Voting */
+        .vote-progress {
             margin: 20px 0;
-            transition: all 0.3s ease;
         }
 
-        .wallet-connect-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
-        }
-
-        .voting-power {
-            text-align: center;
+        .progress-container {
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px 0;
+            border-radius: 20px;
+            height: 12px;
+            margin: 8px 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 20px;
+            transition: width 2s cubic-bezier(0.23, 1, 0.320, 1);
+            position: relative;
+        }
+
+        .progress-yes {
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+        }
+
+        .progress-no {
+            background: linear-gradient(90deg, #f44336, #FF5722);
+        }
+
+        /* Sidebar Components */
+        .sidebar-card {
+            margin-bottom: 25px;
+        }
+
+        .voting-power-display {
+            text-align: center;
+            background: rgba(255, 215, 0, 0.1);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
         }
 
         .power-meter {
             background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            height: 10px;
-            margin: 10px 0;
+            border-radius: 15px;
+            height: 15px;
+            margin: 15px 0;
             overflow: hidden;
+            position: relative;
         }
 
         .power-fill {
-            background: linear-gradient(90deg, #4CAF50, #00d4ff);
+            background: linear-gradient(90deg, #FFD700, #FFA500, #FF6347);
+            background-size: 200% 100%;
             height: 100%;
-            border-radius: 10px;
-            transition: width 1s ease;
+            border-radius: 15px;
+            transition: width 2s cubic-bezier(0.23, 1, 0.320, 1);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { background-position: 200% 0; }
+            50% { background-position: -200% 0; }
+        }
+
+        /* Community Features */
+        .community-feature {
+            background: rgba(0, 212, 255, 0.08);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .community-feature:hover {
+            background: rgba(0, 212, 255, 0.12);
+            border-color: rgba(0, 212, 255, 0.4);
+            transform: translateX(8px);
+        }
+
+        /* Interactive Elements */
+        .interactive-btn {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            border: none;
+            border-radius: 16px;
+            color: #000;
+            font-weight: 700;
+            padding: 16px 32px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+            position: relative;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 15px;
+        }
+
+        .interactive-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.8s ease;
+        }
+
+        .interactive-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 45px rgba(255, 215, 0, 0.4);
+            background: linear-gradient(135deg, #FFA500 0%, #FFD700 100%);
+        }
+
+        .interactive-btn:hover::before {
+            left: 100%;
+        }
+
+        /* Scroll Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s cubic-bezier(0.23, 1, 0.320, 1);
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 1024px) {
+            .governance-grid {
+                grid-template-columns: 1fr;
+                grid-gap: 25px;
+            }
         }
 
         @media (max-width: 768px) {
-            .governance-sections {
+            .vote-buttons {
                 grid-template-columns: 1fr;
             }
             
-            .token-stats {
-                grid-template-columns: 1fr;
+            .dashboard-container {
+                padding: 100px 15px 20px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Modern Navigation -->
+    <!-- Ultra-Modern Navigation -->
     <nav class="nav-glass">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
             <div class="flex items-center space-x-4">
-                <div class="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-500 rounded-xl flex items-center justify-center text-white font-bold text-lg">⚖️</div>
-                <h2 class="text-xl font-bold text-gradient">Truth Governance</h2>
+                <div class="w-14 h-14 bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500 rounded-2xl flex items-center justify-center text-white font-bold text-2xl shadow-lg floating">
+                    ⚖️
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-gradient">Truth Governance</h2>
+                    <p class="text-sm text-gray-400">Lawful Foundation Protocol</p>
+                </div>
             </div>
-            <div class="flex gap-3">
-                <a href="/" class="px-4 py-2 glass rounded-lg transition-all duration-300 hover:scale-105 text-sm font-medium">Home</a>
-                <a href="/analytics" class="px-4 py-2 glass rounded-lg transition-all duration-300 hover:scale-105 text-sm font-medium">Analytics</a>
-                <a href="/community" class="px-4 py-2 glass rounded-lg transition-all duration-300 hover:scale-105 text-sm font-medium">Community</a>
+            <div class="flex gap-4">
+                <a href="/" class="px-5 py-3 glass rounded-xl transition-all duration-300 hover:scale-105 text-sm font-medium">Home</a>
+                <a href="/analytics" class="px-5 py-3 glass rounded-xl transition-all duration-300 hover:scale-105 text-sm font-medium">Analytics</a>
+                <a href="/community" class="px-5 py-3 glass rounded-xl transition-all duration-300 hover:scale-105 text-sm font-medium">Community</a>
+                <a href="/ai-insights" class="px-5 py-3 glass rounded-xl transition-all duration-300 hover:scale-105 text-sm font-medium">AI Insights</a>
             </div>
         </div>
     </nav>
 
-    <div class="governance-container">
-        <div class="header">
-            <h1>The Truth - Lawful Governance</h1>
-            <p>"Foundation before framework - governance rooted in Black's Law principles"</p>
-            <div style="background: rgba(255, 215, 0, 0.1); padding: 15px; border-radius: 10px; margin: 15px 0; border-left: 4px solid #FFD700;">
-                <h4>⚖️ Lawful Foundation Notice</h4>
-                <p>This governance operates under <strong>foundational Law</strong> (Black's Law Dictionary), not statutory compliance. All proposals must align with doctrinal principles: property rights, fiduciary duties, and lawful contract formation.</p>
-                <p><a href="/lawful" style="color: #FFD700;">View Complete Legal Framework →</a></p>
-            </div>
-            <button class="wallet-connect-btn" id="connectWallet">Connect Wallet</button>
-        </div>
-
-        <div class="token-stats">
-            <div class="token-card">
-                <h3>TRUTH Token Holdings</h3>
-                <div class="voting-power">
-                    <h4 id="truthBalance">0 TRUTH</h4>
-                    <p>Voting Power</p>
-                    <div class="power-meter">
-                        <div class="power-fill" id="truthPower" style="width: 0%"></div>
+    <div class="dashboard-container max-w-7xl mx-auto px-6 pt-28 pb-16">
+        <!-- Hero Section -->
+        <div class="text-center mb-20 fade-in">
+            <h1 class="text-7xl font-black mb-8 text-gradient floating">Lawful Governance</h1>
+            <p class="text-2xl text-gray-300 mb-8 max-w-4xl mx-auto leading-relaxed">
+                "Foundation before framework - governance rooted in Black's Law principles"
+            </p>
+            
+            <!-- Enhanced Lawful Notice -->
+            <div class="glass rounded-3xl p-10 max-w-6xl mx-auto border-l-6 border-yellow-400 floating-reverse pulse-glow" style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.05));">
+                <div class="flex items-center justify-center mb-6">
+                    <div class="text-5xl mr-6">⚖️</div>
+                    <h3 class="text-3xl font-bold text-yellow-400">Lawful Foundation Notice</h3>
+                </div>
+                <p class="text-xl text-gray-200 leading-relaxed mb-6">
+                    This governance operates under <strong>foundational Law</strong> (Black's Law Dictionary), not statutory compliance. 
+                    All proposals must align with doctrinal principles: property rights, fiduciary duties, and lawful contract formation.
+                </p>
+                <div class="grid md:grid-cols-3 gap-6 mt-8">
+                    <div class="bg-black/30 rounded-xl p-4 border border-yellow-400/30">
+                        <h4 class="font-bold text-yellow-400 mb-2">Property Rights</h4>
+                        <p class="text-sm text-gray-300">Tokens as choses in action</p>
+                    </div>
+                    <div class="bg-black/30 rounded-xl p-4 border border-yellow-400/30">
+                        <h4 class="font-bold text-yellow-400 mb-2">Fiduciary Duties</h4>
+                        <p class="text-sm text-gray-300">Treasury management</p>
+                    </div>
+                    <div class="bg-black/30 rounded-xl p-4 border border-yellow-400/30">
+                        <h4 class="font-bold text-yellow-400 mb-2">Contract Formation</h4>
+                        <p class="text-sm text-gray-300">Lawful governance structure</p>
                     </div>
                 </div>
+                <button class="interactive-btn mt-8" onclick="viewLegalFramework()">View Complete Legal Framework</button>
             </div>
             
-            <div class="token-card">
-                <h3>Creator Coin Holdings</h3>
-                <div class="voting-power">
-                    <h4 id="creatorBalance">0 @jacqueantoinedegraff</h4>
-                    <p>Community Access Level</p>
-                    <div class="power-meter">
-                        <div class="power-fill" id="creatorPower" style="width: 0%"></div>
-                    </div>
-                </div>
-            </div>
+            <button class="interactive-btn mt-8" id="connectWallet" onclick="connectWallet()">Connect Wallet</button>
         </div>
 
-        <div class="governance-sections">
+        <!-- Main Governance Interface -->
+        <div class="governance-grid fade-in">
+            <!-- Proposals Section -->
             <div class="proposals-section">
-                <h2>Active Proposals</h2>
-                <div id="proposalsList">
-                    <div class="proposal-item">
-                        <h4>⚖️ Proposal #1: Treasury Resolution Compliance</h4>
-                        <p>Adopt formal Treasury Resolution TRS-2025-09-001 for multisig governance structure. This ensures fiduciary compliance under Black's Law trust principles.</p>
-                        <div class="vote-buttons">
-                            <button class="vote-btn vote-yes" onclick="vote(1, true)">Yes (94%)</button>
-                            <button class="vote-btn vote-no" onclick="vote(1, false)">No (6%)</button>
-                        </div>
-                        <small>Ends in 2 days • 2,847 votes • <strong>Lawful Foundation Required</strong></small>
-                    </div>
-
-                    <div class="proposal-item">
-                        <h4>🏛️ Proposal #2: Compliance Dashboard Enhancement</h4>
-                        <p>Implement real-time transparency dashboard exceeding regulatory requirements to demonstrate over-application of Law.</p>
-                        <div class="vote-buttons">
-                            <button class="vote-btn vote-yes" onclick="vote(2, true)">Yes (89%)</button>
-                            <button class="vote-btn vote-no" onclick="vote(2, false)">No (11%)</button>
-                        </div>
-                        <small>Ends in 4 days • 1,652 votes • <strong>Transparency Initiative</strong></small>
-                    </div>
-
-                    <div class="proposal-item">
-                        <h4>📜 Proposal #3: Doctrinal Blackpaper Publication</h4>
-                        <p>Publish 25-page analysis demonstrating foundation-first approach for creator economy policy recommendations.</p>
-                        <div class="vote-buttons">
-                            <button class="vote-btn vote-yes" onclick="vote(3, true)">Yes (91%)</button>
-                            <button class="vote-btn vote-no" onclick="vote(3, false)">No (9%)</button>
-                        </div>
-                        <small>Ends in 6 days • 3,156 votes • <strong>Policy Framework</strong></small>
-                    </div>
-
-                    <div class="proposal-item">
-                        <h4>💰 Proposal #4: Revenue Distribution Framework</h4>
-                        <p>Implement lawful revenue sharing based on token holdings as choses in action under property doctrine.</p>
-                        <div class="vote-buttons">
-                            <button class="vote-btn vote-yes" onclick="vote(4, true)">Yes (87%)</button>
-                            <button class="vote-btn vote-no" onclick="vote(4, false)">No (13%)</button>
-                        </div>
-                        <small>Ends in 8 days • 2,456 votes • <strong>Property Rights</strong></small>
-                    </div>
+                <div class="flex items-center justify-between mb-8">
+                    <h2 class="text-4xl font-bold text-gradient">Active Proposals</h2>
+                    <button class="interactive-btn" onclick="createProposal()">Create Proposal</button>
+                </div>
+                
+                <div class="proposals-grid" id="proposalsList">
+                    <!-- Proposals will be dynamically populated -->
                 </div>
             </div>
 
-            <div class="community-section">
-                <h2>Community Features</h2>
-                
-                <div class="community-feature">
-                    <h4>🔒 Token-Gated Discord</h4>
-                    <p>Access exclusive channels based on your TRUTH + Creator coin holdings</p>
-                    <button class="vote-btn" style="background: #5865F2; margin-top: 10px;" onclick="joinDiscord()">Join Discord</button>
-                </div>
-
-                <div class="community-feature">
-                    <h4>📚 Exclusive Content Library</h4>
-                    <p>Creator coin holders get access to unreleased writings, extended audio commentary</p>
-                    <button class="vote-btn" style="background: #ff6b6b; margin-top: 10px;" onclick="accessLibrary()">Access Library</button>
-                </div>
-
-                <div class="community-feature">
-                    <h4>💎 Master Copy Privileges</h4>
-                    <p>Stake 1000+ TRUTH tokens for priority access to future Master Copies</p>
-                    <button class="vote-btn" style="background: #ffd93d; color: black; margin-top: 10px;" onclick="stakeTruth()">Stake TRUTH</button>
-                </div>
-
-                <div class="community-feature">
-                    <h4>📊 Revenue Sharing Dashboard</h4>
-                    <p>Track your share of platform revenue based on token holdings</p>
-                    <div style="text-align: center; margin: 10px 0;">
-                        <strong>Your Monthly Share: $0.00</strong><br>
-                        <small>Next distribution in 15 days</small>
+            <!-- Sidebar -->
+            <div class="sidebar-section">
+                <!-- Token Holdings -->
+                <div class="glass sidebar-card rounded-2xl p-8 floating">
+                    <h3 class="text-2xl font-bold mb-6 text-gradient flex items-center">
+                        <span class="mr-3 text-3xl">💎</span>Your Governance Power
+                    </h3>
+                    
+                    <div class="voting-power-display">
+                        <div class="text-4xl font-black mb-4 text-yellow-400" id="totalPower">0%</div>
+                        <div class="text-lg text-gray-300 mb-4">Total Voting Power</div>
+                        <div class="power-meter">
+                            <div class="power-fill" id="powerMeter" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-300">TRUTH Tokens:</span>
+                            <span class="font-bold text-blue-400" id="truthBalance">0</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-300">Creator Coins:</span>
+                            <span class="font-bold text-purple-400" id="creatorBalance">0</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-300">Voting Weight:</span>
+                            <span class="font-bold text-yellow-400" id="votingWeight">0</span>
+                        </div>
                     </div>
                 </div>
 
-                <div class="community-feature">
-                    <h4>🎯 Early Access Minting</h4>
-                    <p>Creator coin holders get 24-hour early access to new drops</p>
-                    <small>Next drop: "The Translation Gap" - 3 days</small>
+                <!-- Community Features -->
+                <div class="glass sidebar-card rounded-2xl p-8 floating-reverse">
+                    <h3 class="text-2xl font-bold mb-6 text-gradient flex items-center">
+                        <span class="mr-3 text-3xl">🌟</span>Governance Benefits
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div class="community-feature">
+                            <h4 class="font-bold text-blue-400 mb-2 flex items-center">
+                                <span class="mr-2">🔒</span>Token-Gated Discord
+                            </h4>
+                            <p class="text-sm text-gray-300 mb-3">Exclusive governance channels and proposal discussions</p>
+                            <button class="interactive-btn w-full" onclick="joinDiscord()">Join Discord</button>
+                        </div>
+
+                        <div class="community-feature">
+                            <h4 class="font-bold text-green-400 mb-2 flex items-center">
+                                <span class="mr-2">💰</span>Revenue Participation
+                            </h4>
+                            <p class="text-sm text-gray-300 mb-3">Share in platform revenue based on your voting power</p>
+                            <div class="text-center">
+                                <div class="text-xl font-bold text-green-400" id="revenueShare">$0.00</div>
+                                <div class="text-xs text-gray-400">Monthly Distribution</div>
+                            </div>
+                        </div>
+
+                        <div class="community-feature">
+                            <h4 class="font-bold text-purple-400 mb-2 flex items-center">
+                                <span class="mr-2">📚</span>Policy Library Access
+                            </h4>
+                            <p class="text-sm text-gray-300 mb-3">Exclusive access to governance documents and legal frameworks</p>
+                            <button class="interactive-btn w-full" onclick="accessLibrary()">Access Library</button>
+                        </div>
+
+                        <div class="community-feature">
+                            <h4 class="font-bold text-red-400 mb-2 flex items-center">
+                                <span class="mr-2">🎯</span>Master Copy Priority
+                            </h4>
+                            <p class="text-sm text-gray-300">Priority access to future NFT drops and governance decisions</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Governance Stats -->
+                <div class="glass sidebar-card rounded-2xl p-8 floating">
+                    <h3 class="text-2xl font-bold mb-6 text-gradient">Governance Stats</h3>
+                    <div class="space-y-4 text-center">
+                        <div>
+                            <div class="text-2xl font-bold text-blue-400">12</div>
+                            <div class="text-sm text-gray-400">Active Proposals</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold text-green-400">2,847</div>
+                            <div class="text-sm text-gray-400">Total Votes Cast</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold text-yellow-400">94.7%</div>
+                            <div class="text-sm text-gray-400">Average Participation</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold text-purple-400">$847K</div>
+                            <div class="text-sm text-gray-400">Treasury Value</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="governance.js"></script>
+    <script>
+        // Enhanced Governance System
+        class TruthGovernance {
+            constructor() {
+                this.web3 = null;
+                this.account = null;
+                this.userTokens = { truth: 0, creator: 0 };
+                this.proposals = [];
+                this.init();
+            }
+
+            async init() {
+                this.setupScrollAnimations();
+                this.loadProposals();
+                this.loadUserData();
+                this.staggerAnimations();
+                this.setupEventListeners();
+            }
+
+            setupScrollAnimations() {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                        }
+                    });
+                }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+                document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+            }
+
+            setupEventListeners() {
+                document.getElementById('connectWallet').addEventListener('click', () => this.connectWallet());
+            }
+
+            loadProposals() {
+                this.proposals = [
+                    {
+                        id: 1,
+                        title: "⚖️ Treasury Resolution Compliance Enhancement",
+                        description: "Adopt comprehensive Treasury Resolution TRS-2025-09-001 for enhanced multisig governance structure. This ensures complete fiduciary compliance under Black's Law trust principles and establishes clear doctrinal positioning.",
+                        category: "Lawful Foundation",
+                        yesVotes: 94,
+                        noVotes: 6,
+                        totalVotes: 2847,
+                        endDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+                        status: "active",
+                        priority: "high",
+                        accentColor: "#FFD700"
+                    },
+                    {
+                        id: 2,
+                        title: "🏛️ Real-time Transparency Dashboard Implementation",
+                        description: "Deploy advanced compliance dashboard exceeding all regulatory requirements to demonstrate over-application of Law. This initiative will provide unprecedented transparency in treasury management and governance operations.",
+                        category: "Transparency Initiative",
+                        yesVotes: 89,
+                        noVotes: 11,
+                        totalVotes: 1652,
+                        endDate: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000),
+                        status: "active",
+                        priority: "medium",
+                        accentColor: "#00d4ff"
+                    },
+                    {
+                        id: 3,
+                        title: "📜 Doctrinal Blackpaper Publication & Policy Framework",
+                        description: "Authorize publication of comprehensive 25-page doctrinal analysis demonstrating foundation-first approach for creator economy policy recommendations. This will serve as definitive guidance for institutional engagement.",
+                        category: "Policy Framework",
+                        yesVotes: 91,
+                        noVotes: 9,
+                        totalVotes: 3156,
+                        endDate: new Date(Date.now() + 6 * 24 * 60 * 60 * 1000),
+                        status: "active",
+                        priority: "high",
+                        accentColor: "#4CAF50"
+                    },
+                    {
+                        id: 4,
+                        title: "💰 Enhanced Revenue Distribution Framework",
+                        description: "Implement sophisticated lawful revenue sharing mechanism based on token holdings as choses in action under property doctrine. This establishes clear rights and obligations for all community members.",
+                        category: "Property Rights",
+                        yesVotes: 87,
+                        noVotes: 13,
+                        totalVotes: 2456,
+                        endDate: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000),
+                        status: "active",
+                        priority: "high",
+                        accentColor: "#ff6b6b"
+                    },
+                    {
+                        id: 5,
+                        title: "🔮 Master Copy Staking Privileges Expansion",
+                        description: "Expand Master Copy privileges for TRUTH token stakers (1000+ tokens) to include early governance proposal submission rights and enhanced community access tiers.",
+                        category: "Community Benefits",
+                        yesVotes: 78,
+                        noVotes: 22,
+                        totalVotes: 1834,
+                        endDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
+                        status: "active",
+                        priority: "medium",
+                        accentColor: "#8b5cf6"
+                    }
+                ];
+
+                this.renderProposals();
+            }
+
+            renderProposals() {
+                const container = document.getElementById('proposalsList');
+                container.innerHTML = this.proposals.map(proposal => `
+                    <div class="glass proposal-card floating" style="--accent-color: ${proposal.accentColor};">
+                        <div class="flex items-start justify-between mb-6">
+                            <div>
+                                <div class="flex items-center mb-3">
+                                    <span class="px-3 py-1 bg-${this.getPriorityColor(proposal.priority)}-500/20 text-${this.getPriorityColor(proposal.priority)}-400 rounded-lg text-xs font-bold uppercase mr-3">
+                                        ${proposal.priority} Priority
+                                    </span>
+                                    <span class="text-sm text-gray-400">${proposal.category}</span>
+                                </div>
+                                <h4 class="text-2xl font-bold mb-4" style="color: ${proposal.accentColor};">${proposal.title}</h4>
+                                <p class="text-gray-300 leading-relaxed text-lg">${proposal.description}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="vote-section">
+                            <div class="vote-progress mb-4">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="font-semibold text-green-400">YES: ${proposal.yesVotes}%</span>
+                                    <span class="font-semibold text-red-400">NO: ${proposal.noVotes}%</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div class="progress-container">
+                                        <div class="progress-bar progress-yes" style="width: ${proposal.yesVotes}%"></div>
+                                    </div>
+                                    <div class="progress-container">
+                                        <div class="progress-bar progress-no" style="width: ${proposal.noVotes}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="vote-buttons">
+                                <button class="vote-btn vote-yes" onclick="vote(${proposal.id}, true)">
+                                    Vote YES (${proposal.yesVotes}%)
+                                </button>
+                                <button class="vote-btn vote-no" onclick="vote(${proposal.id}, false)">
+                                    Vote NO (${proposal.noVotes}%)
+                                </button>
+                            </div>
+                            
+                            <div class="flex justify-between items-center text-sm text-gray-400">
+                                <span>Ends in ${this.getDaysRemaining(proposal.endDate)} days</span>
+                                <span>${proposal.totalVotes.toLocaleString()} votes cast</span>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            getPriorityColor(priority) {
+                switch(priority) {
+                    case 'high': return 'red';
+                    case 'medium': return 'yellow';
+                    case 'low': return 'green';
+                    default: return 'gray';
+                }
+            }
+
+            getDaysRemaining(endDate) {
+                const now = new Date();
+                const timeDiff = endDate.getTime() - now.getTime();
+                const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                return Math.max(0, daysDiff);
+            }
+
+            loadUserData() {
+                // Simulate user token data
+                this.userTokens = {
+                    truth: Math.floor(Math.random() * 10000) + 1000,
+                    creator: Math.floor(Math.random() * 25000) + 2000
+                };
+
+                // Update UI
+                document.getElementById('truthBalance').textContent = this.userTokens.truth.toLocaleString();
+                document.getElementById('creatorBalance').textContent = this.userTokens.creator.toLocaleString();
+
+                // Calculate voting power
+                const totalPower = Math.min(((this.userTokens.truth * 1.5 + this.userTokens.creator * 0.1) / 1000) * 100, 100);
+                const votingWeight = this.userTokens.truth * 1.5 + this.userTokens.creator * 0.1;
+                const revenueShare = (totalPower / 100) * 847; // Based on treasury value
+
+                document.getElementById('totalPower').textContent = `${totalPower.toFixed(1)}%`;
+                document.getElementById('votingWeight').textContent = votingWeight.toLocaleString();
+                document.getElementById('revenueShare').textContent = `$${revenueShare.toFixed(2)}`;
+
+                // Animate power meter
+                setTimeout(() => {
+                    document.getElementById('powerMeter').style.width = `${totalPower}%`;
+                }, 1000);
+            }
+
+            staggerAnimations() {
+                setTimeout(() => {
+                    document.querySelectorAll('.floating').forEach((el, index) => {
+                        el.style.animationDelay = `${index * 0.2}s`;
+                    });
+                    document.querySelectorAll('.floating-reverse').forEach((el, index) => {
+                        el.style.animationDelay = `${index * 0.3}s`;
+                    });
+                }, 500);
+            }
+
+            async connectWallet() {
+                try {
+                    if (typeof window.ethereum !== 'undefined') {
+                        const accounts = await window.ethereum.request({ 
+                            method: 'eth_requestAccounts' 
+                        });
+                        
+                        this.account = accounts[0];
+                        
+                        document.getElementById('connectWallet').textContent = 
+                            `${this.account.substring(0, 8)}...${this.account.substring(36)}`;
+                        
+                        console.log('Wallet connected:', this.account);
+                        alert('Wallet connected successfully! Your governance power has been loaded.');
+                    } else {
+                        alert('MetaMask not found! Please install MetaMask to participate in governance.');
+                    }
+                } catch (error) {
+                    console.error('Connection failed:', error);
+                    alert('Failed to connect wallet. Please try again.');
+                }
+            }
+        }
+
+        // Global Functions
+        async function vote(proposalId, voteYes) {
+            const governance = window.truthGovernance;
+            if (!governance.account) {
+                alert('Please connect your wallet first to participate in governance');
+                return;
+            }
+            
+            try {
+                const proposal = governance.proposals.find(p => p.id === proposalId);
+                if (proposal) {
+                    console.log(`Voting ${voteYes ? 'YES' : 'NO'} on proposal ${proposalId}`);
+                    alert(`🗳️ Vote recorded! Thank you for participating in The Truth lawful governance.\n\nProposal: ${proposal.title}\nVote: ${voteYes ? 'YES' : 'NO'}\n\nYour vote has been weighted based on your token holdings.`);
+                }
+            } catch (error) {
+                console.error('Voting failed:', error);
+                alert('Failed to record vote. Please try again.');
+            }
+        }
+
+        function createProposal() {
+            if (!window.truthGovernance.account) {
+                alert('Connect your wallet first to create proposals');
+                return;
+            }
+            alert('Proposal creation interface coming soon! Minimum 5000 combined tokens required to submit proposals.');
+        }
+
+        function viewLegalFramework() {
+            window.open('/lawful-dashboard.html', '_blank');
+        }
+
+        function joinDiscord() {
+            if (!window.truthGovernance.account) {
+                alert('Connect wallet first to verify token holdings for Discord access');
+                return;
+            }
+            window.open('https://discord.gg/thetruth', '_blank');
+        }
+
+        function accessLibrary() {
+            if (!window.truthGovernance.account) {
+                alert('Connect wallet first to verify access level');
+                return;
+            }
+            alert('Policy library access granted! Redirecting to exclusive content...');
+        }
+
+        function connectWallet() {
+            window.truthGovernance.connectWallet();
+        }
+
+        // Initialize Governance System
+        document.addEventListener('DOMContentLoaded', () => {
+            window.truthGovernance = new TruthGovernance();
+        });
+    </script>
 </body>
 </html>
