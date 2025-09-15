@@ -29,8 +29,8 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Serve static files from the web directory first (highest priority)
-app.use(express.static(__dirname));
+// Serve static files from explicit subdirectories (e.g., assets)
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
 // Then serve from parent directory
 app.use(express.static(path.join(__dirname, '..')));
 
