@@ -39,6 +39,15 @@ fi
 # Copy package.json for deployment info
 cp package.json dist/
 
+# Create a .nojekyll file to prevent GitHub Pages from ignoring files starting with underscore
+touch dist/.nojekyll
+
+# Create CNAME file if custom domain is configured
+if [ ! -z "$CUSTOM_DOMAIN" ]; then
+    echo "$CUSTOM_DOMAIN" > dist/CNAME
+fi
+
 echo "✅ Static build complete! Files are in ./dist"
 echo "🔗 Ready for GitHub Pages deployment"
 echo "📋 Included: web files, LAW directory, HTML files, and documentation"
+echo "🚀 GitHub Pages will serve from the uploaded artifact"
