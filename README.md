@@ -181,7 +181,7 @@ The platform showcases how institutions "translate" truth into more palatable fo
 ### Quick Start
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/the-truth-nft.git
+git clone https://github.com/CreoDAMO/The_Truth.git
 cd the-truth-nft
 
 # Install dependencies
