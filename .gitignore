@@ -8,7 +8,7 @@ package-lock.json
 .env.production
 
 # Build outputs
-dist/
+# dist/ - Removed so GitHub Pages can access built files
 build/
 *.tsbuildinfo
 

@@ -1,0 +1,52 @@
+{
+  "name": "the-truth-nft",
+  "version": "1.0.0",
+  "description": "The Truth NFT - A philosophical experiment preserved on-chain",
+  "author": "Jacque Antoine DeGraff",
+  "license": "MIT",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "npx hardhat test",
+    "deploy": "hardhat run scripts/deployTheTruth.js",
+    "deploy:base": "npx hardhat run scripts/deployTheTruth.js --network base",
+    "deploy:baseSepolia": "npx hardhat run scripts/deployTheTruth.js --network baseSepolia",
+    "deploy:metamask": "npx hardhat run scripts/deployWithMetaMaskHardhat.js",
+    "compile-browser": "npx hardhat run scripts/compileForBrowser.js",
+    "update-artifacts": "node scripts/update-artifacts.js",
+    "verify": "npx hardhat run scripts/verifyContract.js --network base",
+    "set-provenance": "npx hardhat run scripts/setProvenance.js --network base",
+    "toggle-minting": "npx hardhat run scripts/toggleMinting.js --network base",
+    "withdraw": "npx hardhat run scripts/withdraw.js --network base",
+    "check-status": "npx hardhat run scripts/checkStatus.js --network base",
+    "generate-metadata": "node scripts/generate_metadata.js",
+    "start": "node web/server.js",
+    "dev": "node web/server.js",
+    "build": "npm run compile && npm run generate-metadata",
+    "build:static": "./build-static.sh",
+    "update-contract": "node deployment/update-contract.js",
+    "deploy:vercel": "./deployment/deploy-everywhere.sh vercel",
+    "deploy:railway": "./deployment/deploy-everywhere.sh railway",
+    "deploy:render": "./deployment/deploy-everywhere.sh render",
+    "deploy:heroku": "./deployment/deploy-everywhere.sh heroku",
+    "deploy:docker": "./deployment/deploy-everywhere.sh docker",
+    "deploy:aws": "./deploy-everywhere.sh aws",
+    "deploy:all": "echo 'Choose specific platform with deploy:[platform]'"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "^1.0.6",
+    "@nomicfoundation/hardhat-network-helpers": "^1.1.0",
+    "@nomicfoundation/hardhat-toolbox": "^2.0.2",
+    "@nomiclabs/hardhat-ethers": "^2.2.3",
+    "@nomiclabs/hardhat-etherscan": "^3.1.8",
+    "@openzeppelin/contracts": "^4.9.6",
+    "dotenv": "^16.6.1",
+    "ethers": "^5.8.0",
+    "hardhat": "^2.26.3"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "express-rate-limit": "^8.1.0",
+    "stripe": "^14.25.0"
+  }
+}

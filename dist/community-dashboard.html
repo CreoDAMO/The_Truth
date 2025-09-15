@@ -1,0 +1,771 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Truth - Community Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(ellipse at center, #0a0a0a 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #1a1a2e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Ultra-Advanced Glassmorphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(24px) saturate(200%) brightness(1.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 
+                0 12px 48px rgba(0, 0, 0, 0.4),
+                inset 0 2px 0 rgba(255, 255, 255, 0.12),
+                0 0 0 1px rgba(255, 255, 255, 0.08);
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.320, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+            transition: left 1s ease;
+        }
+
+        .glass:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 
+                0 25px 80px rgba(0, 0, 0, 0.6),
+                inset 0 2px 0 rgba(255, 255, 255, 0.2),
+                0 0 60px rgba(0, 212, 255, 0.2);
+        }
+
+        .glass:hover::before {
+            left: 100%;
+        }
+
+        /* Navigation */
+        .nav-glass {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(30px) saturate(250%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1rem 0;
+        }
+
+        /* Advanced Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-12px) rotate(0.5deg); }
+            50% { transform: translateY(-8px) rotate(0deg); }
+            75% { transform: translateY(-15px) rotate(-0.5deg); }
+        }
+
+        @keyframes floatReverse {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(15px) rotate(-0.5deg); }
+            50% { transform: translateY(8px) rotate(0deg); }
+            75% { transform: translateY(12px) rotate(0.5deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { 
+                box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+                transform: scale(1);
+            }
+            50% { 
+                box-shadow: 0 0 60px rgba(0, 212, 255, 0.6);
+                transform: scale(1.02);
+            }
+        }
+
+        .floating { animation: float 10s ease-in-out infinite; }
+        .floating-reverse { animation: floatReverse 12s ease-in-out infinite; }
+        .pulse-glow { animation: pulse 3s ease-in-out infinite; }
+
+        /* Gradient Text */
+        .text-gradient {
+            background: linear-gradient(135deg, #00d4ff 0%, #ff6b6b 25%, #4CAF50 50%, #ffd93d 75%, #8b5cf6 100%);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 8s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            25% { background-position: 100% 50%; }
+            50% { background-position: 200% 50%; }
+            75% { background-position: 300% 50%; }
+        }
+
+        /* Modern Grid Layout */
+        .community-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            grid-gap: 30px;
+            grid-auto-rows: max-content;
+        }
+
+        /* Enhanced Cards */
+        .community-card {
+            position: relative;
+            border-radius: 24px;
+            padding: 35px;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+        }
+
+        .community-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                var(--accent-color, #00d4ff) 20%,
+                var(--accent-color, #00d4ff) 80%,
+                transparent 100%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .community-card:hover::after {
+            opacity: 1;
+        }
+
+        /* Interactive Elements */
+        .interactive-btn {
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            border: none;
+            border-radius: 16px;
+            color: white;
+            font-weight: 700;
+            padding: 16px 32px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+            position: relative;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .interactive-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.8s ease;
+        }
+
+        .interactive-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 45px rgba(0, 212, 255, 0.4);
+            background: linear-gradient(135deg, #0099cc 0%, #00d4ff 100%);
+        }
+
+        .interactive-btn:hover::before {
+            left: 100%;
+        }
+
+        /* Stats Display */
+        .stat-display {
+            text-align: center;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin: 20px 0;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #ffd93d, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Progress Bars */
+        .progress-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            height: 16px;
+            margin: 20px 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #4CAF50 0%, #00d4ff 50%, #ffd93d 100%);
+            background-size: 200% 100%;
+            height: 100%;
+            border-radius: 20px;
+            transition: width 2s cubic-bezier(0.23, 1, 0.320, 1);
+            animation: shimmer 3s ease-in-out infinite;
+            position: relative;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { background-position: 200% 0; }
+            50% { background-position: -200% 0; }
+        }
+
+        /* Activity Feed */
+        .activity-feed {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .activity-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-left-color: #00d4ff;
+            transform: translateX(8px);
+        }
+
+        .activity-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8b5cf6, #00d4ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.2rem;
+        }
+
+        /* Scroll Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 1s cubic-bezier(0.23, 1, 0.320, 1);
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+            .community-grid { 
+                grid-template-columns: 1fr; 
+                grid-gap: 20px; 
+            }
+            
+            .dashboard-container {
+                padding: 100px 15px 20px;
+            }
+
+            .stat-number {
+                font-size: 2.5rem;
+            }
+        }
+
+        /* Custom Scrollbar */
+        .activity-feed::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .activity-feed::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .activity-feed::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #00d4ff, #8b5cf6);
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Ultra-Modern Navigation -->
+    <nav class="nav-glass">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <div class="w-14 h-14 bg-gradient-to-br from-purple-400 via-blue-500 to-green-400 rounded-2xl flex items-center justify-center text-white font-bold text-2xl shadow-lg floating">
+                    🌟
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-gradient">Truth Community</h2>
+                    <p class="text-sm text-gray-400">Foundation-First Ecosystem</p>
+                </div>
+            </div>
+            <div class="flex gap-4">
+                <a href="/" class="px-5 py-3 glass rounded-xl transition-all duration-300 hover:scale-105 text-sm font-medium">Home</a>
+                <a href="/analytics" class="px-5 py-3 glass rounded-xl transition-all duration-300 hover:scale-105 text-sm font-medium">Analytics</a>
+                <a href="/governance" class="px-5 py-3 glass rounded-xl transition-all duration-300 hover:scale-105 text-sm font-medium">Governance</a>
+                <a href="/ai-insights" class="px-5 py-3 glass rounded-xl transition-all duration-300 hover:scale-105 text-sm font-medium">AI Insights</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container max-w-7xl mx-auto px-6 pt-28 pb-16">
+        <!-- Hero Section -->
+        <div class="text-center mb-20 fade-in">
+            <h1 class="text-7xl font-black mb-8 text-gradient floating">The Truth Community</h1>
+            <div class="access-level inline-block bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 px-10 py-4 rounded-full font-bold text-xl shadow-lg floating-reverse pulse-glow" id="accessLevel">
+                Access Level: Loading...
+            </div>
+            <p class="text-2xl text-gray-300 mt-8 max-w-4xl mx-auto leading-relaxed">
+                "Foundation before framework - community built on lawful principles"
+            </p>
+            
+            <!-- Lawful Notice -->
+            <div class="mt-12 glass rounded-3xl p-8 max-w-5xl mx-auto border-l-6 border-yellow-400 floating">
+                <div class="flex items-center mb-4">
+                    <div class="text-4xl mr-4">⚖️</div>
+                    <h3 class="text-2xl font-bold text-yellow-400">Lawful Foundation Notice</h3>
+                </div>
+                <p class="text-lg text-gray-300 leading-relaxed">
+                    Your tokens represent <strong>choses in action</strong> under property doctrine. 
+                    Community benefits flow from lawful holdings, not speculative investment. 
+                    All governance operates under Black's Law Dictionary principles.
+                </p>
+                <button class="interactive-btn mt-6" onclick="viewLegalFramework()">View Complete Legal Framework</button>
+            </div>
+        </div>
+
+        <!-- Enhanced Stats Grid -->
+        <div class="community-grid mb-20 fade-in">
+            <!-- Token Holdings Card -->
+            <div class="glass community-card floating" style="--accent-color: #ffd93d;">
+                <div class="flex items-center mb-6">
+                    <div class="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center text-3xl shadow-lg">
+                        💎
+                    </div>
+                    <h3 class="text-2xl font-bold ml-4 text-gradient">Your Holdings</h3>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="stat-display">
+                        <div class="stat-number" id="truthBalance">0</div>
+                        <div class="stat-label">TRUTH Tokens</div>
+                    </div>
+                    <div class="stat-display">
+                        <div class="stat-number" id="creatorBalance">0</div>
+                        <div class="stat-label">Creator Coins</div>
+                    </div>
+                </div>
+                
+                <div class="bg-black/30 rounded-2xl p-4">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-lg font-semibold">Community Power</span>
+                        <span id="communityPower" class="text-2xl font-bold text-blue-400">0%</span>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="powerProgress" style="width: 0%"></div>
+                    </div>
+                    <p class="text-sm text-gray-400 mt-2">Based on total token holdings and staking</p>
+                </div>
+            </div>
+
+            <!-- Revenue & Rewards -->
+            <div class="glass community-card floating-reverse" style="--accent-color: #4CAF50;">
+                <div class="flex items-center mb-6">
+                    <div class="w-16 h-16 bg-gradient-to-br from-green-400 to-blue-500 rounded-2xl flex items-center justify-center text-3xl shadow-lg">
+                        💰
+                    </div>
+                    <h3 class="text-2xl font-bold ml-4 text-gradient">Revenue Share</h3>
+                </div>
+                
+                <div class="stat-display mb-6">
+                    <div class="stat-number" id="revenueAmount">$0.00</div>
+                    <div class="stat-label">Monthly Distribution</div>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-300">Next Distribution:</span>
+                        <span class="font-bold text-green-400" id="nextDistribution">15 days</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-300">Total Earned:</span>
+                        <span class="font-bold text-yellow-400" id="totalEarned">$0.00</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-300">Staking Rewards:</span>
+                        <span class="font-bold text-purple-400" id="stakingRewards">0.00 TRUTH</span>
+                    </div>
+                </div>
+                
+                <button class="interactive-btn w-full mt-6" onclick="claimRewards()">Claim Rewards</button>
+            </div>
+
+            <!-- Exclusive Access -->
+            <div class="glass community-card floating" style="--accent-color: #8b5cf6;">
+                <div class="flex items-center mb-6">
+                    <div class="w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-500 rounded-2xl flex items-center justify-center text-3xl shadow-lg">
+                        🔓
+                    </div>
+                    <h3 class="text-2xl font-bold ml-4 text-gradient">Exclusive Access</h3>
+                </div>
+                
+                <div class="space-y-4" id="accessList">
+                    <!-- Dynamic content will be populated here -->
+                </div>
+            </div>
+
+            <!-- Community Activity -->
+            <div class="glass community-card floating-reverse" style="--accent-color: #00d4ff;">
+                <div class="flex items-center mb-6">
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-2xl flex items-center justify-center text-3xl shadow-lg">
+                        ⚡
+                    </div>
+                    <h3 class="text-2xl font-bold ml-4 text-gradient">Live Activity</h3>
+                </div>
+                
+                <div class="activity-feed" id="activityFeed">
+                    <!-- Dynamic activity items will be populated here -->
+                </div>
+            </div>
+
+            <!-- Staking Interface -->
+            <div class="glass community-card floating pulse-glow" style="--accent-color: #ff6b6b;">
+                <div class="flex items-center mb-6">
+                    <div class="w-16 h-16 bg-gradient-to-br from-red-400 to-pink-500 rounded-2xl flex items-center justify-center text-3xl shadow-lg">
+                        🔮
+                    </div>
+                    <h3 class="text-2xl font-bold ml-4 text-gradient">TRUTH Staking</h3>
+                </div>
+                
+                <p class="text-gray-300 mb-6 text-lg">
+                    Stake TRUTH tokens for enhanced rewards, Master Copy priority, and increased governance power.
+                </p>
+                
+                <div class="bg-gradient-to-r from-red-900/30 to-pink-900/30 rounded-2xl p-6 mb-6">
+                    <div class="grid grid-cols-2 gap-4 text-center">
+                        <div>
+                            <div class="text-2xl font-bold text-red-400" id="stakedAmount">0</div>
+                            <div class="text-sm text-gray-400">Staked</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold text-pink-400">24.5%</div>
+                            <div class="text-sm text-gray-400">APY</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <input 
+                    type="number" 
+                    class="w-full bg-black/40 border border-pink-400/40 rounded-xl px-6 py-4 text-white placeholder-gray-400 mb-4 focus:border-pink-400 focus:outline-none transition-colors text-lg font-medium" 
+                    placeholder="Amount to stake" 
+                    id="stakeInput"
+                >
+                <button class="interactive-btn w-full mb-3" onclick="stakeTruthTokens()">Stake TRUTH</button>
+                <button class="w-full bg-red-600/80 hover:bg-red-600 border-none rounded-xl py-4 text-white font-bold transition-all duration-300 text-lg" onclick="unstakeTruthTokens()">Unstake</button>
+            </div>
+
+            <!-- Social Hub -->
+            <div class="glass community-card floating-reverse" style="--accent-color: #ffd93d; grid-column: span 2;">
+                <div class="flex items-center mb-8">
+                    <div class="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center text-3xl shadow-lg">
+                        🌐
+                    </div>
+                    <h3 class="text-3xl font-bold ml-4 text-gradient">Community Connections</h3>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="glass rounded-2xl p-6 text-center floating">
+                        <div class="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl flex items-center justify-center mx-auto mb-6 text-3xl shadow-lg">🔊</div>
+                        <h4 class="text-2xl font-bold mb-4">Discord Community</h4>
+                        <p class="text-gray-300 mb-6 leading-relaxed">Join token-gated channels, participate in philosophy discussions, and connect with fellow truth seekers.</p>
+                        <div class="bg-indigo-900/30 rounded-xl p-4 mb-6">
+                            <div class="text-lg font-bold text-indigo-400">1,247 Members</div>
+                            <div class="text-sm text-gray-400">Active Community</div>
+                        </div>
+                        <button class="interactive-btn w-full" onclick="joinDiscord()">Join Discord</button>
+                    </div>
+                    
+                    <div class="glass rounded-2xl p-6 text-center floating-reverse">
+                        <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-3xl flex items-center justify-center mx-auto mb-6 text-3xl shadow-lg">📱</div>
+                        <h4 class="text-2xl font-bold mb-4">Telegram Alerts</h4>
+                        <p class="text-gray-300 mb-6 leading-relaxed">Real-time notifications for proposals, distributions, drops, and community announcements.</p>
+                        <div class="bg-blue-900/30 rounded-xl p-4 mb-6">
+                            <div class="text-lg font-bold text-blue-400">Instant Updates</div>
+                            <div class="text-sm text-gray-400">Never Miss a Drop</div>
+                        </div>
+                        <button class="interactive-btn w-full" onclick="joinTelegram()">Join Telegram</button>
+                    </div>
+                    
+                    <div class="glass rounded-2xl p-6 text-center floating">
+                        <div class="w-20 h-20 bg-gradient-to-br from-red-500 to-pink-500 rounded-3xl flex items-center justify-center mx-auto mb-6 text-3xl shadow-lg">🎓</div>
+                        <h4 class="text-2xl font-bold mb-4">Philosophy Sessions</h4>
+                        <p class="text-gray-300 mb-6 leading-relaxed">Monthly live discussions exploring institutional translation gaps and foundational principles.</p>
+                        <div class="bg-red-900/30 rounded-xl p-4 mb-6">
+                            <div class="text-lg font-bold text-red-400">Next Session</div>
+                            <div class="text-sm text-gray-400">March 15th, 8PM EST</div>
+                        </div>
+                        <button class="interactive-btn w-full" onclick="bookSession()">Register Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced Community Dashboard with Real-time Features
+        class TruthCommunity {
+            constructor() {
+                this.userTokens = { truth: 0, creator: 0, nfts: [] };
+                this.activityInterval = null;
+                this.init();
+            }
+
+            init() {
+                this.setupScrollAnimations();
+                this.loadUserData();
+                this.updateAccessLevel();
+                this.calculateRevenue();
+                this.populateExclusiveAccess();
+                this.startActivityFeed();
+                this.staggerAnimations();
+            }
+
+            setupScrollAnimations() {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                        }
+                    });
+                }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+                document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+            }
+
+            loadUserData() {
+                // Simulate enhanced user data
+                this.userTokens = {
+                    truth: Math.floor(Math.random() * 5000) + 500,
+                    creator: Math.floor(Math.random() * 15000) + 1000,
+                    nfts: ['Truth #42', 'Bonus Gift #1337', 'Part Three #777']
+                };
+                
+                document.getElementById('truthBalance').textContent = this.userTokens.truth.toLocaleString();
+                document.getElementById('creatorBalance').textContent = this.userTokens.creator.toLocaleString();
+                
+                // Update community power
+                const power = Math.min(((this.userTokens.truth + this.userTokens.creator * 0.1) / 1000) * 100, 100);
+                document.getElementById('communityPower').textContent = `${power.toFixed(1)}%`;
+                
+                setTimeout(() => {
+                    document.getElementById('powerProgress').style.width = `${power}%`;
+                }, 1000);
+                
+                // Update staking info
+                const staked = Math.floor(this.userTokens.truth * 0.6);
+                document.getElementById('stakedAmount').textContent = staked.toLocaleString();
+            }
+
+            updateAccessLevel() {
+                let level = "Foundation";
+                let gradient = "from-green-500 via-blue-500 to-purple-500";
+                
+                const totalValue = this.userTokens.truth + (this.userTokens.creator * 0.1);
+                
+                if (totalValue >= 25000) {
+                    level = "Truth Sovereign";
+                    gradient = "from-purple-500 via-pink-500 to-red-500";
+                } else if (totalValue >= 10000) {
+                    level = "Truth Guardian";
+                    gradient = "from-blue-500 via-purple-500 to-pink-500";
+                } else if (totalValue >= 5000) {
+                    level = "Truth Seeker";
+                    gradient = "from-green-500 via-blue-500 to-purple-500";
+                } else if (totalValue >= 1000) {
+                    level = "Truth Holder";
+                    gradient = "from-yellow-500 via-orange-500 to-red-500";
+                }
+                
+                const accessElement = document.getElementById('accessLevel');
+                accessElement.textContent = `Access Level: ${level}`;
+                accessElement.className = `inline-block bg-gradient-to-r ${gradient} px-10 py-4 rounded-full font-bold text-xl shadow-lg floating-reverse pulse-glow`;
+            }
+
+            calculateRevenue() {
+                const baseRevenue = 2500;
+                const totalTruthSupply = 10000000;
+                const totalCreatorSupply = 1000000000;
+                
+                const truthShare = (this.userTokens.truth / totalTruthSupply) * baseRevenue * 0.7;
+                const creatorShare = (this.userTokens.creator / totalCreatorSupply) * baseRevenue * 0.3;
+                
+                const totalShare = truthShare + creatorShare;
+                const totalEarned = totalShare * 6; // 6 months of earnings
+                const stakingRewards = this.userTokens.truth * 0.245 / 12; // Monthly staking rewards
+                
+                document.getElementById('revenueAmount').textContent = `$${totalShare.toFixed(2)}`;
+                document.getElementById('totalEarned').textContent = `$${totalEarned.toFixed(2)}`;
+                document.getElementById('stakingRewards').textContent = `${stakingRewards.toFixed(2)} TRUTH`;
+            }
+
+            populateExclusiveAccess() {
+                const accessList = document.getElementById('accessList');
+                const totalValue = this.userTokens.truth + (this.userTokens.creator * 0.1);
+                
+                const accessItems = [
+                    { threshold: 0, title: "Discord Foundation Access", status: "UNLOCKED", color: "green" },
+                    { threshold: 100, title: "Content Library", status: totalValue >= 100 ? "UNLOCKED" : "LOCKED", color: totalValue >= 100 ? "blue" : "gray" },
+                    { threshold: 1000, title: "Philosophy Sessions", status: totalValue >= 1000 ? "UNLOCKED" : "LOCKED", color: totalValue >= 1000 ? "purple" : "gray" },
+                    { threshold: 5000, title: "Master Copy Priority", status: totalValue >= 5000 ? "UNLOCKED" : "LOCKED", color: totalValue >= 5000 ? "yellow" : "gray" },
+                    { threshold: 10000, title: "Policy Influence", status: totalValue >= 10000 ? "UNLOCKED" : "LOCKED", color: totalValue >= 10000 ? "red" : "gray" }
+                ];
+                
+                accessList.innerHTML = accessItems.map(item => `
+                    <div class="flex justify-between items-center p-4 bg-black/20 rounded-xl border-l-4 border-${item.color}-400 hover:bg-black/30 transition-all duration-300 cursor-pointer">
+                        <div>
+                            <h4 class="font-bold text-${item.color}-400 mb-1">${item.title}</h4>
+                            <p class="text-sm text-gray-400">Requires ${item.threshold.toLocaleString()}+ tokens</p>
+                        </div>
+                        <span class="px-3 py-1 bg-${item.color}-500/20 text-${item.color}-400 rounded-lg text-xs font-bold">${item.status}</span>
+                    </div>
+                `).join('');
+            }
+
+            startActivityFeed() {
+                const activities = [
+                    { icon: "💎", action: "minted Truth #1456", user: "0x1234...5678", time: "2m ago" },
+                    { icon: "🔥", action: "staked 500 TRUTH", user: "0xabcd...efgh", time: "5m ago" },
+                    { icon: "🗳️", action: "voted on proposal #4", user: "0x9876...1234", time: "12m ago" },
+                    { icon: "💰", action: "claimed rewards", user: "0xdef0...9abc", time: "18m ago" },
+                    { icon: "🎯", action: "joined Discord", user: "0x4567...8901", time: "25m ago" }
+                ];
+                
+                const feedElement = document.getElementById('activityFeed');
+                let currentIndex = 0;
+                
+                const updateFeed = () => {
+                    const activity = activities[currentIndex % activities.length];
+                    const newItem = document.createElement('div');
+                    newItem.className = 'activity-item';
+                    newItem.innerHTML = `
+                        <div class="activity-icon">${activity.icon}</div>
+                        <div class="flex-1">
+                            <p class="font-semibold text-white">${activity.user} ${activity.action}</p>
+                            <p class="text-sm text-gray-400">${activity.time}</p>
+                        </div>
+                    `;
+                    
+                    feedElement.insertBefore(newItem, feedElement.firstChild);
+                    
+                    // Keep only last 10 items
+                    while (feedElement.children.length > 10) {
+                        feedElement.removeChild(feedElement.lastChild);
+                    }
+                    
+                    currentIndex++;
+                };
+                
+                // Initial population
+                for (let i = 0; i < 5; i++) {
+                    updateFeed();
+                }
+                
+                // Update every 15 seconds
+                this.activityInterval = setInterval(updateFeed, 15000);
+            }
+
+            staggerAnimations() {
+                setTimeout(() => {
+                    document.querySelectorAll('.floating').forEach((el, index) => {
+                        el.style.animationDelay = `${index * 0.3}s`;
+                    });
+                    document.querySelectorAll('.floating-reverse').forEach((el, index) => {
+                        el.style.animationDelay = `${index * 0.4}s`;
+                    });
+                }, 500);
+            }
+        }
+
+        // Global Functions
+        function stakeTruthTokens() {
+            const amount = document.getElementById('stakeInput').value;
+            if (!amount || amount <= 0) {
+                alert('Please enter a valid amount to stake');
+                return;
+            }
+            alert(`Staking ${amount} TRUTH tokens for enhanced rewards and governance power!`);
+        }
+
+        function unstakeTruthTokens() {
+            alert('Unstaking TRUTH tokens... Note: There may be a cooldown period.');
+        }
+
+        function claimRewards() {
+            alert('Claiming your rewards! Revenue share and staking rewards have been distributed to your wallet.');
+        }
+
+        function joinDiscord() {
+            window.open('https://discord.gg/thetruth', '_blank');
+        }
+
+        function joinTelegram() {
+            window.open('https://t.me/thetruthcommunity', '_blank');
+        }
+
+        function bookSession() {
+            alert('Registering for the next philosophy session! You will receive a calendar invite soon.');
+        }
+
+        function viewLegalFramework() {
+            window.open('/lawful-dashboard.html', '_blank');
+        }
+
+        // Initialize Community Dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            new TruthCommunity();
+        });
+    </script>
+</body>
+</html>

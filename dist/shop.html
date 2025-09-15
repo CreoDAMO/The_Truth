@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Truth Shop - Digital Content</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d1810 50%, #1a1a1a 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            min-height: 100vh;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .product-card {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 140, 0, 0.05) 100%);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 215, 0, 0.6);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
+            color: #1a1a1a;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+        }
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .grid {
+            display: grid;
+        }
+
+        .grid-cols-1 {
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+
+        .grid-cols-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        @media (min-width: 768px) {
+            .md\\:grid-cols-2 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        .gap-6 {
+            gap: 1.5rem;
+        }
+
+        .rounded-xl {
+            border-radius: 0.75rem;
+        }
+
+        .p-6 {
+            padding: 1.5rem;
+        }
+
+        .mb-4 {
+            margin-bottom: 1rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .mb-3 {
+            margin-bottom: 0.75rem;
+        }
+
+        .text-xl {
+            font-size: 1.25rem;
+            line-height: 1.75rem;
+        }
+
+        .text-lg {
+            font-size: 1.125rem;
+            line-height: 1.75rem;
+        }
+
+        .text-2xl {
+            font-size: 1.5rem;
+            line-height: 2rem;
+        }
+
+        .text-5xl {
+            font-size: 3rem;
+            line-height: 1;
+        }
+
+        .font-bold {
+            font-weight: 700;
+        }
+
+        .text-yellow-400 {
+            color: #fbbf24;
+        }
+
+        .text-green-400 {
+            color: #4ade80;
+        }
+
+        .text-red-400 {
+            color: #f87171;
+        }
+
+        .text-red-200 {
+            color: #fecaca;
+        }
+
+        .text-green-200 {
+            color: #bbf7d0;
+        }
+
+        .bg-red-900 {
+            background-color: #7f1d1d;
+        }
+
+        .bg-green-900 {
+            background-color: #14532d;
+        }
+
+        .bg-red-600 {
+            background-color: #dc2626;
+        }
+
+        .bg-green-600 {
+            background-color: #16a34a;
+        }
+
+        .border {
+            border-width: 1px;
+        }
+
+        .rounded-lg {
+            border-radius: 0.5rem;
+        }
+
+        .p-4 {
+            padding: 1rem;
+        }
+
+        .mb-6 {
+            margin-bottom: 1.5rem;
+        }
+
+        .mb-8 {
+            margin-bottom: 2rem;
+        }
+
+        .mb-12 {
+            margin-bottom: 3rem;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        .items-center {
+            align-items: center;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .px-4 {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        .py-2 {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+
+        .py-3 {
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+        }
+
+        .w-full {
+            width: 100%;
+        }
+
+        .bg-gray-800 {
+            background-color: #1f2937;
+        }
+
+        .border-gray-600 {
+            border-color: #4b5563;
+        }
+
+        .text-white {
+            color: #ffffff;
+        }
+
+        .space-y-3 > :not([hidden]) ~ :not([hidden]) {
+            margin-top: 0.75rem;
+        }
+
+        .opacity-60 {
+            opacity: 0.6;
+        }
+
+        .opacity-80 {
+            opacity: 0.8;
+        }
+
+        .text-sm {
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+        }
+
+        .text-xs {
+            font-size: 0.75rem;
+            line-height: 1rem;
+        }
+
+        .bg-gradient-to-r {
+            background-image: linear-gradient(to right, var(--tw-gradient-stops));
+        }
+
+        .from-yellow-400 {
+            --tw-gradient-from: #fbbf24;
+        }
+
+        .to-orange-500 {
+            --tw-gradient-to: #f97316;
+        }
+
+        .bg-clip-text {
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        .text-transparent {
+            color: transparent;
+        }
+
+        /* Additional styles for the total section */
+        .total-section {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #4b5563; /* border-gray-600 */
+        }
+
+        .total-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem; /* mb-3 */
+        }
+
+        .total-line.final {
+            font-weight: bold;
+            font-size: 1.25rem; /* text-xl */
+            line-height: 1.75rem; /* leading-7 */
+        }
+
+        .tax-info {
+            margin-top: 0.5rem; /* mt-2 */
+            font-size: 0.75rem; /* text-xs */
+            opacity: 0.6; /* opacity-60 */
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="shop-root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const PRODUCTS = {
+            truth: {
+                audiobook: {
+                    id: 'truth-audiobook',
+                    name: 'The Truth - Complete Audiobook',
+                    description: '25-page philosophical demonstration narrated by the author. The complete work that captured AI systems demonstrating institutional translation gaps.',
+                    price: 35,
+                    type: 'audiobook',
+                    category: 'digital',
+                    collection: 'The Truth',
+                    file: 'ipfs://bafybeibtcjku4uce7volglh6edjw2va63usahqixoqxwkv4quvptljonw4',
+                    duration: '45 minutes',
+                    format: 'MP3'
+                },
+                pdf: {
+                    id: 'truth-pdf',
+                    name: 'The Truth - Original Document',
+                    description: 'The complete 25-page philosophical work in its original written form. Unedited, unaltered Truth.',
+                    price: 20,
+                    type: 'pdf',
+                    category: 'digital',
+                    collection: 'The Truth',
+                    file: 'ipfs://bafybeid4w7qtpzjkjxpb5l7hw4qxh6wkzjgqgfgnqkclgzjbgbg5qw7bw4',
+                    pages: '25 pages',
+                    format: 'PDF'
+                }
+            },
+            bonus: {
+                audiobook: {
+                    id: 'bonus-audiobook',
+                    name: 'The Truth Bonus - Audio Commentary',
+                    description: 'Extended analysis and commentary on the recursive demonstration. The meta-analysis preserved.',
+                    price: 15,
+                    type: 'audiobook',
+                    category: 'digital',
+                    collection: 'Bonus Gift',
+                    file: 'ipfs://bafybeibtudgvfggsjdpyikuwh67pdktqqznpcfv5b2xpwyjn62myero2wy',
+                    duration: '30 minutes',
+                    format: 'MP3'
+                },
+                pdf: {
+                    id: 'bonus-pdf',
+                    name: 'The Truth Bonus - Complete Analysis',
+                    description: 'The five-act revelation analysis. How Truth metabolizes institutional responses.',
+                    price: 10,
+                    type: 'pdf',
+                    category: 'digital',
+                    collection: 'Bonus Gift',
+                    file: 'ipfs://bafybeid4t2jkcolfhs6zrwdv4ch6z2lnodywqpzjudpi5w24gl4rr7n5sq',
+                    pages: 'Extended',
+                    format: 'PDF'
+                }
+            },
+            merch: {
+                tshirt_truth: {
+                    id: 'tshirt-truth',
+                    name: 'The Truth - Statement T-Shirt',
+                    description: 'Premium cotton tee featuring "THE TRUTH" in minimalist typography. Philosophy you can wear.',
+                    price: 29,
+                    type: 'apparel',
+                    category: 'merch',
+                    collection: 'Truth Merch',
+                    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+                    colors: ['Black', 'White', 'Navy'],
+                    material: '100% Cotton',
+                    shipping: '5-7 business days'
+                },
+                hoodie_recursive: {
+                    id: 'hoodie-recursive',
+                    name: 'Recursive Truth - Premium Hoodie',
+                    description: 'Heavyweight hoodie with embroidered "RECURSIVE DEMONSTRATION" design. Comfort for deep thinkers.',
+                    price: 65,
+                    type: 'apparel',
+                    category: 'merch',
+                    collection: 'Truth Merch',
+                    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+                    colors: ['Charcoal', 'Forest Green', 'Burgundy'],
+                    material: '80% Cotton, 20% Polyester',
+                    shipping: '5-7 business days'
+                },
+                mug_philosophy: {
+                    id: 'mug-philosophy',
+                    name: 'Philosophy First - Ceramic Mug',
+                    description: '11oz ceramic mug with "Truth belongs to no one" inscription. Perfect for morning contemplation.',
+                    price: 18,
+                    type: 'accessories',
+                    category: 'merch',
+                    collection: 'Truth Merch',
+                    sizes: ['11oz'],
+                    colors: ['Matte Black', 'White'],
+                    material: 'Ceramic',
+                    shipping: '3-5 business days'
+                },
+                stickers_pack: {
+                    id: 'stickers-pack',
+                    name: 'Truth Sticker Pack',
+                    description: 'Set of 5 vinyl stickers featuring key quotes and symbols from The Truth. Spread philosophy everywhere.',
+                    price: 12,
+                    type: 'accessories',
+                    category: 'merch',
+                    collection: 'Truth Merch',
+                    sizes: ['Pack of 5'],
+                    colors: ['Full Color'],
+                    material: 'Waterproof Vinyl',
+                    shipping: '3-5 business days'
+                },
+                poster_demonstration: {
+                    id: 'poster-demonstration',
+                    name: 'The Demonstration - Art Print',
+                    description: 'Limited edition 18"x24" art print visualizing the recursive demonstration concept. Museum-quality paper.',
+                    price: 35,
+                    type: 'art',
+                    category: 'merch',
+                    collection: 'Truth Merch',
+                    sizes: ['18"x24"'],
+                    colors: ['Full Color'],
+                    material: 'Museum-quality Paper',
+                    shipping: '5-7 business days'
+                },
+                notebook_manifesto: {
+                    id: 'notebook-manifesto',
+                    name: 'Truth Manifesto - Journal',
+                    description: 'Hardcover notebook with dot grid pages and embossed cover. For capturing your own philosophical insights.',
+                    price: 24,
+                    type: 'accessories',
+                    category: 'merch',
+                    collection: 'Truth Merch',
+                    sizes: ['A5 (5.8"x8.3")'],
+                    colors: ['Black', 'Brown Leather'],
+                    material: 'Hardcover with 192 pages',
+                    shipping: '3-5 business days'
+                }
+            }
+        };
+
+        function Shop() {
+            const [cart, setCart] = useState([]);
+            const [showCart, setShowCart] = useState(false);
+            const [customerEmail, setCustomerEmail] = useState('');
+            const [loading, setLoading] = useState(false);
+            const [success, setSuccess] = useState('');
+            const [error, setError] = useState('');
+            const [stripeInstance, setStripeInstance] = useState(null);
+            const [clientSecret, setClientSecret] = useState(null);
+            const [activeCategory, setActiveCategory] = useState('all');
+            const [selectedVariants, setSelectedVariants] = useState({});
+
+            // Stripe initialization
+            useEffect(() => {
+                // This is a placeholder for your Stripe publishable key
+                // Replace with your actual key or environment variable
+                const stripePublishableKey = 'pk_test_TYooMQauZI2g1u1H5qR0Jm3b'; // Example key, replace with your actual key
+                const stripe = window.Stripe(stripePublishableKey);
+                setStripeInstance(stripe);
+
+                // Fetch client secret from your backend when ready to checkout
+                // This part would typically involve an API call to your server
+                // For demonstration, we'll simulate it.
+            }, []);
+
+            const addToCart = (product) => {
+                const existing = cart.find(item => item.id === product.id);
+                if (existing) {
+                    setError('Product already in cart');
+                    return;
+                }
+                setCart([...cart, { ...product, quantity: 1 }]);
+                setError('');
+            };
+
+            const removeFromCart = (productId) => {
+                setCart(cart.filter(item => item.id !== productId));
+            };
+
+            const getCartTotal = () => {
+                return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+            };
+
+            const calculateTax = async (amount) => {
+                if (!stripeInstance) return 0;
+
+                try {
+                    const response = await fetch('/create-checkout-session', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ amount: amount, currency: 'usd' }),
+                    });
+                    const session = await response.json();
+                    setClientSecret(session.clientSecret); // Store for potential direct tax calculation if needed, though Stripe handles it via checkout
+
+                    // For this example, we'll assume Stripe Tax is configured on the backend
+                    // and the tax amount is returned as part of the checkout session or handled client-side by Stripe.js
+                    // In a real scenario, you might fetch tax rates based on customer location.
+                    // For now, we'll use a placeholder calculation or rely on Stripe's checkout flow to handle it.
+                    // Let's simulate a tax rate for demonstration if not using Stripe's direct tax calculation API here.
+                    const simulatedTaxRate = 0.08; // 8%
+                    const tax = amount * simulatedTaxRate;
+                    return tax;
+
+                } catch (err) {
+                    console.error("Error calculating tax:", err);
+                    return 0; // Return 0 if tax calculation fails
+                }
+            };
+
+
+            const handleCheckout = async () => {
+                if (!customerEmail) {
+                    setError('Please enter your email address');
+                    return;
+                }
+                if (cart.length === 0) {
+                    setError('Cart is empty');
+                    return;
+                }
+
+                setLoading(true);
+                setError('');
+
+                try {
+                    const totalAmount = getCartTotal();
+                    // Call backend to create Stripe checkout session, which will include tax configurations
+                    const response = await fetch('/create-checkout-session', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            items: cart,
+                            customer_email: customerEmail,
+                        }),
+                    });
+
+                    const session = await response.json();
+
+                    if (session.id) {
+                        // Redirect to Stripe Checkout
+                        const result = await stripeInstance.redirectToCheckout({
+                            sessionId: session.id,
+                        });
+
+                        if (result.error) {
+                            setError(result.error.message);
+                        }
+                    } else {
+                        setError('Failed to create checkout session. Please try again.');
+                    }
+                } catch (err) {
+                    console.error('Checkout error:', err);
+                    setError('An error occurred during checkout. Please try again.');
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+
+            const ProductCard = ({ product }) => {
+                const isInCart = cart.some(item => item.id === product.id);
+                const variants = selectedVariants[product.id] || {};
+                
+                const handleVariantChange = (type, value) => {
+                    setSelectedVariants(prev => ({
+                        ...prev,
+                        [product.id]: { ...prev[product.id], [type]: value }
+                    }));
+                };
+
+                const addProductToCart = () => {
+                    const productWithVariants = {
+                        ...product,
+                        variants: product.category === 'merch' ? variants : undefined
+                    };
+                    addToCart(productWithVariants);
+                };
+
+                return (
+                    <div className="product-card rounded-xl p-6">
+                        <div className="mb-4">
+                            <div className="flex justify-between items-start mb-2">
+                                <h3 className="text-xl font-bold text-yellow-400">{product.name}</h3>
+                                <span className={`px-2 py-1 text-xs rounded-full ${
+                                    product.category === 'digital' 
+                                        ? 'bg-blue-900 text-blue-200' 
+                                        : 'bg-purple-900 text-purple-200'
+                                }`}>
+                                    {product.category === 'digital' ? '📱 Digital' : '📦 Physical'}
+                                </span>
+                            </div>
+                            <p className="text-sm opacity-80 mb-3">{product.description}</p>
+                            
+                            {/* Product Details */}
+                            <div className="grid grid-cols-2 gap-2 text-xs opacity-60 mb-4">
+                                <span>📁 {product.collection}</span>
+                                {product.category === 'digital' ? (
+                                    <>
+                                        <span>⏱️ {product.duration || product.pages}</span>
+                                        <span>📄 {product.format}</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <span>🚚 {product.shipping}</span>
+                                        <span>🧵 {product.material}</span>
+                                    </>
+                                )}
+                            </div>
+
+                            {/* Variant Selection for Merch */}
+                            {product.category === 'merch' && (
+                                <div className="space-y-3 mb-4">
+                                    {product.sizes && product.sizes.length > 1 && (
+                                        <div>
+                                            <label className="text-sm font-semibold mb-2 block">Size:</label>
+                                            <div className="flex flex-wrap gap-2">
+                                                {product.sizes.map(size => (
+                                                    <button
+                                                        key={size}
+                                                        onClick={() => handleVariantChange('size', size)}
+                                                        className={`px-3 py-1 text-xs rounded border transition-all ${
+                                                            variants.size === size
+                                                                ? 'border-yellow-400 bg-yellow-400 text-black'
+                                                                : 'border-gray-600 hover:border-yellow-400'
+                                                        }`}
+                                                    >
+                                                        {size}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+                                    {product.colors && product.colors.length > 1 && (
+                                        <div>
+                                            <label className="text-sm font-semibold mb-2 block">Color:</label>
+                                            <div className="flex flex-wrap gap-2">
+                                                {product.colors.map(color => (
+                                                    <button
+                                                        key={color}
+                                                        onClick={() => handleVariantChange('color', color)}
+                                                        className={`px-3 py-1 text-xs rounded border transition-all ${
+                                                            variants.color === color
+                                                                ? 'border-yellow-400 bg-yellow-400 text-black'
+                                                                : 'border-gray-600 hover:border-yellow-400'
+                                                        }`}
+                                                    >
+                                                        {color}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                        
+                        <div className="flex justify-between items-center">
+                            <div>
+                                <span className="text-2xl font-bold text-green-400">${product.price}</span>
+                                <span className="text-sm opacity-60 ml-2">USD</span>
+                            </div>
+                            <button
+                                onClick={addProductToCart}
+                                className="btn-primary px-4 py-2 rounded-lg"
+                                disabled={isInCart || (product.category === 'merch' && product.sizes?.length > 1 && !variants.size)}
+                            >
+                                {isInCart ? 'In Cart' : 'Add to Cart'}
+                            </button>
+                        </div>
+                    </div>
+                );
+            };
+
+            // This is a placeholder for updating the total based on tax.
+            // In a real integration, the tax amount would be dynamically calculated
+            // and displayed by Stripe or a tax service.
+            useEffect(() => {
+                const total = getCartTotal();
+                const taxLine = document.getElementById('tax-line');
+                const finalTotalSpan = document.getElementById('final-total');
+
+                if (taxLine && finalTotalSpan) {
+                    // This is a simplified tax calculation for UI display.
+                    // Real tax calculation should be done server-side with Stripe Tax.
+                    const simulatedTaxRate = 0.08; // Example 8% tax rate
+                    const taxAmount = total * simulatedTaxRate;
+                    const finalTotal = total + taxAmount;
+
+                    if (taxLine.style.display !== 'none') { // Only update if tax line is visible
+                        document.getElementById('tax-amount').textContent = `$${taxAmount.toFixed(2)}`;
+                        finalTotalSpan.textContent = `$${finalTotal.toFixed(2)}`;
+                    } else {
+                        finalTotalSpan.textContent = `$${total.toFixed(2)}`;
+                    }
+                }
+            }, [cart]);
+
+
+            return (
+                <div className="min-h-screen p-4">
+                    <div className="max-w-6xl mx-auto">
+                        {/* Header */}
+                        <div className="text-center mb-8">
+                            <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+                                THE TRUTH SHOP
+                            </h1>
+                            <p className="text-xl opacity-80 mb-2">
+                                Digital Content - Independent of Blockchain
+                            </p>
+                            <p className="text-lg opacity-60">
+                                "Truth accessible to all, regardless of technology"
+                            </p>
+                        </div>
+
+                        {/* Category Navigation */}
+                        <div className="flex justify-center mb-8">
+                            <div className="glass rounded-xl p-2 flex gap-2">
+                                {['all', 'digital', 'merch'].map(category => (
+                                    <button
+                                        key={category}
+                                        onClick={() => setActiveCategory(category)}
+                                        className={`px-4 py-2 rounded-lg transition-all ${
+                                            activeCategory === category
+                                                ? 'btn-primary'
+                                                : 'btn-secondary'
+                                        }`}
+                                    >
+                                        {category === 'all' ? '🌟 All Products' : 
+                                         category === 'digital' ? '📱 Digital Content' : 
+                                         '📦 Merchandise'}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Cart Button */}
+                        <div className="flex justify-end mb-6">
+                            <button
+                                onClick={() => setShowCart(!showCart)}
+                                className="btn-secondary px-4 py-2 rounded-lg relative"
+                            >
+                                🛒 Cart ({cart.length})
+                                {cart.length > 0 && (
+                                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                                        {cart.length}
+                                    </span>
+                                )}
+                            </button>
+                        </div>
+
+                        {/* Cart Dropdown */}
+                        {showCart && (
+                            <div className="glass rounded-xl p-6 mb-6">
+                                <h3 className="text-xl font-bold mb-4">Shopping Cart</h3>
+                                {cart.length === 0 ? (
+                                    <p className="opacity-60">Your cart is empty</p>
+                                ) : (
+                                    <>
+                                        {cart.map(item => (
+                                            <div key={`${item.id}-${JSON.stringify(item.variants)}`} className="flex justify-between items-start py-3 border-b border-gray-600">
+                                                <div className="flex-1">
+                                                    <p className="font-semibold">{item.name}</p>
+                                                    <p className="text-sm opacity-60 mb-1">{item.collection}</p>
+                                                    {item.variants && (
+                                                        <div className="text-xs opacity-70 space-x-2">
+                                                            {item.variants.size && <span>Size: {item.variants.size}</span>}
+                                                            {item.variants.color && <span>Color: {item.variants.color}</span>}
+                                                        </div>
+                                                    )}
+                                                    <span className={`inline-block px-2 py-1 text-xs rounded mt-1 ${
+                                                        item.category === 'digital' 
+                                                            ? 'bg-blue-900 text-blue-200' 
+                                                            : 'bg-purple-900 text-purple-200'
+                                                    }`}>
+                                                        {item.category === 'digital' ? '📱 Digital' : '📦 Ships ' + item.shipping}
+                                                    </span>
+                                                </div>
+                                                <div className="flex items-center gap-3 ml-4">
+                                                    <span className="font-bold">${item.price}</span>
+                                                    <button
+                                                        onClick={() => removeFromCart(item.id)}
+                                                        className="text-red-400 hover:text-red-300"
+                                                    >
+                                                        ❌
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                        <div className="mt-4 pt-4 border-t border-gray-600">
+                                            <div className="flex justify-between items-center mb-4">
+                                                <span>Subtotal:</span>
+                                                <span>${getCartTotal().toFixed(2)}</span>
+                                            </div>
+                                            <div class="total-section">
+                                                <div class="total-line">
+                                                    <span>Subtotal:</span>
+                                                    <span>$${getCartTotal().toFixed(2)}</span>
+                                                </div>
+                                                <div class="total-line" id="tax-line" style="display: none;">
+                                                    <span>Tax:</span>
+                                                    <span id="tax-amount">$0.00</span>
+                                                </div>
+                                                <div class="total-line final">
+                                                    <span>Total:</span>
+                                                    <span id="final-total">${getCartTotal().toFixed(2)}</span>
+                                                </div>
+                                                <div class="tax-info">
+                                                    <small>Sales tax calculated at checkout • Tax ID: 23-8019835728-2</small>
+                                                </div>
+                                            </div>
+                                            <div className="space-y-3">
+                                                <input
+                                                    type="email"
+                                                    placeholder="Your email address"
+                                                    value={customerEmail}
+                                                    onChange={(e) => setCustomerEmail(e.target.value)}
+                                                    className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white"
+                                                />
+                                                <button
+                                                    onClick={handleCheckout}
+                                                    disabled={loading || !stripeInstance}
+                                                    className="btn-primary w-full py-3 rounded-lg text-lg"
+                                                >
+                                                    {loading ? '⏳ Processing...' : '💳 Checkout'}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Dynamic Product Grid */}
+                        {(activeCategory === 'all' || activeCategory === 'digital') && (
+                            <div className="mb-12">
+                                <h2 className="text-3xl font-bold mb-6 text-center">📱 Digital Content</h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {Object.values(PRODUCTS.truth).map(product => (
+                                        <ProductCard key={product.id} product={product} />
+                                    ))}
+                                    {Object.values(PRODUCTS.bonus).map(product => (
+                                        <ProductCard key={product.id} product={product} />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {(activeCategory === 'all' || activeCategory === 'merch') && (
+                            <div className="mb-12">
+                                <h2 className="text-3xl font-bold mb-6 text-center">📦 Truth Merchandise</h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {Object.values(PRODUCTS.merch).map(product => (
+                                        <ProductCard key={product.id} product={product} />
+                                    ))}
+                                </div>
+                                
+                                {/* Merch Info Banner */}
+                                <div className="glass rounded-xl p-6 mt-8">
+                                    <div className="text-center">
+                                        <h3 className="text-xl font-bold mb-3 text-yellow-400">🌟 Quality Guarantee</h3>
+                                        <p className="opacity-80 mb-4">
+                                            All merchandise is printed on-demand with premium materials. 
+                                            Each item supports the philosophical mission while spreading Truth in the physical world.
+                                        </p>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                                            <div className="bg-green-900/20 rounded-lg p-3">
+                                                <strong className="text-green-400">🌱 Sustainable</strong><br/>
+                                                Eco-friendly printing and materials
+                                            </div>
+                                            <div className="bg-blue-900/20 rounded-lg p-3">
+                                                <strong className="text-blue-400">📦 Print-on-Demand</strong><br/>
+                                                No waste, made when you order
+                                            </div>
+                                            <div className="bg-purple-900/20 rounded-lg p-3">
+                                                <strong className="text-purple-400">🎯 Direct Support</strong><br/>
+                                                Revenue funds Truth ecosystem
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Access Methods Comparison */}
+                        <div className="glass rounded-xl p-6 mb-6">
+                            <h3 className="text-xl font-bold mb-4 text-center">Truth Access Methods</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div>
+                                    <h4 className="font-bold text-yellow-400 mb-3">🎯 NFT Collection (Web3)</h4>
+                                    <ul className="text-sm space-y-2 opacity-80">
+                                        <li>• Complete package + ownership proof</li>
+                                        <li>• The Truth: $777 (77 editions)</li>
+                                        <li>• Bonus Gift: $145 (145,000 editions)</li>
+                                        <li>• 10% royalties on resales</li>
+                                        <li>• Immutable blockchain record</li>
+                                        <li>• Requires MetaMask + ETH</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-blue-400 mb-3">📱 Digital Shop (Web2)</h4>
+                                    <ul className="text-sm space-y-2 opacity-80">
+                                        <li>• Individual content pieces</li>
+                                        <li>• Audiobooks: $35 / $15</li>
+                                        <li>• PDFs: $20 / $10</li>
+                                        <li>• Traditional payment methods</li>
+                                        <li>• Instant download access</li>
+                                        <li>• No crypto knowledge required</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-purple-400 mb-3">📦 Physical Merch</h4>
+                                    <ul className="text-sm space-y-2 opacity-80">
+                                        <li>• Wearable philosophy</li>
+                                        <li>• Apparel: $29 - $65</li>
+                                        <li>• Accessories: $12 - $35</li>
+                                        <li>• Print-on-demand quality</li>
+                                        <li>• Ships worldwide</li>
+                                        <li>• Spreads Truth in physical world</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Messages */}
+                        {error && (
+                            <div className="bg-red-900 border border-red-600 rounded-lg p-4 mb-4">
+                                <p className="text-red-200">❌ {error}</p>
+                            </div>
+                        )}
+
+                        {success && (
+                            <div className="bg-green-900 border border-green-600 rounded-lg p-4 mb-4">
+                                <p className="text-green-200">✅ {success}</p>
+                            </div>
+                        )}
+
+                        {/* Footer */}
+                        <div className="text-center py-8 opacity-60">
+                            <p className="text-sm mb-2">
+                                "Truth doesn't discriminate by technology"
+                            </p>
+                            <p className="text-xs">
+                                Choose your preferred access method: Blockchain ownership or traditional purchase
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // React 18 compatibility
+        const shopRootElement = document.getElementById('shop-root');
+        if (window.ReactDOM.createRoot) {
+            const root = ReactDOM.createRoot(shopRootElement);
+            root.render(<Shop />);
+        } else {
+            // Fallback for older React versions
+            ReactDOM.render(<Shop />, shopRootElement);
+        }
+    </script>
+</body>
+</html>
