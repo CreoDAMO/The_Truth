@@ -8,7 +8,7 @@ channel = "stable-25_05"
 run = ["sh", "-c", "npm run dev"]
 
 [workflows]
-runButton = "Start Minting App"
+runButton = "Project"
 
 [[workflows.workflow]]
 name = "Start Minting App"
@@ -73,12 +73,33 @@ args = "echo \"✅ Static files built and pushed to GitHub\""
 task = "shell.exec"
 args = "echo \"🔗 Enable GitHub Pages in your repo settings to deploy from /dist folder\""
 
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "The Truth NFT Server"
+
+[[workflows.workflow]]
+name = "The Truth NFT Server"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm start"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
 [[ports]]
 localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 5001
+localPort = 46429
 externalPort = 3000
 
 [agent]
