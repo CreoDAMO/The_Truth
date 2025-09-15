@@ -1,46 +1,44 @@
 #!/bin/bash
 
-echo "🏗️ Building static files for deployment..."
+echo "🏗️ Building static site for GitHub Pages..."
 
-# Create build directory
+# Create dist directory
 mkdir -p dist
 
-# Copy web files
+# Copy main files
+echo "📁 Copying main files..."
 cp -r web/* dist/
 
-# Check if pre-compiled artifacts exist
-if [ -f "artifacts-compiled/contract-artifacts.js" ]; then
-    echo "📦 Using pre-compiled artifacts..."
-    cp artifacts-compiled/contract-artifacts.js dist/
-else
-    echo "🔨 Compiling contracts..."
-    npm run compile
-    npm run compile-browser
-    cp contract-artifacts.js dist/ 2>/dev/null || echo "⚠️ No contract artifacts found"
+# Copy the entire LAW directory
+echo "⚖️ Copying LAW directory..."
+cp -r LAW/ dist/
+
+# Copy root files that should be accessible
+echo "📄 Copying root HTML files..."
+for file in *.html; do
+    if [ -f "$file" ]; then
+        cp "$file" dist/
+    fi
+done
+
+# Copy important markdown files
+echo "📚 Copying documentation files..."
+if [ -f "README.md" ]; then
+    cp README.md dist/
+fi
+if [ -f "BLACKPAPER.md" ]; then
+    cp BLACKPAPER.md dist/
 fi
 
-# Copy metadata if it exists
-if [ -d "metadata" ]; then
-    cp -r metadata dist/
+# Copy contract artifacts if they exist
+if [ -f "contract-artifacts.js" ]; then
+    echo "📋 Copying contract artifacts..."
+    cp contract-artifacts.js dist/
 fi
 
-# Copy documentation
-cp README.md dist/ 2>/dev/null || true
-cp DEPLOYMENT.md dist/ 2>/dev/null || true
+# Copy package.json for deployment info
+cp package.json dist/
 
-# Update paths for static deployment
-echo "📝 Updating paths for static deployment..."
-
-# Add base path for GitHub Pages if needed
-if [ ! -z "$GITHUB_REPOSITORY" ]; then
-    REPO_NAME=$(echo $GITHUB_REPOSITORY | cut -d'/' -f2)
-    echo "🔗 Setting base path for repository: $REPO_NAME"
-
-    # Update asset paths in HTML files
-    find dist -name "*.html" -exec sed -i "s|src=\"/|src=\"/$REPO_NAME/|g" {} \;
-    find dist -name "*.html" -exec sed -i "s|href=\"/|href=\"/$REPO_NAME/|g" {} \;
-fi
-
-echo "✅ Static build complete in ./dist directory"
-echo "📁 Files created:"
-ls -la dist/
+echo "✅ Static build complete! Files are in ./dist"
+echo "🔗 Ready for GitHub Pages deployment"
+echo "📋 Included: web files, LAW directory, HTML files, and documentation"

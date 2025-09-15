@@ -33,6 +33,16 @@ app.use(express.static(__dirname));
 // Then serve from parent directory
 app.use(express.static(path.join(__dirname, '..')));
 
+// Explicit routes for LAW directory files
+app.use('/LAW', express.static(path.join(__dirname, '..', 'LAW')));
+
+// Serve markdown files with correct MIME type
+app.get('/LAW/*.md', (req, res) => {
+    const fileName = req.params[0];
+    res.setHeader('Content-Type', 'text/markdown');
+    res.sendFile(path.join(__dirname, '..', 'LAW', fileName + '.md'));
+});
+
 // Serve PWA manifest with correct MIME type
 app.get('/manifest.json', (req, res) => {
     res.setHeader('Content-Type', 'application/json');
