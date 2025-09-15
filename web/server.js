@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 const RateLimit = require('express-rate-limit');
 const cors = require('cors');
 
@@ -39,8 +40,15 @@ app.use('/LAW', express.static(path.join(__dirname, '..', 'LAW')));
 // Serve markdown files with correct MIME type
 app.get('/LAW/*.md', (req, res) => {
     const fileName = req.params[0];
+    const lawDir = path.resolve(__dirname, '..', 'LAW');
+    // Construct full file path and normalize
+    const filePath = path.resolve(lawDir, fileName + '.md');
+    // Ensure the resolved path is within the LAW directory
+    if (!filePath.startsWith(lawDir + path.sep)) {
+        return res.status(403).send('Access denied');
+    }
     res.setHeader('Content-Type', 'text/markdown');
-    res.sendFile(path.join(__dirname, '..', 'LAW', fileName + '.md'));
+    res.sendFile(filePath);
 });
 
 // Serve PWA manifest with correct MIME type
