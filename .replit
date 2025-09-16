@@ -9,7 +9,7 @@ deploymentTarget = "autoscale"
 run = ["npm", "start"]
 
 [workflows]
-runButton = "Project"
+runButton = "Truth NFT Server"
 
 [[workflows.workflow]]
 name = "Start Minting App"
@@ -94,6 +94,19 @@ waitForPort = 5000
 
 [workflows.workflow.metadata]
 outputType = "webview"
+
+[[workflows.workflow]]
+name = "Truth NFT Server"
+author = 47682465
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm install"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node web/server.js"
 
 [[ports]]
 localPort = 5000
