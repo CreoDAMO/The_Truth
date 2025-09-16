@@ -48,5 +48,6 @@
     "express": "^4.21.2",
     "express-rate-limit": "^8.1.0",
     "stripe": "^14.25.0"
-  }
+  },
+  "type": "module"
 }
