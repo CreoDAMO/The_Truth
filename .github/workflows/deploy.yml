@@ -45,22 +45,14 @@ jobs:
       run: npm run build
       env:
         NODE_ENV: production
-      # Ensure package.json has "build": "parcel build web/*.html --out-dir dist --public-url ./"
-
+        
     - name: Setup Pages
       uses: actions/configure-pages@v4
       
     - name: Upload artifact for GitHub Pages
-      uses: actions/upload-pages-artifact@v3
+      uses: actions/upload-pages-artifact@v4  # Updated to v4
       with:
         path: './dist'
-
-    - name: Upload artifact for Vercel (optional)
-      uses: actions/upload-artifact@v3
-      with:
-        name: vercel-deployment
-        path: './dist'
-        # Vercel can pull this artifact via API if integrated
 
   deploy:
     environment:
@@ -76,13 +68,13 @@ jobs:
       uses: actions/deploy-pages@v4
 
     # Optional: Trigger Vercel Deployment via API
-    - name: Deploy to Vercel
+    - name: Trigger Vercel Deployment
       if: github.ref == 'refs/heads/main'
       run: |
-        curl -X POST "https://api.vercel.com/v1/integrations/deploy/prj_XXX/XXXXXX" \
+        curl -X POST "https://api.vercel.com/v1/integrations/deploy/${{ secrets.VERCEL_PROJECT_ID }}/${{ secrets.VERCEL_INTEGRATION_TOKEN }}" \
           -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" \
           -H "Content-Type: application/json" \
           -d '{"gitBranch": "main"}'
       env:
         VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-      # Replace prj_XXX/XXXXXX with your Vercel project ID (find in Vercel dashboard)
+      # Note: Replace with your Vercel project ID and integration token if using API trigger
