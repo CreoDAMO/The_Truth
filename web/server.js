@@ -979,7 +979,9 @@ app.get('/health', (req, res) => {
     res.json({ 
         status: 'healthy', 
         timestamp: new Date().toISOString(),
-        contracts: process.env.NODE_ENV === 'production' ? 'deployed' : 'development'
+        environment: process.env.REPLIT_DEPLOYMENT ? 'replit_deployment' : 'development',
+        contracts: process.env.NODE_ENV === 'production' ? 'deployed' : 'development',
+        port: PORT
     });
 });
 
