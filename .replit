@@ -108,6 +108,27 @@ args = "npm install"
 task = "shell.exec"
 args = "node web/server.js"
 
+[[workflows.workflow]]
+name = "Prepare Contracts"
+author = 47682465
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run compile"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run generate-metadata"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run update-artifacts"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"✅ Contracts compiled and artifacts updated\""
+
 [[ports]]
 localPort = 5000
 externalPort = 80
