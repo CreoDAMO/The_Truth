@@ -3,21 +3,21 @@
   "version": 2,
   "builds": [
     {
-      "src": "server.js",
+      "src": "web/server.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/server.js"
+      "dest": "/web/server.js"
     }
   ],
   "env": {
     "NODE_ENV": "production"
   },
   "functions": {
-    "server.js": {
+    "web/server.js": {
       "maxDuration": 30
     }
   }
