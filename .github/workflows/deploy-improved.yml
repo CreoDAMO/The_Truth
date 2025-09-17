@@ -19,6 +19,9 @@ concurrency:
 jobs:
   # Build and deploy static site to GitHub Pages
   deploy-github-pages:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     
