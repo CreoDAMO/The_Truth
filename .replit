@@ -9,7 +9,7 @@ deploymentTarget = "autoscale"
 run = ["npm", "start"]
 
 [workflows]
-runButton = "Truth NFT Server"
+runButton = "Project"
 
 [[workflows.workflow]]
 name = "Start Minting App"
@@ -87,13 +87,13 @@ args = "The Truth NFT Server"
 name = "The Truth NFT Server"
 author = "agent"
 
+[workflows.workflow.metadata]
+outputType = "webview"
+
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm start"
 waitForPort = 5000
-
-[workflows.workflow.metadata]
-outputType = "webview"
 
 [[workflows.workflow]]
 name = "Truth NFT Server"
