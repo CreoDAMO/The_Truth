@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/common/ERC2981.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract TheTruth is ERC721, ERC721Enumerable, ERC2981, Ownable, ReentrancyGuard {
@@ -42,7 +42,8 @@ contract TheTruth is ERC721, ERC721Enumerable, ERC2981, Ownable, ReentrancyGuard
         address initialOwner,
         string memory baseURI,
         address initialTreasury
-    ) ERC721("The Truth", "TRUTH") Ownable(initialOwner) {
+    ) ERC721("The Truth", "TRUTH") Ownable() {
+        _transferOwnership(initialOwner);
         _baseTokenURI = baseURI;
         _setDefaultRoyalty(initialOwner, 1000); // 10%
         treasury = initialTreasury;
@@ -127,11 +128,11 @@ contract TheTruth is ERC721, ERC721Enumerable, ERC2981, Ownable, ReentrancyGuard
     }
     
     // Required overrides
-    function _beforeTokenTransfer(address from, address to, uint256 tokenId)
+    function _beforeTokenTransfer(address from, address to, uint256 firstTokenId, uint256 batchSize)
         internal
         override(ERC721, ERC721Enumerable)
     {
-        super._beforeTokenTransfer(from, to, tokenId);
+        super._beforeTokenTransfer(from, to, firstTokenId, batchSize);
     }
     
     function supportsInterface(bytes4 interfaceId)

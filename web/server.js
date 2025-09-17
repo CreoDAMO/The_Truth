@@ -28,7 +28,21 @@ app.use(limiter);
 
 // Enable CORS and JSON parsing
 app.use(cors({
-    origin: ['http://localhost:5000', 'https://*.replit.dev', 'https://*.replit.app', 'https://*.repl.co'],
+    origin: (origin, callback) => {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        
+        // Allow localhost for development
+        if (origin.includes('localhost')) return callback(null, true);
+        
+        // Allow Replit domains
+        if (origin.endsWith('.replit.dev') || origin.endsWith('.replit.app') || origin.endsWith('.repl.co')) {
+            return callback(null, true);
+        }
+        
+        // Fallback - for development allow all origins
+        return callback(null, true);
+    },
     credentials: true
 }));
 app.use(express.json());
