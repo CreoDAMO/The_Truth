@@ -6,7 +6,7 @@ channel = "stable-25_05"
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["npm", "start"]
+run = ["npm"]
 
 [workflows]
 runButton = "Project"
@@ -132,6 +132,10 @@ args = "echo \"✅ Contracts compiled and artifacts updated\""
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[[ports]]
+localPort = 39765
+externalPort = 3000
 
 [agent]
 expertMode = true
