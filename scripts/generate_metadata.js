@@ -1,6 +1,9 @@
 // scripts/generate_metadata.js
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // REAL IPFS CIDs from your Pinata uploads
 // Update these with the actual CIDs from your Pinata group: 477dfcab-ef52-4227-96f2-f9588c6294d4

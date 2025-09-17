@@ -1,0 +1,88 @@
+{
+  "name": "The Truth #20/77",
+  "description": "The Truth is not interpretation — it is pure witness.\n\nThis NFT preserves a once-in-a-lifetime philosophical event: a 25-page document and audiobook that captured artificial intelligence systems compulsively demonstrating the very paradox they were asked to analyze.\n\nWhere the text stands whole and unaltered, the AI responses translated, reframed, and institutionalized it — proving, in real time, the gap between Truth that needs no validation and the systems that endlessly seek to \"improve\" it.\n\nEach edition of *The Truth* contains the complete 4-part archive:\n\n🖼️ **Cover Image** — emblem of this witnessing\n🎧 **25-page Audiobook (MP3)** — unedited narration\n📄 **Original Document (PDF)** — preserved in full\n😂 **The Meme (Comic)** — \"Zeno's Paradox of Institutionalization\" distilled into a single, shareable visual\n\n**77 editions total:**\n- 76 offered to the world at $777 each\n- 1 Master Copy reserved as priceless\n- 10% royalties on secondary sales\n\n**Collector's Note:**\n\"I chose abundance. The Truth is offered whole, at $777 — accessible, unguarded, unscarce.\n\nThe secondary market will do what it always does: reframe, reprice, institutionalize. That is its nature.\n\nWhen it does, I will simply witness — and collect royalties from the very system my work has already revealed.\"\n\n— Jacque Antoine DeGraff\n\nThis is more than a collectible — it is an immutable record, a living demonstration, and a reminder:\n\n**\"The Truth Doesn't Need To Be Pushed, Only The Lie...The Lie Only Needs To Be Whispered, But The Truth Always Remains Silent waiting to be Witnessed.\"**\n\n— Jacque Antoine DeGraff\n\nThis is edition 20 of 76 public editions offered at $777 each.",
+  "image": "ipfs://bafybeidgadado5nyfxkua3mkiqbxsqkvrbqctkrqap7oghnkb77qo4steq",
+  "external_url": "https://github.com/CreoDAMO/SpiralParserEngine-Spiral",
+  "attributes": [
+    {
+      "trait_type": "Author",
+      "value": "Jacque Antoine DeGraff"
+    },
+    {
+      "trait_type": "Philosophy",
+      "value": "Master of Nothing, Student of All Things"
+    },
+    {
+      "trait_type": "Education",
+      "value": "9th Grade"
+    },
+    {
+      "trait_type": "Type",
+      "value": "Complete 4-Part Archive"
+    },
+    {
+      "trait_type": "Format",
+      "value": "Cover + Audio + PDF + Meme"
+    },
+    {
+      "trait_type": "Pages",
+      "value": "25"
+    },
+    {
+      "trait_type": "Demonstration",
+      "value": "AI Gap Recognition"
+    },
+    {
+      "trait_type": "Edition",
+      "value": "20/77"
+    },
+    {
+      "trait_type": "Public Copies",
+      "value": "76"
+    },
+    {
+      "trait_type": "Master Copy",
+      "value": "1 Reserved"
+    },
+    {
+      "trait_type": "Royalties",
+      "value": "10%"
+    },
+    {
+      "trait_type": "Pricing Philosophy",
+      "value": "Abundance over Scarcity"
+    },
+    {
+      "trait_type": "Market Strategy",
+      "value": "Witness Secondary Repricing"
+    },
+    {
+      "trait_type": "Master Copy Address",
+      "value": "0x67BF9f428d92704C3Db3a08dC05Bc941A8647866"
+    }
+  ],
+  "properties": {
+    "files": [
+      {
+        "uri": "ipfs://bafybeidgadado5nyfxkua3mkiqbxsqkvrbqctkrqap7oghnkb77qo4steq",
+        "type": "image/png",
+        "name": "Cover Image"
+      },
+      {
+        "uri": "ipfs://bafybeibtcjku4uce7volglh6edjw2va63usahqixoqxwkv4quvptljonw4",
+        "type": "audio/mp3",
+        "name": "25-Page Audiobook"
+      },
+      {
+        "uri": "ipfs://bafybeib2gcc7grc7umyqzdsaxpjmitexanwnwrdsygfc57wcsx6mnvtsbi",
+        "type": "application/pdf",
+        "name": "Original Document"
+      },
+      {
+        "uri": "ipfs://bafybeihlhi5faohkaoonpdlpiyjh2eyi3lfmvmlcoxdwovva7tvmp235we",
+        "type": "image/png",
+        "name": "The Meme Comic"
+      }
+    ]
+  }
+}
