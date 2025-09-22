@@ -552,6 +552,69 @@ function App() {
         }).catch(console.error);
     };
 
+    // Unified dashboard navigation
+    window.showDashboard = function(dashboardType) {
+        // Hide all dashboard content
+        const dashboards = ['analytics', 'governance', 'community', 'payments', 'social', 'ai', 'lawful', 'shop', 'deploy'];
+        dashboards.forEach(dash => {
+            const element = document.getElementById(`${dash}-dashboard`);
+            if (element) {
+                element.style.display = 'none';
+            }
+        });
+
+        // Show the selected dashboard
+        const selectedDashboard = document.getElementById(`${dashboardType}-dashboard`);
+        if (selectedDashboard) {
+            selectedDashboard.style.display = 'block';
+
+            // Update browser history without page reload
+            window.history.pushState({dashboard: dashboardType}, '', `/${dashboardType}`);
+
+            // Initialize dashboard-specific functionality
+            switch(dashboardType) {
+                case 'analytics':
+                    if (window.initAnalytics) window.initAnalytics();
+                    break;
+                case 'governance':
+                    if (window.initGovernance) window.initGovernance();
+                    break;
+                case 'deploy':
+                    if (window.initDeployDashboard) window.initDeployDashboard();
+                    break;
+            }
+        }
+
+        // Update active nav item
+        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+        event.target.classList.add('active');
+    };
+
+    // Handle browser back/forward buttons
+    window.addEventListener('popstate', function(event) {
+        if (event.state && event.state.dashboard) {
+            showDashboard(event.state.dashboard);
+        }
+    });
+
+    // Initialize the application
+    window.initializeApp = initializeApp;
+
+    // Auto-initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    } else {
+        initializeApp();
+    }
+
+    // Dummy function to satisfy the structure, actual implementation would be elsewhere
+    function initializeApp() {
+        console.log("App initialized");
+        // Potentially show default dashboard here
+        // For example: showDashboard('analytics');
+    }
+
+
     return (
         <div className="min-h-screen text-white p-4">
             <div className="max-w-4xl mx-auto">

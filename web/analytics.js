@@ -1,8 +1,67 @@
 const { useState, useEffect } = React;
 
-// Enhanced Analytics Dashboard Component
-function AnalyticsApp() {
-    const [loading, setLoading] = useState(true);
+// Error Boundary Component
+class ErrorBoundary extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { hasError: false, error: null };
+    }
+
+    static getDerivedStateFromError(error) {
+        return { hasError: true, error };
+    }
+
+    componentDidCatch(error, errorInfo) {
+        console.error('Analytics Error:', error, errorInfo);
+    }
+
+    render() {
+        if (this.state.hasError) {
+            return React.createElement('div', { className: 'error-boundary' },
+                React.createElement('h3', null, '📊 Analytics Temporarily Unavailable'),
+                React.createElement('p', null, 'Please refresh the page or try again later.'),
+                React.createElement('button', {
+                    onClick: () => this.setState({ hasError: false, error: null })
+                }, 'Retry')
+            );
+        }
+        return this.props.children;
+    }
+}
+
+// Analytics Dashboard Component with proper error handling
+const AnalyticsApp = () => {
+    const [analytics, setAnalytics] = React.useState({
+        collections: [],
+        recentTransactions: [],
+        totalSupply: 0,
+        mintedCount: 0,
+        totalRevenue: "0 ETH",
+        holders: 0
+    });
+    const [loading, setLoading] = React.useState(true);
+
+    React.useEffect(() => {
+        fetchAnalytics();
+    }, []);
+
+    const fetchAnalytics = async () => {
+        try {
+            console.log('Loading real analytics...');
+            const response = await fetch('/api/analytics');
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
+            setAnalytics(data);
+        } catch (error) {
+            console.error('Error loading real analytics:', error);
+            // Keep default state with empty arrays to prevent map errors
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+    // Enhanced Analytics Dashboard Component
     const [timeframe, setTimeframe] = useState('24h');
     const [metrics, setMetrics] = useState({
         totalHolders: 1247,
@@ -36,7 +95,7 @@ function AnalyticsApp() {
         } catch (error) {
             console.log('Using estimated geographic distribution');
         }
-        
+
         // Estimated distribution based on crypto adoption patterns
         return [
             { country: 'United States', holders: 0, percentage: 0 },
@@ -59,7 +118,7 @@ function AnalyticsApp() {
         } catch (error) {
             console.log('No recent activity data available yet');
         }
-        
+
         return [];
     };
 
@@ -79,7 +138,7 @@ function AnalyticsApp() {
         try {
             // Initialize provider for Base network
             const provider = new ethers.providers.JsonRpcProvider('https://mainnet.base.org');
-            
+
             // Enhanced NFT contract ABIs
             const nftABI = [
                 "function totalSupply() view returns (uint256)",
@@ -106,13 +165,13 @@ function AnalyticsApp() {
             // Get contract addresses from config
             let nftContracts = [];
             let tokenContracts = [];
-            
+
             try {
                 // Load deployed contract addresses dynamically
                 const contractResponse = await fetch('/api/analytics/contract-data');
                 if (contractResponse.ok) {
                     const contractData = await contractResponse.json();
-                    
+
                     // Add deployed NFT contracts
                     if (window.contractAddresses) {
                         if (window.contractAddresses.TheTruth) {
@@ -242,25 +301,25 @@ function AnalyticsApp() {
                 avgPrice: totalRevenue / (totalMinted || 1),
                 latestBlock: latestBlock,
                 ethPrice: ethPrice,
-                
+
                 // NFT collection data
                 collections: nftData,
-                
+
                 // Token data
                 tokens: tokenData,
-                
+
                 // Philosophy metrics
                 truthScore: truthScore,
                 translationGap: institutionalGap,
                 abundanceMultiplier: abundanceMetrics,
-                
+
                 // Enhanced analytics
                 geographicData: await loadGeographicData(),
                 priceHistory: await loadRealPriceHistory(nftContracts),
                 holderGrowth: await loadRealHolderGrowth(nftContracts),
                 philosophyMetrics: await calculatePhilosophyMetrics(nftData, tokenData),
                 recentSales: await loadRecentActivity(),
-                
+
                 // Real-time status
                 lastUpdated: new Date().toISOString(),
                 networkStatus: 'connected',
@@ -311,11 +370,11 @@ function AnalyticsApp() {
     // Calculate truth score from blockchain data
     const calculateTruthScore = (nftData, tokenData) => {
         let score = 90.0; // Base score
-        
+
         // Higher score for more minting activity
         const totalMinted = Object.values(nftData).reduce((sum, data) => sum + parseInt(data.minted || 0), 0);
         score += Math.min(totalMinted * 0.1, 5.0);
-        
+
         // Factor in token distribution
         if (tokenData.TRUTH && tokenData.CREATOR) {
             const truthSupply = parseFloat(tokenData.TRUTH.supply || 0);
@@ -324,14 +383,14 @@ function AnalyticsApp() {
                 score += 2.5;
             }
         }
-        
+
         return Math.min(score, 99.9);
     };
 
     // Calculate institutional translation gap
     const calculateInstitutionalGap = (minted, holders) => {
         if (minted === 0) return 75.0;
-        
+
         // Lower gap indicates better institutional understanding
         const adoptionRate = holders / Math.max(minted * 10, 1); // Theoretical max audience
         return Math.max(20.0, 75.0 - (adoptionRate * 100));
@@ -340,7 +399,7 @@ function AnalyticsApp() {
     // Calculate abundance multiplier
     const calculateAbundanceMetrics = (revenue, minted) => {
         if (minted === 0) return 1.0;
-        
+
         const revenuePerNFT = revenue / minted;
         return Math.max(1.0, revenuePerNFT * 10); // Scale factor
     };
@@ -348,7 +407,7 @@ function AnalyticsApp() {
     // Enhanced philosophy metrics calculation
     const calculatePhilosophyMetrics = async (nftData, tokenData) => {
         const totalMinted = Object.values(nftData).reduce((sum, data) => sum + parseInt(data.minted || 0), 0);
-        
+
         return {
             deepAlignment: Math.min(totalMinted * 0.5, 50.0),
             surfaceEngagement: Math.min(totalMinted * 1.2, 100.0),
@@ -369,10 +428,10 @@ function AnalyticsApp() {
             // For now, generate realistic data based on contract prices
             const data = [];
             const now = new Date();
-            
+
             for (let i = 23; i >= 0; i--) {
                 const time = new Date(now.getTime() - i * 60 * 60 * 1000);
-                
+
                 // Use actual contract prices as base
                 let avgPrice = 0.169;
                 if (nftContracts.length > 0) {
@@ -380,14 +439,14 @@ function AnalyticsApp() {
                         return sum + parseFloat(contract.priceETH || 0);
                     }, 0) / nftContracts.length;
                 }
-                
+
                 data.push({
                     time: time.toISOString(),
                     price: avgPrice + (Math.random() - 0.5) * avgPrice * 0.1,
                     volume: Math.floor(Math.random() * 10) + 1
                 });
             }
-            
+
             return data;
         } catch (error) {
             return generatePriceHistory();
@@ -401,20 +460,20 @@ function AnalyticsApp() {
             // For now, generate based on current minting data
             const data = [];
             const now = new Date();
-            
+
             for (let i = 6; i >= 0; i--) {
                 const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
-                
+
                 // Simulate growth based on contract activity
                 const baseHolders = Math.floor(Math.random() * 50) + 10;
-                
+
                 data.push({
                     date: date.toISOString().split('T')[0],
                     holders: baseHolders + i * 5,
                     newHolders: Math.floor(Math.random() * 10) + 1
                 });
             }
-            
+
             return data;
         } catch (error) {
             return generateHolderGrowth();
@@ -458,7 +517,7 @@ function AnalyticsApp() {
                 setTimeout(tryInitCharts, 100);
                 return;
             }
-            
+
             // Price Chart
             const priceCtx = document.getElementById('priceChart');
             if (priceCtx && !charts.priceChart) {
@@ -557,7 +616,7 @@ function AnalyticsApp() {
                 });
             }
         };
-        
+
         tryInitCharts();
     };
 
@@ -637,7 +696,7 @@ function AnalyticsApp() {
                             <div className="text-4xl mb-4">🪙</div>
                             <h3 className="text-lg font-semibold mb-2">TRUTH Supply</h3>
                             <div className="text-3xl font-bold text-yellow-400 mb-2">
-                                {metrics.truthSupply ? metrics.truthSupply.toLocaleString() : 'Loading...'}
+                                {analytics.totalSupply ? analytics.totalSupply.toLocaleString() : 'Loading...'}
                             </div>
                             <div className="text-sm text-blue-400">Live on Base Network</div>
                         </div>
@@ -648,7 +707,7 @@ function AnalyticsApp() {
                             <div className="text-4xl mb-4">👑</div>
                             <h3 className="text-lg font-semibold mb-2">Creator Tokens</h3>
                             <div className="text-3xl font-bold text-purple-400 mb-2">
-                                {metrics.creatorSupply ? metrics.creatorSupply.toLocaleString() : 'Loading...'}
+                                {analytics.holders ? analytics.holders.toLocaleString() : 'Loading...'}
                             </div>
                             <div className="text-sm text-purple-300">@jacqueantoinedegraff</div>
                         </div>
@@ -810,9 +869,9 @@ function AnalyticsApp() {
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         const root = ReactDOM.createRoot(document.getElementById('analytics-root'));
-        root.render(<AnalyticsApp />);
+        root.render(React.createElement(ErrorBoundary, null, React.createElement(AnalyticsApp)));
     });
 } else {
     const root = ReactDOM.createRoot(document.getElementById('analytics-root'));
-    root.render(<AnalyticsApp />);
+    root.render(React.createElement(ErrorBoundary, null, React.createElement(AnalyticsApp)));
 }

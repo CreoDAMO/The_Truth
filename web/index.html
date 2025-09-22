@@ -1371,7 +1371,7 @@
         // SPA Router for seamless navigation
         let currentPage = 'home';
         let pageCache = {};
-        
+
         async function navigateToPage(page) {
             try {
                 // Track navigation
@@ -1390,28 +1390,28 @@
                 // Update URL without page reload
                 const newUrl = page === 'home' ? '/' : `/${page}`;
                 history.pushState({ page }, '', newUrl);
-                
+
                 // Load page content
                 await loadPageContent(page);
                 currentPage = page;
-                
+
                 // Update active nav item
                 updateActiveNavItem(page);
-                
+
             } catch (error) {
                 console.error('Navigation failed:', error);
                 showError('Failed to load page. Please try again.');
             }
         }
-        
+
         async function loadPageContent(page) {
             const mainContent = document.getElementById('main-content');
-            
+
             if (!mainContent) {
                 console.error('Main content container not found');
                 return;
             }
-            
+
             // Show loading state
             mainContent.innerHTML = `
                 <div style="text-align: center; padding: 60px 20px; color: rgba(255,255,255,0.8);">
@@ -1419,16 +1419,16 @@
                     <div>Loading ${page}...</div>
                 </div>
             `;
-            
+
             try {
                 // Check cache first
                 if (pageCache[page]) {
                     mainContent.innerHTML = pageCache[page];
                     return;
                 }
-                
+
                 let content = '';
-                
+
                 // Route to appropriate content using unified components
                 switch (page) {
                     case 'home':
@@ -1464,14 +1464,14 @@
                     default:
                         content = await getHomeContent();
                 }
-                
+
                 // Cache and display content
                 pageCache[page] = content;
                 mainContent.innerHTML = content;
-                
+
                 // Re-initialize page-specific functionality
                 initializePageFeatures(page);
-                
+
             } catch (error) {
                 console.error('Failed to load page content:', error);
                 mainContent.innerHTML = `
@@ -1483,11 +1483,11 @@
                 `;
             }
         }
-        
+
         async function fetchPageContent(url) {
             const response = await fetch(url);
             const html = await response.text();
-            
+
             // Extract content between main content markers or body if not found
             const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
             if (bodyMatch) {
@@ -1498,7 +1498,7 @@
                 content = content.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
                 return content;
             }
-            
+
             return html;
         }
 
@@ -1510,7 +1510,7 @@
                         <h1 class="text-4xl font-bold text-gradient mb-4">📊 Analytics Dashboard</h1>
                         <p class="text-gray-300">Real-time ecosystem metrics and blockchain analytics</p>
                     </div>
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                         <div class="glass rounded-xl p-6 text-center">
                             <div class="text-3xl font-bold text-blue-400" id="live-holders">Loading...</div>
@@ -1529,7 +1529,7 @@
                             <div class="text-gray-400">Truth Score</div>
                         </div>
                     </div>
-                    
+
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <div class="glass rounded-xl p-6">
                             <h3 class="text-xl font-semibold mb-4">📈 Price History</h3>
@@ -1553,7 +1553,7 @@
                         <h1 class="text-4xl font-bold text-gradient mb-4">🛍️ The Truth Shop</h1>
                         <p class="text-gray-300">AI-Generated Merch from Your NFT Collection</p>
                     </div>
-                    
+
                     <div class="glass rounded-xl p-8 mb-8">
                         <h2 class="text-2xl font-semibold mb-6">🤖 AI Merch Generator</h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1580,7 +1580,7 @@
                             🎨 Generate AI Merch Design
                         </button>
                     </div>
-                    
+
                     <div id="merch-results" class="hidden">
                         <div class="glass rounded-xl p-8">
                             <h3 class="text-xl font-semibold mb-4">Generated Design</h3>
@@ -1600,7 +1600,7 @@
                         <h1 class="text-4xl font-bold text-gradient mb-4">🗳️ Governance</h1>
                         <p class="text-gray-300">Community-driven decision making</p>
                     </div>
-                    
+
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div class="lg:col-span-2">
                             <div class="space-y-6" id="proposals-list">
@@ -1633,12 +1633,12 @@
                 </div>
             `;
         }
-        
+
         function getHomeContent() {
             // Return the original home content
             return document.getElementById('main-content').innerHTML;
         }
-        
+
         function updateActiveNavItem(page) {
             // Remove active class from all nav items
             document.querySelectorAll('.nav-links a').forEach(link => {
@@ -1646,7 +1646,7 @@
                 link.style.background = '';
                 link.style.color = '';
             });
-            
+
             // Add active class to current page
             const activeLink = document.querySelector(`[onclick="navigateToPage('${page}')"]`);
             if (activeLink) {
@@ -1655,7 +1655,7 @@
                 activeLink.style.color = '#00d4ff';
             }
         }
-        
+
         function initializePageFeatures(page) {
             // Re-initialize page-specific features after content load
             switch (page) {
@@ -1696,16 +1696,16 @@
             try {
                 const response = await fetch('/api/analytics');
                 const data = await response.json();
-                
+
                 document.getElementById('live-holders').textContent = data.holderAnalytics?.uniqueHolders || '0';
                 document.getElementById('live-volume').textContent = (data.totalRevenue / 1000000 || 0).toFixed(1) + 'M';
                 document.getElementById('live-price').textContent = '0.169';
                 document.getElementById('truth-score').textContent = '94.7%';
-                
+
                 // Load geographic data
                 const geoResponse = await fetch('/api/analytics/geographic');
                 const geoData = await geoResponse.json();
-                
+
                 const geoContainer = document.getElementById('geo-data');
                 if (geoData && geoData.length > 0) {
                     geoContainer.innerHTML = geoData.map(country => `
@@ -1761,7 +1761,7 @@
         async function generateAIMerch() {
             const nftId = document.getElementById('nft-selector').value;
             const merchType = document.getElementById('merch-type').value;
-            
+
             if (!nftId) {
                 showError('Please select an NFT first');
                 return;
@@ -1784,7 +1784,7 @@
                 });
 
                 const result = await response.json();
-                
+
                 if (result.success) {
                     document.getElementById('merch-results').classList.remove('hidden');
                     document.getElementById('design-preview').innerHTML = `
@@ -1818,7 +1818,7 @@
             try {
                 const response = await fetch('/api/governance/proposals');
                 const proposals = await response.json();
-                
+
                 const proposalsList = document.getElementById('proposals-list');
                 if (proposals && proposals.length > 0) {
                     proposalsList.innerHTML = proposals.map(proposal => `
@@ -1891,20 +1891,20 @@
                 showError('Failed to record vote');
             }
         }
-        
+
         // Handle browser back/forward buttons
         window.addEventListener('popstate', (event) => {
             const page = event.state?.page || getPageFromPath();
             loadPageContent(page);
             updateActiveNavItem(page);
         });
-        
+
         function getPageFromPath() {
             const path = window.location.pathname;
             if (path === '/' || path === '') return 'home';
             return path.slice(1).replace('.html', '');
         }
-        
+
         // Handle GitHub Pages redirects and initialize router
         window.addEventListener('load', () => {
             // Handle GitHub Pages SPA redirect
@@ -1917,7 +1917,7 @@
                 navigateToPage(path);
                 return;
             }
-            
+
             const initialPage = getPageFromPath();
             if (initialPage !== 'home') {
                 navigateToPage(initialPage);
@@ -1925,7 +1925,7 @@
                 updateActiveNavItem('home');
             }
         });
-        
+
     </script>
 </body>
 </html>

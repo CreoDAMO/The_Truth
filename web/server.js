@@ -69,6 +69,70 @@ app.get('/LAW/*.md', (req, res) => {
     res.sendFile(filePath);
 });
 
+// API endpoints for dashboard data
+app.get('/api/analytics', (req, res) => {
+    res.json({
+        totalSupply: 77,
+        mintedCount: 42,
+        totalRevenue: "12.5 ETH",
+        holders: 35,
+        collections: [
+            { name: "The Truth Original", supply: 77, minted: 42, price: "0.1695 ETH" },
+            { name: "Bonus Gift", supply: 145000, minted: 1250, price: "0.039 ETH" },
+            { name: "Part Three", supply: 444, minted: 0, price: "TBD" }
+        ],
+        recentTransactions: [
+            { hash: "0x123...", amount: "0.1695 ETH", timestamp: new Date().toISOString() },
+            { hash: "0x456...", amount: "0.039 ETH", timestamp: new Date().toISOString() }
+        ]
+    });
+});
+
+app.get('/api/governance', (req, res) => {
+    res.json({
+        proposals: [
+            { id: 1, title: "Add new collection", status: "active", votes: 1250 },
+            { id: 2, title: "Update royalties", status: "pending", votes: 890 }
+        ],
+        totalVotingPower: 5000,
+        activeProposals: 2
+    });
+});
+
+app.get('/api/community', (req, res) => {
+    res.json({
+        totalHolders: 35,
+        activeMembers: 28,
+        truthScore: 94.7,
+        engagement: 87.2,
+        geographicDistribution: [
+            { country: "US", holders: 15 },
+            { country: "UK", holders: 8 },
+            { country: "Canada", holders: 5 },
+            { country: "Germany", holders: 4 },
+            { country: "Other", holders: 3 }
+        ]
+    });
+});
+
+// Catch-all route for SPA - must be last
+app.get('*', (req, res) => {
+    // Don't intercept API calls or static assets
+    if (req.path.startsWith('/api/') || 
+        req.path.startsWith('/assets/') || 
+        req.path.startsWith('/LAW/') ||
+        req.path.includes('.js') || 
+        req.path.includes('.css') || 
+        req.path.includes('.png') || 
+        req.path.includes('.jpg') || 
+        req.path.includes('.ico')) {
+        return res.status(404).send('Not found');
+    }
+    
+    // Serve the main SPA for all dashboard routes
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
 // Serve PWA manifest with correct MIME type
 app.get('/manifest.json', (req, res) => {
     res.setHeader('Content-Type', 'application/json');
