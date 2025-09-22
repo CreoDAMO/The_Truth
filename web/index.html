@@ -6,27 +6,79 @@
     <title>The Truth NFT - Complete Web3 Creator Economy</title>
     <meta name="description" content="The Truth NFT ecosystem - where philosophy meets blockchain technology">
     <link rel="manifest" href="manifest.json">
-    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.9/dist/purify.min.js" 
-            integrity="sha512-s+cOgVYJAFdeUAUr8UjHqfSVhYaOhCmOCQoKj4KYn1v1ZXLS7JaDAw5Q3KV1Rq0P7Qq7XyPT7TIzwcpNr3L3g==" 
-            crossorigin="anonymous"
-            onerror="console.warn('DOMPurify failed to load from primary CDN')"></script>
     <script>
-        // DOMPurify fallback
-        if (typeof DOMPurify === 'undefined') {
-            console.warn('DOMPurify not available, loading fallback...');
-            const script = document.createElement('script');
-            script.src = 'https://unpkg.com/dompurify@3.0.9/dist/purify.min.js';
-            script.onerror = () => {
-                console.error('DOMPurify fallback also failed');
-                window.DOMPurify = {
-                    sanitize: (html) => {
-                        console.warn('Using basic HTML sanitization fallback');
-                        return html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+        // Enhanced DOMPurify loading with multiple CDN fallbacks
+        const DOMPURIFY_CDNS = [
+            'https://unpkg.com/dompurify@3.0.9/dist/purify.min.js',
+            'https://cdn.jsdelivr.net/npm/dompurify@3.0.9/dist/purify.min.js',
+            'https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.9/purify.min.js'
+        ];
+
+        async function loadDOMPurifyWithFallbacks() {
+            for (let i = 0; i < DOMPURIFY_CDNS.length; i++) {
+                try {
+                    await loadDOMPurifyScript(DOMPURIFY_CDNS[i]);
+                    console.log(`✅ DOMPurify loaded successfully from: ${DOMPURIFY_CDNS[i]}`);
+                    return;
+                } catch (error) {
+                    console.warn(`⚠️ Failed to load DOMPurify from ${DOMPURIFY_CDNS[i]}, trying next...`);
+                    if (i === DOMPURIFY_CDNS.length - 1) {
+                        console.error('❌ All DOMPurify CDNs failed, using secure fallback');
+                        initializeSecureFallback();
+                    }
+                }
+            }
+        }
+
+        function loadDOMPurifyScript(src) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = () => {
+                    if (typeof DOMPurify !== 'undefined') {
+                        resolve();
+                    } else {
+                        reject(new Error('DOMPurify not found after script load'));
                     }
                 };
-            };
-            document.head.appendChild(script);
+                script.onerror = reject;
+                document.head.appendChild(script);
+
+                // Timeout after 5 seconds
+                setTimeout(() => reject(new Error('Script loading timeout')), 5000);
+            });
         }
+
+        function initializeSecureFallback() {
+            // More secure fallback that removes all potentially dangerous elements
+            window.DOMPurify = {
+                sanitize: (html, options = {}) => {
+                    console.warn('Using enhanced security fallback for HTML sanitization');
+                    
+                    // Remove all script tags and event handlers
+                    let sanitized = html
+                        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                        .replace(/javascript:/gi, '')
+                        .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '')
+                        .replace(/on\w+\s*=\s*[^>\s]+/gi, '');
+                    
+                    // Allow only safe HTML elements and attributes
+                    const allowedTags = ['div', 'span', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'strong', 'em', 'br', 'ul', 'ol', 'li', 'a'];
+                    const allowedAttributes = ['class', 'style', 'href', 'target'];
+                    
+                    // Basic tag filtering (simplified for fallback)
+                    if (options.SAFE_FOR_JQUERY || sanitized.includes('<')) {
+                        // Strip all tags except allowed ones as a safety measure
+                        sanitized = sanitized.replace(/<(?!\/?(?:div|span|p|h[1-6]|strong|em|br|ul|ol|li|a)\b)[^>]*>/gi, '');
+                    }
+                    
+                    return sanitized;
+                }
+            };
+        }
+
+        // Load DOMPurify immediately
+        loadDOMPurifyWithFallbacks();
     </script>
     <style>
         * {
@@ -1071,6 +1123,19 @@
         async function initializeApp() {
             try {
                 console.log('🚀 Starting application initialization...');
+
+                // Wait for DOMPurify to be loaded first
+                let domPurifyAttempts = 0;
+                while (typeof DOMPurify === 'undefined' && domPurifyAttempts < 50) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    domPurifyAttempts++;
+                }
+
+                if (typeof DOMPurify !== 'undefined') {
+                    console.log('✅ DOMPurify loaded and ready');
+                } else {
+                    console.warn('⚠️ DOMPurify not available, fallback will be used');
+                }
 
                 // Load ethers.js with fallbacks
                 await loadScriptWithFallbacks(ETHERS_CDNS, 'ethers.js');

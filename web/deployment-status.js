@@ -171,16 +171,26 @@ class DeploymentStatus {
             `;
         }
 
-        // Use DOMPurify to sanitize HTML content before setting innerHTML, with fallback
-        if (typeof DOMPurify !== 'undefined') {
-            this.statusElement.innerHTML = DOMPurify.sanitize(html);
-        } else {
-            // Fallback: create elements safely without innerHTML
+        // Wait for DOMPurify to be available and use it safely
+        const waitForDOMPurify = () => {
+            return new Promise((resolve) => {
+                if (typeof DOMPurify !== 'undefined') {
+                    resolve();
+                } else {
+                    setTimeout(() => waitForDOMPurify().then(resolve), 100);
+                }
+            });
+        };
+
+        waitForDOMPurify().then(() => {
+            this.statusElement.innerHTML = DOMPurify.sanitize(html, {SAFE_FOR_JQUERY: true});
+        }).catch(() => {
+            // Safe fallback: create elements without innerHTML
             this.statusElement.innerHTML = '';
-            const tempDiv = document.createElement('div');
-            tempDiv.textContent = html.replace(/<[^>]*>/g, ''); // Strip HTML tags as fallback
-            this.statusElement.appendChild(tempDiv);
-        }
+            const container = document.createElement('div');
+            container.textContent = 'Contract status loading...';
+            this.statusElement.appendChild(container);
+        });
     }
 }
 
