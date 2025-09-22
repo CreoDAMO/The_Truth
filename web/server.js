@@ -135,8 +135,8 @@ app.get('*', (req, res) => {
     // All dashboard routes serve the main SPA
     const dashboardRoutes = [
         '/analytics', '/governance', '/community', '/payments', 
-        '/social', '/ai-insights', '/lawful', '/shop', '/deploy',
-        '/deployment-dashboard', '/ai', '/legal', '/liquidity'
+        '/social', '/ai-insights', '/lawful', '/shop', '/liquidity', '/deploy',
+        '/deployment-dashboard', '/ai', '/legal'
     ];
 
     const isValidRoute = dashboardRoutes.some(route => 
