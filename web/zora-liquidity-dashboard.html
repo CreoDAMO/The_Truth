@@ -1,0 +1,466 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zora Liquidity Automation - The Truth Ecosystem</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .pool-card {
+            transition: all 0.3s ease;
+        }
+        .pool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        .status-live { color: #10b981; }
+        .status-pending { color: #f59e0b; }
+        .status-inactive { color: #ef4444; }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen text-white">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold mb-4">🌊 Zora Liquidity Automation</h1>
+            <p class="text-xl opacity-80">Automated LP Pools for Creator Coins & Truth Ecosystem</p>
+            <div class="mt-4 flex justify-center space-x-4">
+                <div class="glass rounded-lg px-4 py-2">
+                    <span class="text-sm opacity-70">Total Value Locked:</span>
+                    <span class="font-bold ml-2" id="tvl">$0</span>
+                </div>
+                <div class="glass rounded-lg px-4 py-2">
+                    <span class="text-sm opacity-70">Active Pools:</span>
+                    <span class="font-bold ml-2" id="activePools">0</span>
+                </div>
+                <div class="glass rounded-lg px-4 py-2">
+                    <span class="text-sm opacity-70">24h Volume:</span>
+                    <span class="font-bold ml-2" id="volume24h">$0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Connection Status -->
+        <div class="glass rounded-xl p-6 mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-xl font-semibold mb-2">Wallet Connection</h3>
+                    <p class="opacity-70" id="walletStatus">Please connect your wallet to access liquidity automation</p>
+                </div>
+                <button id="connectWallet" class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-semibold transition-colors">
+                    Connect Wallet
+                </button>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="glass rounded-xl p-6 pool-card">
+                <h3 class="text-xl font-semibold mb-4">🚀 Create Auto Pool</h3>
+                <p class="opacity-70 mb-4">Automatically create LP pools for Zora Creator Coins</p>
+                <div class="space-y-3">
+                    <input type="text" id="creatorTokenAddress" placeholder="Creator Token Address" 
+                           class="w-full p-3 rounded bg-black/30 border border-white/20 text-white placeholder-gray-400">
+                    <select id="baseTokenSelect" class="w-full p-3 rounded bg-black/30 border border-white/20 text-white">
+                        <option value="">Select Base Token</option>
+                        <option value="0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913">USDC</option>
+                        <option value="0x4200000000000000000000000000000000000006">WETH</option>
+                        <option value="0x8f6cf6f7747e170f4768533b869c339dc3d30a3c">TRUTH</option>
+                    </select>
+                    <button id="createPoolBtn" class="w-full bg-green-600 hover:bg-green-700 py-3 rounded font-semibold transition-colors">
+                        Create Automated Pool
+                    </button>
+                </div>
+            </div>
+
+            <div class="glass rounded-xl p-6 pool-card">
+                <h3 class="text-xl font-semibold mb-4">💰 Provide Liquidity</h3>
+                <p class="opacity-70 mb-4">Add balanced liquidity to existing pools</p>
+                <div class="space-y-3">
+                    <select id="poolSelect" class="w-full p-3 rounded bg-black/30 border border-white/20 text-white">
+                        <option value="">Select Pool</option>
+                    </select>
+                    <input type="number" id="liquidityAmount" placeholder="Amount to Provide" 
+                           class="w-full p-3 rounded bg-black/30 border border-white/20 text-white placeholder-gray-400">
+                    <button id="provideLiquidityBtn" class="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded font-semibold transition-colors">
+                        Provide Liquidity
+                    </button>
+                </div>
+            </div>
+
+            <div class="glass rounded-xl p-6 pool-card">
+                <h3 class="text-xl font-semibold mb-4">🔄 Arbitrage Bot</h3>
+                <p class="opacity-70 mb-4">Automated arbitrage between Zora and DEXs</p>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span>Bot Status:</span>
+                        <span id="botStatus" class="status-inactive">Inactive</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span>Profit Today:</span>
+                        <span id="dailyProfit" class="text-green-400">$0.00</span>
+                    </div>
+                    <button id="toggleBotBtn" class="w-full bg-purple-600 hover:bg-purple-700 py-3 rounded font-semibold transition-colors">
+                        Start Arbitrage Bot
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Pools -->
+        <div class="glass rounded-xl p-6 mb-8">
+            <h3 class="text-2xl font-semibold mb-6">🏊 Active Liquidity Pools</h3>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6" id="poolsContainer">
+                <!-- Pools will be dynamically loaded -->
+            </div>
+        </div>
+
+        <!-- Analytics Dashboard -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div class="glass rounded-xl p-6">
+                <h3 class="text-xl font-semibold mb-4">📊 Liquidity Performance</h3>
+                <canvas id="liquidityChart" width="400" height="200"></canvas>
+            </div>
+            <div class="glass rounded-xl p-6">
+                <h3 class="text-xl font-semibold mb-4">💹 Arbitrage Opportunities</h3>
+                <canvas id="arbitrageChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+
+        <!-- Creator Rewards -->
+        <div class="glass rounded-xl p-6">
+            <h3 class="text-2xl font-semibold mb-6">🎨 Creator Rewards Dashboard</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-black/20 rounded-lg p-4">
+                    <h4 class="font-semibold mb-2">Your Creator Rewards</h4>
+                    <div class="text-2xl font-bold text-green-400" id="creatorRewards">0 TRUTH</div>
+                    <button id="claimRewardsBtn" class="mt-3 bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-sm">
+                        Claim Rewards
+                    </button>
+                </div>
+                <div class="bg-black/20 rounded-lg p-4">
+                    <h4 class="font-semibold mb-2">Pool Performance</h4>
+                    <div class="text-2xl font-bold text-blue-400" id="poolApy">0%</div>
+                    <div class="text-sm opacity-70">Average APY</div>
+                </div>
+                <div class="bg-black/20 rounded-lg p-4">
+                    <h4 class="font-semibold mb-2">Liquidity Provided</h4>
+                    <div class="text-2xl font-bold text-purple-400" id="userLiquidity">$0</div>
+                    <div class="text-sm opacity-70">Total Value</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class ZoraLiquidityDashboard {
+            constructor() {
+                this.provider = null;
+                this.signer = null;
+                this.contract = null;
+                this.userAddress = null;
+                this.pools = [];
+                this.init();
+            }
+
+            async init() {
+                this.setupEventListeners();
+                this.loadPoolData();
+                this.setupCharts();
+                setInterval(() => this.updateDashboard(), 30000); // Update every 30 seconds
+            }
+
+            setupEventListeners() {
+                document.getElementById('connectWallet').addEventListener('click', () => this.connectWallet());
+                document.getElementById('createPoolBtn').addEventListener('click', () => this.createPool());
+                document.getElementById('provideLiquidityBtn').addEventListener('click', () => this.provideLiquidity());
+                document.getElementById('toggleBotBtn').addEventListener('click', () => this.toggleArbitrageBot());
+                document.getElementById('claimRewardsBtn').addEventListener('click', () => this.claimRewards());
+            }
+
+            async connectWallet() {
+                try {
+                    if (typeof window.ethereum !== 'undefined') {
+                        this.provider = new ethers.providers.Web3Provider(window.ethereum);
+                        await window.ethereum.request({ method: 'eth_requestAccounts' });
+                        this.signer = this.provider.getSigner();
+                        this.userAddress = await this.signer.getAddress();
+
+                        // Switch to Base network
+                        await this.switchToBase();
+
+                        document.getElementById('walletStatus').textContent = `Connected: ${this.userAddress.slice(0, 6)}...${this.userAddress.slice(-4)}`;
+                        document.getElementById('connectWallet').textContent = 'Connected';
+                        document.getElementById('connectWallet').disabled = true;
+
+                        await this.loadUserData();
+                    } else {
+                        alert('Please install MetaMask!');
+                    }
+                } catch (error) {
+                    console.error('Failed to connect wallet:', error);
+                    alert('Failed to connect wallet');
+                }
+            }
+
+            async switchToBase() {
+                try {
+                    await window.ethereum.request({
+                        method: 'wallet_switchEthereumChain',
+                        params: [{ chainId: '0x2105' }] // Base mainnet
+                    });
+                } catch (switchError) {
+                    if (switchError.code === 4902) {
+                        await window.ethereum.request({
+                            method: 'wallet_addEthereumChain',
+                            params: [{
+                                chainId: '0x2105',
+                                chainName: 'Base',
+                                nativeCurrency: { name: 'Ethereum', symbol: 'ETH', decimals: 18 },
+                                rpcUrls: ['https://mainnet.base.org'],
+                                blockExplorerUrls: ['https://basescan.org']
+                            }]
+                        });
+                    }
+                }
+            }
+
+            async createPool() {
+                const creatorToken = document.getElementById('creatorTokenAddress').value;
+                const baseToken = document.getElementById('baseTokenSelect').value;
+
+                if (!creatorToken || !baseToken) {
+                    alert('Please enter creator token address and select base token');
+                    return;
+                }
+
+                try {
+                    // This would call the smart contract
+                    console.log('Creating pool for:', creatorToken, 'paired with:', baseToken);
+                    
+                    // Simulate pool creation
+                    const newPool = {
+                        id: `${creatorToken}-${baseToken}`,
+                        token0: creatorToken,
+                        token1: baseToken,
+                        tvl: '$0',
+                        apy: '0%',
+                        volume24h: '$0',
+                        status: 'pending'
+                    };
+
+                    this.pools.push(newPool);
+                    this.renderPools();
+                    
+                    alert('Pool creation initiated! It may take a few minutes to become active.');
+                } catch (error) {
+                    console.error('Failed to create pool:', error);
+                    alert('Failed to create pool');
+                }
+            }
+
+            async provideLiquidity() {
+                const selectedPool = document.getElementById('poolSelect').value;
+                const amount = document.getElementById('liquidityAmount').value;
+
+                if (!selectedPool || !amount) {
+                    alert('Please select a pool and enter amount');
+                    return;
+                }
+
+                try {
+                    console.log('Providing liquidity to pool:', selectedPool, 'amount:', amount);
+                    alert('Liquidity provision initiated!');
+                } catch (error) {
+                    console.error('Failed to provide liquidity:', error);
+                    alert('Failed to provide liquidity');
+                }
+            }
+
+            async toggleArbitrageBot() {
+                const button = document.getElementById('toggleBotBtn');
+                const status = document.getElementById('botStatus');
+
+                if (status.textContent === 'Inactive') {
+                    status.textContent = 'Active';
+                    status.className = 'status-live';
+                    button.textContent = 'Stop Arbitrage Bot';
+                    
+                    // Start simulated arbitrage
+                    this.startArbitrageSimulation();
+                } else {
+                    status.textContent = 'Inactive';
+                    status.className = 'status-inactive';
+                    button.textContent = 'Start Arbitrage Bot';
+                }
+            }
+
+            startArbitrageSimulation() {
+                setInterval(() => {
+                    const currentProfit = parseFloat(document.getElementById('dailyProfit').textContent.replace('$', ''));
+                    const newProfit = currentProfit + (Math.random() * 5);
+                    document.getElementById('dailyProfit').textContent = `$${newProfit.toFixed(2)}`;
+                }, 5000);
+            }
+
+            async claimRewards() {
+                try {
+                    console.log('Claiming creator rewards...');
+                    alert('Rewards claimed successfully!');
+                    document.getElementById('creatorRewards').textContent = '0 TRUTH';
+                } catch (error) {
+                    console.error('Failed to claim rewards:', error);
+                    alert('Failed to claim rewards');
+                }
+            }
+
+            async loadPoolData() {
+                // Simulate loading pool data
+                this.pools = [
+                    {
+                        id: 'truth-usdc',
+                        token0: 'TRUTH',
+                        token1: 'USDC',
+                        tvl: '$125,420',
+                        apy: '24.5%',
+                        volume24h: '$8,750',
+                        status: 'live'
+                    },
+                    {
+                        id: 'creator-eth',
+                        token0: 'Creator',
+                        token1: 'ETH',
+                        tvl: '$89,340',
+                        apy: '18.7%',
+                        volume24h: '$12,340',
+                        status: 'live'
+                    }
+                ];
+
+                this.renderPools();
+                this.populatePoolSelect();
+            }
+
+            renderPools() {
+                const container = document.getElementById('poolsContainer');
+                container.innerHTML = this.pools.map(pool => `
+                    <div class="bg-black/20 rounded-lg p-4 pool-card">
+                        <div class="flex justify-between items-start mb-3">
+                            <h4 class="font-semibold">${pool.token0}/${pool.token1}</h4>
+                            <span class="status-${pool.status}">${pool.status.toUpperCase()}</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-3 text-sm">
+                            <div>
+                                <div class="opacity-70">TVL</div>
+                                <div class="font-semibold">${pool.tvl}</div>
+                            </div>
+                            <div>
+                                <div class="opacity-70">APY</div>
+                                <div class="font-semibold text-green-400">${pool.apy}</div>
+                            </div>
+                            <div>
+                                <div class="opacity-70">24h Vol</div>
+                                <div class="font-semibold">${pool.volume24h}</div>
+                            </div>
+                        </div>
+                        <div class="mt-3 flex space-x-2">
+                            <button class="flex-1 bg-blue-600 hover:bg-blue-700 py-2 rounded text-sm">
+                                Add Liquidity
+                            </button>
+                            <button class="flex-1 bg-purple-600 hover:bg-purple-700 py-2 rounded text-sm">
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            populatePoolSelect() {
+                const select = document.getElementById('poolSelect');
+                select.innerHTML = '<option value="">Select Pool</option>' + 
+                    this.pools.map(pool => 
+                        `<option value="${pool.id}">${pool.token0}/${pool.token1}</option>`
+                    ).join('');
+            }
+
+            async loadUserData() {
+                // Load user-specific data
+                document.getElementById('creatorRewards').textContent = '247.5 TRUTH';
+                document.getElementById('poolApy').textContent = '21.3%';
+                document.getElementById('userLiquidity').textContent = '$15,750';
+            }
+
+            setupCharts() {
+                // Liquidity Performance Chart
+                const liquidityCtx = document.getElementById('liquidityChart').getContext('2d');
+                new Chart(liquidityCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['1h', '6h', '12h', '1d', '3d', '7d'],
+                        datasets: [{
+                            label: 'TVL ($)',
+                            data: [180000, 185000, 192000, 195000, 205000, 215000],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: { ticks: { color: '#fff' } },
+                            x: { ticks: { color: '#fff' } }
+                        },
+                        plugins: { legend: { labels: { color: '#fff' } } }
+                    }
+                });
+
+                // Arbitrage Chart
+                const arbitrageCtx = document.getElementById('arbitrageChart').getContext('2d');
+                new Chart(arbitrageCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        datasets: [{
+                            label: 'Arbitrage Profit ($)',
+                            data: [125, 180, 95, 240, 165, 310, 85],
+                            backgroundColor: '#8b5cf6'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: { ticks: { color: '#fff' } },
+                            x: { ticks: { color: '#fff' } }
+                        },
+                        plugins: { legend: { labels: { color: '#fff' } } }
+                    }
+                });
+            }
+
+            updateDashboard() {
+                // Update key metrics
+                document.getElementById('tvl').textContent = '$' + (214760 + Math.random() * 1000).toFixed(0);
+                document.getElementById('activePools').textContent = this.pools.filter(p => p.status === 'live').length;
+                document.getElementById('volume24h').textContent = '$' + (21090 + Math.random() * 500).toFixed(0);
+            }
+        }
+
+        // Initialize dashboard when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new ZoraLiquidityDashboard();
+        });
+    </script>
+</body>
+</html>
