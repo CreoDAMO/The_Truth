@@ -115,7 +115,60 @@ app.get('/api/community', (req, res) => {
     });
 });
 
-// Complete SPA routing with proper dashboard handling
+// Serve specific HTML files for dashboard routes
+app.get('/analytics', (req, res) => {
+    res.sendFile(path.join(__dirname, 'analytics.html'));
+});
+
+app.get('/governance', (req, res) => {
+    res.sendFile(path.join(__dirname, 'governance.html'));
+});
+
+app.get('/community', (req, res) => {
+    res.sendFile(path.join(__dirname, 'community-dashboard.html'));
+});
+
+app.get('/payments', (req, res) => {
+    res.sendFile(path.join(__dirname, 'payments.html'));
+});
+
+app.get('/liquidity', (req, res) => {
+    res.sendFile(path.join(__dirname, 'liquidity.html'));
+});
+
+app.get('/social', (req, res) => {
+    res.sendFile(path.join(__dirname, 'social.html'));
+});
+
+app.get('/ai-insights', (req, res) => {
+    res.sendFile(path.join(__dirname, 'ai-insights.html'));
+});
+
+app.get('/ai', (req, res) => {
+    res.sendFile(path.join(__dirname, 'ai-insights.html'));
+});
+
+app.get('/lawful', (req, res) => {
+    res.sendFile(path.join(__dirname, 'lawful-dashboard.html'));
+});
+
+app.get('/legal', (req, res) => {
+    res.sendFile(path.join(__dirname, 'lawful-dashboard.html'));
+});
+
+app.get('/shop', (req, res) => {
+    res.sendFile(path.join(__dirname, 'shop.html'));
+});
+
+app.get('/deploy', (req, res) => {
+    res.sendFile(path.join(__dirname, 'deploy.html'));
+});
+
+app.get('/deployment-dashboard', (req, res) => {
+    res.sendFile(path.join(__dirname, 'deployment-dashboard.html'));
+});
+
+// Catch-all for other routes - serve main page
 app.get('*', (req, res) => {
     // Static assets and API routes
     if (req.path.startsWith('/api/') || 
@@ -132,23 +185,9 @@ app.get('*', (req, res) => {
         return res.status(404).send('Not found');
     }
     
-    // All dashboard routes serve the main SPA
-    const dashboardRoutes = [
-        '/analytics', '/governance', '/community', '/payments', 
-        '/liquidity', '/social', '/ai-insights', '/lawful', '/shop', '/deploy',
-        '/deployment-dashboard', '/ai', '/legal'
-    ];
-    
-    const isValidRoute = dashboardRoutes.some(route => 
-        req.path === route || req.path.startsWith(route + '/')
-    );
-    
-    if (isValidRoute || req.path === '/') {
-        if (req.path === '/liquidity') {
-            res.sendFile(path.join(__dirname, 'liquidity.html'));
-        } else {
-            res.sendFile(path.join(__dirname, 'index.html'));
-        }
+    // Default to main page
+    if (req.path === '/') {
+        res.sendFile(path.join(__dirname, 'index.html'));
     } else {
         res.status(404).sendFile(path.join(__dirname, '404.html'));
     }

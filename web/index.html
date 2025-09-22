@@ -587,7 +587,7 @@
             .nav-links {
                 gap: 15px;
             }
-            
+
             .nav-links a {
                 padding: 6px 12px;
                 font-size: 0.9rem;
@@ -632,7 +632,7 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-brand">🌐 Hybrid Blockchain Gateway</div>
-            
+
             <!-- Desktop Navigation -->
             <div class="nav-links">
                 <a href="#" onclick="navigateToPage('home')">🏠 Home</a>
@@ -665,21 +665,21 @@
 
             <!-- Mobile Menu Toggle -->
             <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
-            
+
             <button class="wallet-btn" id="connectWallet">Connect Wallet</button>
         </div>
     </nav>
 
     <!-- Mobile Navigation Overlay -->
     <div class="mobile-nav-overlay" id="mobileNavOverlay" onclick="closeMobileMenu()"></div>
-    
+
     <!-- Mobile Navigation Menu -->
     <div class="mobile-nav-menu" id="mobileNavMenu">
         <div class="mobile-nav-header">
             <div class="nav-brand">🌐 Truth NFT</div>
             <button class="mobile-nav-close" onclick="closeMobileMenu()">✕</button>
         </div>
-        
+
         <div class="mobile-nav-links">
             <a href="#" onclick="navigateToPage('home'); closeMobileMenu();">🏠 Home Dashboard</a>
             <a href="#" onclick="navigateToPage('analytics'); closeMobileMenu();">📊 Analytics & Metrics</a>
@@ -1110,7 +1110,7 @@
         function toggleMobileMenu() {
             const overlay = document.getElementById('mobileNavOverlay');
             const menu = document.getElementById('mobileNavMenu');
-            
+
             overlay.classList.add('active');
             menu.classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -1119,7 +1119,7 @@
         function closeMobileMenu() {
             const overlay = document.getElementById('mobileNavOverlay');
             const menu = document.getElementById('mobileNavMenu');
-            
+
             overlay.classList.remove('active');
             menu.classList.remove('active');
             document.body.style.overflow = 'auto';
@@ -1134,20 +1134,20 @@
             nftCount: 0,
             governancePower: 0,
             currentPage: 'home',
-            
+
             // Unified data sharing across dashboards
             updateGlobalState: function(newState) {
                 Object.assign(this, newState);
                 this.broadcastStateChange();
             },
-            
+
             broadcastStateChange: function() {
                 // Notify all dashboards of state changes
                 window.dispatchEvent(new CustomEvent('truthEcosystemUpdate', {
                     detail: this
                 }));
             },
-            
+
             // Cross-dashboard navigation with state preservation
             navigateTo: function(page, data = {}) {
                 this.currentPage = page;
@@ -1710,7 +1710,7 @@
 
                 // Update URL without page reload
                 const newUrl = page === 'home' ? '/' : `/${page}`;
-                history.pushState({ page }, '', newUrl);
+                history.pushState({page}, '', newUrl);
 
                 // Load page content
                 await loadPageContent(page);
