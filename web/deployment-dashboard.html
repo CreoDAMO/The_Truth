@@ -250,66 +250,34 @@
             </div>
         </div>
 
-        <!-- Enhanced Deployment Options -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div class="glass rounded-xl p-6">
-                    <h3 class="text-xl font-semibold mb-4">🚀 Smart Contract Deployment</h3>
-                    <div class="bg-blue-900/30 rounded-lg p-3 mb-4">
-                        <div class="text-sm font-semibold mb-2">🌊 Unified Liquidity Integration</div>
-                        <div class="text-xs opacity-80">
-                            • Auto-LP creation via Uniswap V4 hooks<br>
-                            • Zora Creator Coin compatibility<br>
-                            • NFTX fractionalization support<br>
-                            • Cross-DEX arbitrage protection
-                        </div>
-                    </div>
-                    <div class="space-y-4">
-                    </div>
-                </div>
-
-                <div class="glass rounded-xl p-6">
-                    <h3 class="text-xl font-semibold mb-4">🔗 Ecosystem Connectivity</h3>
-                    <div class="bg-gradient-to-r from-purple-900/30 to-pink-900/30 rounded-lg p-3 mb-4">
-                        <div class="text-sm font-semibold mb-2">🌐 Cross-Protocol Synergy</div>
-                        <div class="text-xs opacity-80">
-                            • Uniswap V4 Pool Orchestration<br>
-                            • Aave V3 Lending Integration<br>
-                            • Chainlink Price Feeds<br>
-                            • ENS Domain Support
-                        </div>
-                    </div>
-                    <div class="space-y-4">
-                    </div>
-                </div>
-            </div>
-
         <!-- Deployment Status -->
-        <div class="glass rounded-xl p-6 mb-8">
-            <h3 class="text-2xl font-semibold mb-6">📊 Deployment Status</h3>
+        <div class="deployment-status glass" id="deploymentStatus" style="display: none;">
+            <h2 class="text-2xl font-semibold mb-6 flex items-center">
+                <i class="fas fa-chart-line mr-3"></i>Deployment Progress
+            </h2>
 
-            <!-- Zora Integration Status -->
-            <div class="bg-gradient-to-r from-blue-900/30 to-purple-900/30 rounded-lg p-4 mb-6">
-                <h4 class="text-lg font-semibold mb-3">🌊 Zora Ecosystem Integration</h4>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="bg-black/30 rounded-lg p-3">
-                        <div class="text-sm opacity-70">Zora Wallet</div>
-                        <div class="font-mono text-xs break-all">0xc4b8f1ab3499fac71975666a04a1c99de7609603</div>
-                        <div class="text-xs text-green-400 mt-1">✓ Active</div>
-                    </div>
-                    <div class="bg-black/30 rounded-lg p-3">
-                        <div class="text-sm opacity-70">Creator Coin</div>
-                        <div class="font-mono text-xs break-all">0x22b0434e89882f8e6841d340b28427646c015aa7</div>
-                        <div class="text-xs text-green-400 mt-1">✓ Live on Base</div>
-                    </div>
-                    <div class="bg-black/30 rounded-lg p-3">
-                        <div class="text-sm opacity-70">Auto-LP Status</div>
-                        <div class="text-sm font-semibold">Ready for Deployment</div>
-                        <div class="text-xs text-yellow-400 mt-1">⚡ Automated</div>
-                    </div>
+            <div class="grid md:grid-cols-3 gap-6 mb-6">
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-yellow-400" id="deploymentStep">1/5</div>
+                    <div class="text-sm opacity-60">Current Step</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-blue-400" id="gasEstimate">~$45</div>
+                    <div class="text-sm opacity-60">Est. Gas Cost</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-green-400" id="timeEstimate">2-3 min</div>
+                    <div class="text-sm opacity-60">Est. Time</div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="deploymentStatusGrid"></div>
+            <div class="w-full bg-gray-700 rounded-full h-3 mb-4">
+                <div class="progress-bar" id="deploymentProgress" style="width: 0%"></div>
+            </div>
+
+            <div id="deploymentLogs" class="bg-black rounded-lg p-4 h-48 overflow-y-auto font-mono text-sm">
+                <div class="text-green-400">[Ready] Deployment dashboard initialized</div>
+            </div>
         </div>
     </div>
 

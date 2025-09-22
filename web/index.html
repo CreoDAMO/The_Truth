@@ -455,7 +455,6 @@
                 <a href="#" onclick="navigateToPage('ai-insights')">🤖 AI Insights</a>
                 <a href="#" onclick="navigateToPage('lawful')">⚖️ Legal</a>
                 <a href="#" onclick="navigateToPage('shop')">🛍️ Shop</a>
-                <a href="#" onclick="navigateToPage('liquidity')">💧 Liquidity</a>
                 <a href="#" onclick="navigateToPage('deploy')">🚀 Deploy</a>
             </div>
             <button class="wallet-btn" id="connectWallet">Connect Wallet</button>
@@ -658,144 +657,6 @@
             </div>
 
             <div class="action-buttons">
-                <div class="bg-gradient-to-r from-amber-900/50 to-orange-900/50 rounded-xl p-6 backdrop-blur-sm border border-amber-500/30">
-                        <h3 class="text-2xl font-bold mb-4 text-center">⚡ Buy TRUTH Token</h3>
-                        <div class="space-y-4">
-                            <div class="bg-black/30 rounded-lg p-4">
-                                <div class="text-sm opacity-70 mb-2">TRUTH Token Address</div>
-                                <div class="font-mono text-xs break-all bg-black/50 p-2 rounded">
-                                    0x8f6cf6f7747e170f4768533b869c339dc3d30a3c
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-3 gap-2 text-xs">
-                                <div class="bg-black/30 rounded-lg p-2 text-center">
-                                    <div class="opacity-70">Network</div>
-                                    <div class="font-semibold">Base</div>
-                                </div>
-                                <div class="bg-black/30 rounded-lg p-2 text-center">
-                                    <div class="opacity-70">Supply</div>
-                                    <div class="font-semibold">10M</div>
-                                </div>
-                                <div class="bg-black/30 rounded-lg p-2 text-center">
-                                    <div class="opacity-70">APY</div>
-                                    <div class="font-semibold text-green-400">18.5%</div>
-                                </div>
-                            </div>
-
-                            <!-- Multi-DEX Access -->
-                            <div class="space-y-2">
-                                <div class="text-sm font-semibold text-center mb-2">🔥 Best Price Discovery</div>
-                                <div class="grid grid-cols-2 gap-2">
-                                    <button onclick="buyTruthToken('uniswap')" class="bg-pink-600 hover:bg-pink-700 py-2 px-3 rounded text-sm transition-colors">
-                                        Uniswap V4
-                                    </button>
-                                    <button onclick="buyTruthToken('aggregator')" class="bg-cyan-600 hover:bg-cyan-700 py-2 px-3 rounded text-sm transition-colors">
-                                        Best Price
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Yield Opportunities -->
-                            <div class="bg-gradient-to-r from-yellow-900/30 to-orange-900/30 rounded-lg p-3">
-                                <div class="text-xs font-semibold text-center mb-2">💰 Yield Opportunities</div>
-                                <div class="grid grid-cols-2 gap-2 text-xs">
-                                    <div class="bg-black/30 rounded p-2 text-center">
-                                        <div class="text-yellow-400">Staking: 12%</div>
-                                    </div>
-                                    <div class="bg-black/30 rounded p-2 text-center">
-                                        <div class="text-orange-400">LP: 15-25%</div>
-                                    </div>
-                                </div>
-                                <div class="grid grid-cols-2 gap-1 mt-2">
-                                    <button onclick="stakeTruth()" class="bg-yellow-600 hover:bg-yellow-700 py-1 px-2 rounded text-xs transition-colors">
-                                        Stake TRUTH
-                                    </button>
-                                    <button onclick="provideLiquidity('truth')" class="bg-orange-600 hover:bg-orange-700 py-1 px-2 rounded text-xs transition-colors">
-                                        Provide LP
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Governance Power -->
-                            <div class="bg-gradient-to-r from-purple-900/30 to-indigo-900/30 rounded-lg p-3">
-                                <div class="text-xs font-semibold text-center text-purple-300">🗳️ Governance + Revenue Share</div>
-                                <div class="text-xs text-center opacity-80 mt-1">
-                                    Vote on platform decisions • Share in protocol revenue
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-gradient-to-r from-purple-900/50 to-pink-900/50 rounded-xl p-6 backdrop-blur-sm border border-purple-500/30">
-                        <h3 class="text-2xl font-bold mb-4 text-center">💎 Buy Creator Coin</h3>
-                        <div class="space-y-4">
-                            <div class="bg-black/30 rounded-lg p-4">
-                                <div class="text-sm opacity-70 mb-2">Creator Token Address</div>
-                                <div class="font-mono text-xs break-all bg-black/50 p-2 rounded">
-                                    0x22b0434e89882f8e6841d340b28427646c015aa7
-                                </div>
-                                <div class="text-xs opacity-70 mt-2">Zora Wallet</div>
-                                <div class="font-mono text-xs break-all bg-black/50 p-2 rounded">
-                                    0xc4b8f1ab3499fac71975666a04a1c99de7609603
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-3 gap-2 text-xs">
-                                <div class="bg-black/30 rounded-lg p-2 text-center">
-                                    <div class="opacity-70">Network</div>
-                                    <div class="font-semibold">Base</div>
-                                </div>
-                                <div class="bg-black/30 rounded-lg p-2 text-center">
-                                    <div class="opacity-70">Type</div>
-                                    <div class="font-semibold">Creator</div>
-                                </div>
-                                <div class="bg-black/30 rounded-lg p-2 text-center">
-                                    <div class="opacity-70">Liquidity</div>
-                                    <div class="font-semibold text-green-400">Live</div>
-                                </div>
-                            </div>
-
-                            <!-- Enhanced Liquidity Options -->
-                            <div class="space-y-2">
-                                <div class="text-sm font-semibold text-center mb-2">🌊 Unified Liquidity Access</div>
-                                <div class="grid grid-cols-2 gap-2">
-                                    <button onclick="buyCreatorCoin('zora')" class="bg-blue-600 hover:bg-blue-700 py-2 px-3 rounded text-sm transition-colors">
-                                        Zora Direct
-                                    </button>
-                                    <button onclick="buyCreatorCoin('uniswap')" class="bg-pink-600 hover:bg-pink-700 py-2 px-3 rounded text-sm transition-colors">
-                                        Uniswap V4
-                                    </button>
-                                </div>
-                                <div class="grid grid-cols-3 gap-2">
-                                    <button onclick="buyCreatorCoin('nftx')" class="bg-purple-600 hover:bg-purple-700 py-1 px-2 rounded text-xs transition-colors">
-                                        NFTX Vault
-                                    </button>
-                                    <button onclick="buyCreatorCoin('sudo')" class="bg-orange-600 hover:bg-orange-700 py-1 px-2 rounded text-xs transition-colors">
-                                        Sudoswap
-                                    </button>
-                                    <button onclick="buyCreatorCoin('1inch')" class="bg-cyan-600 hover:bg-cyan-700 py-1 px-2 rounded text-xs transition-colors">
-                                        1inch Best
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Auto-LP Features -->
-                            <div class="bg-gradient-to-r from-green-900/30 to-blue-900/30 rounded-lg p-3">
-                                <div class="text-xs font-semibold text-center mb-2">⚡ Auto-LP Features</div>
-                                <div class="grid grid-cols-2 gap-2 text-xs">
-                                    <div class="bg-black/30 rounded p-2 text-center">
-                                        <div class="text-green-400">✓ Instant Liquidity</div>
-                                    </div>
-                                    <div class="bg-black/30 rounded p-2 text-center">
-                                        <div class="text-blue-400">✓ Yield Farming</div>
-                                    </div>
-                                </div>
-                                <button onclick="enableAutoLP()" class="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 py-2 px-4 rounded text-xs font-semibold mt-2 transition-all">
-                                    Enable Auto-LP Rewards
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
                 <button class="action-btn secondary" onclick="window.open('https://app.uniswap.org/#/swap?outputCurrency=0x8f6cf6f7747e170f4768533b869c339dc3d30a3c&chain=base', '_blank')">
                     💰 Buy TRUTH Token
                 </button>
@@ -854,7 +715,6 @@
                 <a href="/ai-insights.html" class="action-btn secondary">🤖 AI Insights</a>
                 <a href="/lawful-dashboard.html" class="action-btn secondary">⚖️ Legal Framework</a>
                 <a href="/shop.html" class="action-btn secondary">🛒 Traditional Shop</a>
-                <a href="/liquidity-dashboard.html" class="action-btn secondary">💧 Liquidity</a>
             </div>
         </div>
     </div>
@@ -955,13 +815,6 @@
                 } catch (error) {
                     console.warn('⚠️ Deployment status failed to load');
                 }
-                try {
-                    await loadSingleScript('unified-liquidity-engine.js');
-                    console.log('✅ Unified liquidity engine loaded');
-                } catch (error) {
-                    console.warn('⚠️ Unified liquidity engine failed to load');
-                }
-
 
                 console.log('✅ Application initialization completed');
 
@@ -1605,9 +1458,6 @@
                     case 'shop':
                         content = createUnifiedShop();
                         break;
-                    case 'liquidity':
-                        content = await fetchPageContent('/liquidity-dashboard.html');
-                        break;
                     case 'deploy':
                         content = await fetchPageContent('/deploy.html');
                         break;
@@ -1945,7 +1795,7 @@
                             <h4 class="text-lg font-semibold mb-2">${result.design.philosophicalTheme} ${result.design.merchantType}</h4>
                             <p class="text-gray-400 mb-4">Generated from The Truth #${nftId}</p>
                             <div class="text-2xl font-bold text-green-400 mb-4">$${result.pricing.total}</div>
-                            <button onclick="orderMerch(${nftId}, '${merchType}')" class="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg font-semibold">
+                            <button class="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg font-semibold">
                                 🛒 Order Now
                             </button>
                         </div>
@@ -1961,13 +1811,6 @@
                 button.disabled = false;
                 button.textContent = '🎨 Generate AI Merch Design';
             }
-        }
-
-        async function orderMerch(nftId, merchType) {
-            showSuccess("Initiating merch order process...");
-            // Placeholder for actual order processing logic
-            // This would involve interacting with a backend API or directly with a smart contract
-            console.log(`Ordering ${merchType} for NFT #${nftId}`);
         }
 
         // Unified Governance Initialization
@@ -2049,6 +1892,19 @@
             }
         }
 
+        // Handle browser back/forward buttons
+        window.addEventListener('popstate', (event) => {
+            const page = event.state?.page || getPageFromPath();
+            loadPageContent(page);
+            updateActiveNavItem(page);
+        });
+
+        function getPageFromPath() {
+            const path = window.location.pathname;
+            if (path === '/' || path === '') return 'home';
+            return path.slice(1).replace('.html', '');
+        }
+
         // Handle GitHub Pages redirects and initialize router
         window.addEventListener('load', () => {
             // Handle GitHub Pages SPA redirect
@@ -2069,60 +1925,6 @@
                 updateActiveNavItem('home');
             }
         });
-
-        // Handle browser back/forward buttons
-        window.addEventListener('popstate', (event) => {
-            const page = event.state?.page || getPageFromPath();
-            loadPageContent(page);
-            updateActiveNavItem(page);
-        });
-
-        function getPageFromPath() {
-            const path = window.location.pathname;
-            if (path === '/' || path === '') return 'home';
-            return path.slice(1).replace('.html', '');
-        }
-
-        // Placeholder functions for newly added button actions
-        function buyCreatorCoin(source) {
-            console.log(`Buying Creator Coin via ${source}`);
-            let url = '';
-            switch(source) {
-                case 'zora': url = 'https://zora.co/collect/base:0x22b0434e89882f8e6841d340b28427646c015aa7'; break;
-                case 'uniswap': url = 'https://app.uniswap.org/#/swap?outputCurrency=0x22b0434e89882f8e6841d340b28427646c015aa7&chain=base'; break;
-                case 'nftx': url = 'https://app.nftx.org/vault/0x22b0434e89882f8e6841d340b28427646c015aa7'; break; // Example vault address
-                case 'sudo': url = 'https://sudoswap.xyz/#/swap'; break; // Example, would need specific pool
-                case '1inch': url = 'https://app.1inch.io/#/1/unified/swap/ETH/0x22b0434e89882f8e6841d340b28427646c015aa7'; break;
-                default: url = 'https://app.uniswap.org/#/swap?outputCurrency=0x22b0434e89882f8e6841d340b28427646c015aa7&chain=base';
-            }
-            window.open(url, '_blank');
-        }
-
-        function buyTruthToken(source) {
-            console.log(`Buying TRUTH Token via ${source}`);
-            let url = '';
-            switch(source) {
-                case 'uniswap': url = 'https://app.uniswap.org/#/swap?outputCurrency=0x8f6cf6f7747e170f4768533b869c339dc3d30a3c&chain=base'; break;
-                case 'aggregator': url = 'https://matcha.xyz/markets/0x8f6cf6f7747e170f4768533b869c339dc3d30a3c'; break; // Example aggregator
-                default: url = 'https://app.uniswap.org/#/swap?outputCurrency=0x8f6cf6f7747e170f4768533b869c339dc3d30a3c&chain=base';
-            }
-            window.open(url, '_blank');
-        }
-
-        function stakeTruth() {
-            showSuccess("Stake TRUTH functionality not yet implemented.");
-            console.log("Stake TRUTH");
-        }
-
-        function provideLiquidity(token) {
-            showSuccess(`Provide ${token} LP functionality not yet implemented.`);
-            console.log(`Provide LP for ${token}`);
-        }
-
-        function enableAutoLP() {
-            showSuccess("Auto-LP feature activation initiated.");
-            console.log("Enable Auto-LP");
-        }
 
     </script>
 </body>

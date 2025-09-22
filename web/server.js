@@ -31,15 +31,15 @@ app.use(cors({
     origin: (origin, callback) => {
         // Allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
-
+        
         // Allow localhost for development
         if (origin.includes('localhost')) return callback(null, true);
-
+        
         // Allow Replit domains
         if (origin.endsWith('.replit.dev') || origin.endsWith('.replit.app') || origin.endsWith('.repl.co')) {
             return callback(null, true);
         }
-
+        
         // Fallback - for development allow all origins
         return callback(null, true);
     },
@@ -131,18 +131,18 @@ app.get('*', (req, res) => {
         req.path.includes('.md')) {
         return res.status(404).send('Not found');
     }
-
+    
     // All dashboard routes serve the main SPA
     const dashboardRoutes = [
         '/analytics', '/governance', '/community', '/payments', 
-        '/social', '/ai-insights', '/lawful', '/shop', '/liquidity', '/deploy',
+        '/social', '/ai-insights', '/lawful', '/shop', '/deploy',
         '/deployment-dashboard', '/ai', '/legal'
     ];
-
+    
     const isValidRoute = dashboardRoutes.some(route => 
         req.path === route || req.path.startsWith(route + '/')
     );
-
+    
     if (isValidRoute || req.path === '/') {
         res.sendFile(path.join(__dirname, 'index.html'));
     } else {
@@ -595,37 +595,7 @@ app.post('/api/ai/generate-merch', async (req, res) => {
             });
         }
 
-        // Mock NFT metadata fetching - replace with actual IPFS/API call
-        const fetchNFTMetadata = async (tokenId) => {
-            // Placeholder for actual NFT metadata fetching
-            return {
-                image: `ipfs://QmExampleImageHash/${tokenId}.png`,
-                description: 'A philosophical NFT',
-                attributes: [{ trait_type: 'Theme', value: 'Truth' }]
-            };
-        };
-
-        // Mock merch design generation
-        const generateMerchDesign = async (options) => {
-            // Placeholder for actual merch design generation
-            return {
-                imageUrl: `ipfs://QmMerchDesignHash/${Date.now()}.png`,
-                designDetails: `Design for ${options.merchantType} based on NFT ${options.originalImage}`,
-                style: options.style,
-                theme: options.philosophicalTheme
-            };
-        };
-
-        // Mock Printful API integration
-        const createPrintfulProduct = async (design) => {
-            // Placeholder for actual Printful API call
-            return {
-                productId: 'printful_' + Date.now(),
-                printfulUrl: 'https://printful.com/product/12345',
-                status: 'created'
-            };
-        };
-
+        // Fetch NFT metadata
         const nftMetadata = await fetchNFTMetadata(nftTokenId);
         if (!nftMetadata) {
             return res.status(404).json({ 
@@ -674,20 +644,6 @@ app.post('/api/ai/analyze-nft-for-merch', async (req, res) => {
     try {
         const { nftTokenId } = req.body;
 
-        // Mock NFT analysis for merch potential
-        const analyzeNFTForMerch = async (tokenId) => {
-            // Placeholder for actual NFT analysis logic
-            return {
-                compatibleMerchTypes: ['tshirt', 'hoodie', 'poster'],
-                recommendations: [
-                    'Focus on the philosophical theme',
-                    'Use bold, minimalist designs',
-                    'Highlight truth-seeking elements'
-                ],
-                truthAlignmentScore: 92.5
-            };
-        };
-
         // Fetch and analyze NFT for merch potential
         const analysis = await analyzeNFTForMerch(nftTokenId);
 
@@ -721,12 +677,6 @@ app.post('/api/deploy/agentkit-deploy', async (req, res) => {
             });
         }
 
-        // Mock authorization check
-        const verifyDeploymentAuth = async (request) => {
-            // Placeholder for actual authentication logic
-            return true; // Assume authorized for mock
-        };
-
         // Security check - only allow authorized deployments
         const isAuthorized = await verifyDeploymentAuth(req);
         if (!isAuthorized) {
@@ -735,16 +685,6 @@ app.post('/api/deploy/agentkit-deploy', async (req, res) => {
                 error: 'Unauthorized deployment request'
             });
         }
-
-        // Mock initialization of Coinbase Agentkit deployment
-        const initializeAgentKitDeployment = async (options) => {
-            // Placeholder for actual Agentkit SDK interaction
-            return {
-                id: 'deploy_' + Date.now(),
-                status: 'initiated',
-                timestamp: new Date().toISOString()
-            };
-        };
 
         // Initialize Coinbase Agentkit deployment
         const deployment = await initializeAgentKitDeployment({
@@ -774,23 +714,6 @@ app.post('/api/deploy/agentkit-deploy', async (req, res) => {
 app.get('/api/deploy/status/:deploymentId', async (req, res) => {
     try {
         const { deploymentId } = req.params;
-
-        // Mock getting deployment status
-        const getDeploymentStatus = async (id) => {
-            // Placeholder for actual status retrieval from Agentkit
-            const statuses = ['pending', 'processing', 'completed', 'failed'];
-            const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
-            return {
-                id: id,
-                status: randomStatus,
-                contractAddress: randomStatus === 'completed' ? '0x' + Math.random().toString(16).substr(2, 40) : null,
-                transactionHash: randomStatus === 'completed' ? '0x' + Math.random().toString(16).substr(2, 64) : null,
-                blockNumber: randomStatus === 'completed' ? Math.floor(Math.random() * 100000) : null,
-                gasUsed: randomStatus === 'completed' ? Math.floor(Math.random() * 1000000) : null,
-                timestamp: new Date().toISOString()
-            };
-        };
-
         const status = await getDeploymentStatus(deploymentId);
 
         res.json({
@@ -1013,7 +936,7 @@ app.get('/api/analytics/geographic', async (req, res) => {
 app.get('/api/whitelist/proof/:address', async (req, res) => {
     try {
         const { address } = req.params;
-
+        
         // Mock whitelist data - in production, verify against Merkle tree
         const mockWhitelist = [
             '0x742d35Cc6523c0532925a3b8D4b9d35C21B64C4A',
@@ -1022,7 +945,7 @@ app.get('/api/whitelist/proof/:address', async (req, res) => {
         ];
 
         const isWhitelisted = mockWhitelist.includes(address);
-
+        
         // Mock Merkle proof - in production, calculate actual proof
         const mockProof = isWhitelisted ? [
             '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
@@ -1044,7 +967,7 @@ app.get('/api/whitelist/proof/:address', async (req, res) => {
 app.post('/api/community/discord-verify', async (req, res) => {
     try {
         const { userAddress, discordUserId } = req.body;
-
+        
         // Placeholder for Discord bot integration
         const verificationResult = {
             success: true,
@@ -1065,7 +988,7 @@ app.post('/api/community/discord-verify', async (req, res) => {
 app.post('/api/truth-witness/submit', async (req, res) => {
     try {
         const statementData = req.body;
-
+        
         // Mock truth statement submission
         const result = {
             success: true,
@@ -1085,7 +1008,7 @@ app.post('/api/truth-witness/validate/:statementId', async (req, res) => {
     try {
         const { statementId } = req.params;
         const witnessData = req.body;
-
+        
         // Mock witness validation
         const result = {
             success: true,
@@ -1105,7 +1028,7 @@ app.post('/api/truth-witness/validate/:statementId', async (req, res) => {
 app.get('/api/nft/:tokenId/evolution/:holderAddress', async (req, res) => {
     try {
         const { tokenId, holderAddress } = req.params;
-
+        
         // Mock evolution status
         const evolutionStatus = {
             tokenId: tokenId,
@@ -1139,7 +1062,7 @@ app.get('/api/nft/:tokenId/evolution/:holderAddress', async (req, res) => {
 app.post('/api/nft/track-behavior', async (req, res) => {
     try {
         const { tokenId, userAddress, action, value, context } = req.body;
-
+        
         // Mock behavior tracking
         const result = {
             success: true,
@@ -1161,7 +1084,7 @@ app.post('/api/nft/track-behavior', async (req, res) => {
 app.post('/api/staking/stake', async (req, res) => {
     try {
         const { userAddress, poolId, amount } = req.body;
-
+        
         // Mock staking
         const stakingResult = {
             success: true,
@@ -1370,7 +1293,6 @@ const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`🛍️ Shop: http://0.0.0.0:${PORT}/shop`);
   console.log(`🤖 AI Insights: http://0.0.0.0:${PORT}/ai`);
   console.log(`🚀 Deploy: http://0.0.0.0:${PORT}/deploy`);
-  console.log(`💧 Liquidity: http://0.0.0.0:${PORT}/liquidity`);
 });
 
 server.on('error', (err) => {
