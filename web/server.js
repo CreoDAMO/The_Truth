@@ -148,7 +148,7 @@ app.get('*', (req, res) => {
     } else {
         res.status(404).sendFile(path.join(__dirname, '404.html'));
     }
-});</proper_SPA_routing>
+});
 
 // Serve PWA manifest with correct MIME type
 app.get('/manifest.json', (req, res) => {
