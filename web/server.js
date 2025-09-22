@@ -78,49 +78,9 @@ app.get('/manifest.json', (req, res) => {
 // Serve contract artifacts specifically
 app.use('/contract-artifacts.js', express.static(path.join(__dirname, '..', 'contract-artifacts.js')));
 
-// Serve main pages
+// Serve main SPA page for root route
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-app.get('/governance', (req, res) => {
-    res.sendFile(path.join(__dirname, 'governance.html'));
-});
-
-app.get('/community', (req, res) => {
-    res.sendFile(path.join(__dirname, 'community-dashboard.html'));
-});
-
-app.get('/analytics', (req, res) => {
-    res.sendFile(path.join(__dirname, 'analytics.html'));
-});
-
-app.get('/deploy', (req, res) => {
-    res.sendFile(path.join(__dirname, 'deploy.html'));
-});
-
-app.get('/shop', (req, res) => {
-    res.sendFile(path.join(__dirname, 'shop.html'));
-});
-
-app.get('/payments', (req, res) => {
-    res.sendFile(path.join(__dirname, 'payments.html'));
-});
-
-app.get('/social', (req, res) => {
-    res.sendFile(path.join(__dirname, 'social.html'));
-});
-
-app.get('/ai', (req, res) => {
-    res.sendFile(path.join(__dirname, 'ai-insights.html'));
-});
-
-app.get('/lawful', (req, res) => {
-    res.sendFile(path.join(__dirname, 'lawful-dashboard.html'));
-});
-
-app.get('/contracts', (req, res) => {
-  res.sendFile(path.join(__dirname, 'contract-deployment.html'));
 });
 
 // Event tracking endpoint

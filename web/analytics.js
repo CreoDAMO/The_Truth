@@ -465,10 +465,10 @@ function AnalyticsApp() {
                 charts.priceChart = new Chart(priceCtx, {
                     type: 'line',
                     data: {
-                        labels: data.priceHistory.map(d => d.time),
+                        labels: (data.priceHistory || []).map(d => d.time),
                         datasets: [{
                             label: 'Price (ETH)',
-                            data: data.priceHistory.map(d => d.price),
+                            data: (data.priceHistory || []).map(d => d.price),
                             borderColor: '#fbbf24',
                             backgroundColor: 'rgba(251, 191, 36, 0.1)',
                             borderWidth: 3,
@@ -500,10 +500,10 @@ function AnalyticsApp() {
                 charts.holderChart = new Chart(holderCtx, {
                     type: 'bar',
                     data: {
-                        labels: data.holderGrowth.slice(-7).map(d => d.date),
+                        labels: (data.holderGrowth || []).slice(-7).map(d => d.date),
                         datasets: [{
                             label: 'New Holders',
-                            data: data.holderGrowth.slice(-7).map(d => d.growth),
+                            data: (data.holderGrowth || []).slice(-7).map(d => d.growth),
                             backgroundColor: 'rgba(59, 130, 246, 0.8)',
                             borderColor: '#3b82f6',
                             borderWidth: 2
@@ -737,7 +737,7 @@ function AnalyticsApp() {
                     </h3>
                     <div className="grid md:grid-cols-2 gap-8">
                         <div className="space-y-3">
-                            {metrics.geographicData.map((country, index) => (
+                            {(metrics.geographicData || []).map((country, index) => (
                                 <div key={country.country} className="flex items-center justify-between bg-black/30 p-4 rounded-lg hover:bg-black/50 transition-all duration-300 hover:scale-105">
                                     <span className="font-medium">{country.country}</span>
                                     <div className="text-right">
@@ -782,7 +782,7 @@ function AnalyticsApp() {
                         <span className="mr-3">⚡</span>Recent Sales
                     </h3>
                     <div className="space-y-4">
-                        {metrics.recentSales.map((sale, index) => (
+                        {(metrics.recentSales || []).map((sale, index) => (
                             <div key={sale.id} className="flex items-center justify-between bg-black/30 p-4 rounded-lg hover:bg-black/50 transition-all duration-300 hover:scale-105 hover:border-l-4 hover:border-yellow-400">
                                 <div className="flex items-center space-x-4">
                                     <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center text-white font-bold">
@@ -806,11 +806,13 @@ function AnalyticsApp() {
     );
 }
 
-// Initialize when DOM is ready
+// Initialize when DOM is ready with React 18 createRoot
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-        ReactDOM.render(<AnalyticsApp />, document.getElementById('analytics-root'));
+        const root = ReactDOM.createRoot(document.getElementById('analytics-root'));
+        root.render(<AnalyticsApp />);
     });
 } else {
-    ReactDOM.render(<AnalyticsApp />, document.getElementById('analytics-root'));
+    const root = ReactDOM.createRoot(document.getElementById('analytics-root'));
+    root.render(<AnalyticsApp />);
 }
