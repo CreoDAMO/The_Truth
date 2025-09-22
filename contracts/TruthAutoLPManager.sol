@@ -1,0 +1,422 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.27;
+
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
+
+/**
+ * @title TruthAutoLPManager
+ * @dev Automated liquidity pool management for Truth NFT ecosystem with Zora integration
+ * @author Jacque Antoine DeGraff - Master of Nothing, Student of All Things
+ */
+contract TruthAutoLPManager is Ownable, ReentrancyGuard, Pausable {
+    
+    // Token addresses
+    address public constant TRUTH_TOKEN = 0x8f6cf6f7747e170f4768533b869c339dc3d30a3c;
+    address public constant CREATOR_TOKEN = 0x22b0434e89882f8e6841d340b28427646c015aa7;
+    address public constant ZORA_WALLET = 0xc4b8f1ab3499fac71975666a04a1c99de7609603;
+    
+    // Base network tokens
+    address public constant WETH = 0x4200000000000000000000000000000000000006;
+    address public constant USDC = 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913;
+    
+    // Pool creation thresholds
+    uint256 public volumeThreshold = 10000 * 1e6; // $10K USDC
+    uint256 public holderThreshold = 100;
+    uint256 public timeDelay = 86400; // 24 hours
+    
+    // Fee distribution (basis points)
+    uint256 public constant LP_FEE = 4000; // 40%
+    uint256 public constant CREATOR_FEE = 3000; // 30%
+    uint256 public constant PROTOCOL_FEE = 2000; // 20%
+    uint256 public constant AUTOMATION_FEE = 1000; // 10%
+    
+    // Pool tracking
+    struct PoolInfo {
+        address token0;
+        address token1;
+        address poolAddress;
+        uint256 tvl;
+        uint256 volume24h;
+        uint256 apy;
+        bool isActive;
+        uint256 createdAt;
+        PoolType poolType;
+    }
+    
+    enum PoolType {
+        TRUTH_ETH,
+        TRUTH_USDC,
+        CREATOR_ETH,
+        CREATOR_USDC,
+        FRACTIONAL_ETH,
+        ZORA_CROSS
+    }
+    
+    // NFT fractionalization tracking
+    struct FractionalNFT {
+        address nftContract;
+        uint256 tokenId;
+        address fractionalToken;
+        uint256 totalShares;
+        uint256 reservePrice;
+        bool isActive;
+        uint256 createdAt;
+    }
+    
+    // Automation settings
+    struct AutomationConfig {
+        bool ethPoolsEnabled;
+        bool usdcPoolsEnabled;
+        bool nftFractionalizationEnabled;
+        bool arbitrageEnabled;
+        uint256 maxGasPrice;
+        uint256 minLiquidity;
+    }
+    
+    // State variables
+    mapping(bytes32 => PoolInfo) public pools;
+    mapping(address => FractionalNFT) public fractionalNFTs;
+    mapping(address => AutomationConfig) public userConfigs;
+    
+    bytes32[] public poolKeys;
+    address[] public fractionalTokens;
+    
+    // Revenue tracking
+    mapping(address => uint256) public creatorRevenue;
+    mapping(address => uint256) public lpRewards;
+    
+    // Events
+    event PoolCreated(
+        bytes32 indexed poolKey,
+        address indexed token0,
+        address indexed token1,
+        address poolAddress,
+        PoolType poolType
+    );
+    
+    event NFTFractionalized(
+        address indexed nftContract,
+        uint256 indexed tokenId,
+        address indexed fractionalToken,
+        uint256 totalShares
+    );
+    
+    event LiquidityAdded(
+        bytes32 indexed poolKey,
+        address indexed user,
+        uint256 amount0,
+        uint256 amount1
+    );
+    
+    event RevenueDistributed(
+        address indexed recipient,
+        uint256 amount,
+        string revenueType
+    );
+    
+    event ZoraIntegrationUpdate(
+        address indexed zoraToken,
+        uint256 volume,
+        bool autoPoolCreated
+    );
+    
+    constructor(address initialOwner) Ownable() {
+        _transferOwnership(initialOwner);
+    }
+    
+    /**
+     * @dev Create automated liquidity pool based on criteria
+     */
+    function createAutomatedPool(
+        address token0,
+        address token1,
+        PoolType poolType,
+        uint256 initialLiquidity0,
+        uint256 initialLiquidity1
+    ) external nonReentrant whenNotPaused {
+        require(token0 != address(0) && token1 != address(0), "Invalid tokens");
+        require(initialLiquidity0 > 0 && initialLiquidity1 > 0, "Insufficient liquidity");
+        
+        bytes32 poolKey = keccak256(abi.encodePacked(token0, token1, poolType));
+        require(pools[poolKey].poolAddress == address(0), "Pool already exists");
+        
+        // Verify threshold conditions
+        require(_meetsCreationCriteria(token0, token1), "Criteria not met");
+        
+        // Create the pool (simplified - would integrate with Uniswap V4)
+        address poolAddress = _deployPool(token0, token1, poolType);
+        
+        // Store pool info
+        pools[poolKey] = PoolInfo({
+            token0: token0,
+            token1: token1,
+            poolAddress: poolAddress,
+            tvl: initialLiquidity0 + initialLiquidity1,
+            volume24h: 0,
+            apy: 0,
+            isActive: true,
+            createdAt: block.timestamp,
+            poolType: poolType
+        });
+        
+        poolKeys.push(poolKey);
+        
+        emit PoolCreated(poolKey, token0, token1, poolAddress, poolType);
+    }
+    
+    /**
+     * @dev Fractionalize NFT for liquidity
+     */
+    function fractionalizeNFT(
+        address nftContract,
+        uint256 tokenId,
+        uint256 totalShares,
+        uint256 reservePrice,
+        string memory tokenName,
+        string memory tokenSymbol
+    ) external nonReentrant whenNotPaused {
+        require(IERC721(nftContract).ownerOf(tokenId) == msg.sender, "Not NFT owner");
+        require(totalShares > 0, "Invalid share amount");
+        require(fractionalNFTs[nftContract].fractionalToken == address(0), "Already fractionalized");
+        
+        // Transfer NFT to this contract
+        IERC721(nftContract).transferFrom(msg.sender, address(this), tokenId);
+        
+        // Deploy fractional token (simplified)
+        address fractionalToken = _deployFractionalToken(
+            tokenName,
+            tokenSymbol,
+            totalShares
+        );
+        
+        // Store fractionalization info
+        fractionalNFTs[nftContract] = FractionalNFT({
+            nftContract: nftContract,
+            tokenId: tokenId,
+            fractionalToken: fractionalToken,
+            totalShares: totalShares,
+            reservePrice: reservePrice,
+            isActive: true,
+            createdAt: block.timestamp
+        });
+        
+        fractionalTokens.push(fractionalToken);
+        
+        // Mint initial shares to the original owner
+        _mintFractionalShares(fractionalToken, msg.sender, totalShares * 20 / 100); // 20% to original owner
+        
+        emit NFTFractionalized(nftContract, tokenId, fractionalToken, totalShares);
+    }
+    
+    /**
+     * @dev Monitor Zora creator coins and auto-create pools
+     */
+    function monitorZoraIntegration(
+        address zoraToken,
+        uint256 currentVolume
+    ) external onlyOwner {
+        if (currentVolume >= volumeThreshold) {
+            // Auto-create ETH pool if enabled
+            if (_shouldCreateEthPool(zoraToken)) {
+                _createZoraPool(zoraToken, WETH, PoolType.ZORA_CROSS);
+            }
+            
+            // Auto-create USDC pool if enabled
+            if (_shouldCreateUsdcPool(zoraToken)) {
+                _createZoraPool(zoraToken, USDC, PoolType.ZORA_CROSS);
+            }
+            
+            emit ZoraIntegrationUpdate(zoraToken, currentVolume, true);
+        }
+    }
+    
+    /**
+     * @dev Add liquidity to existing pool
+     */
+    function addLiquidity(
+        bytes32 poolKey,
+        uint256 amount0,
+        uint256 amount1
+    ) external nonReentrant whenNotPaused {
+        PoolInfo storage pool = pools[poolKey];
+        require(pool.isActive, "Pool not active");
+        
+        // Transfer tokens
+        IERC20(pool.token0).transferFrom(msg.sender, address(this), amount0);
+        IERC20(pool.token1).transferFrom(msg.sender, address(this), amount1);
+        
+        // Add to pool (simplified)
+        _addLiquidityToPool(pool.poolAddress, amount0, amount1);
+        
+        // Update TVL
+        pool.tvl += amount0 + amount1;
+        
+        // Record LP reward eligibility
+        lpRewards[msg.sender] += (amount0 + amount1) * LP_FEE / 10000;
+        
+        emit LiquidityAdded(poolKey, msg.sender, amount0, amount1);
+    }
+    
+    /**
+     * @dev Distribute revenue to creators and LPs
+     */
+    function distributeRevenue(
+        address creator,
+        uint256 totalRevenue
+    ) external onlyOwner {
+        uint256 creatorShare = totalRevenue * CREATOR_FEE / 10000;
+        uint256 protocolShare = totalRevenue * PROTOCOL_FEE / 10000;
+        uint256 automationShare = totalRevenue * AUTOMATION_FEE / 10000;
+        
+        // Distribute to creator
+        creatorRevenue[creator] += creatorShare;
+        payable(creator).transfer(creatorShare);
+        
+        // Protocol and automation fees stay in contract
+        
+        emit RevenueDistributed(creator, creatorShare, "creator");
+        emit RevenueDistributed(address(this), protocolShare, "protocol");
+        emit RevenueDistributed(address(this), automationShare, "automation");
+    }
+    
+    /**
+     * @dev Update automation settings for user
+     */
+    function updateAutomationConfig(
+        bool _ethPoolsEnabled,
+        bool _usdcPoolsEnabled,
+        bool _nftFractionalizationEnabled,
+        bool _arbitrageEnabled,
+        uint256 _maxGasPrice,
+        uint256 _minLiquidity
+    ) external {
+        userConfigs[msg.sender] = AutomationConfig({
+            ethPoolsEnabled: _ethPoolsEnabled,
+            usdcPoolsEnabled: _usdcPoolsEnabled,
+            nftFractionalizationEnabled: _nftFractionalizationEnabled,
+            arbitrageEnabled: _arbitrageEnabled,
+            maxGasPrice: _maxGasPrice,
+            minLiquidity: _minLiquidity
+        });
+    }
+    
+    // View functions
+    function getPoolInfo(bytes32 poolKey) external view returns (PoolInfo memory) {
+        return pools[poolKey];
+    }
+    
+    function getFractionalNFT(address nftContract) external view returns (FractionalNFT memory) {
+        return fractionalNFTs[nftContract];
+    }
+    
+    function getAllPools() external view returns (bytes32[] memory) {
+        return poolKeys;
+    }
+    
+    function getUserConfig(address user) external view returns (AutomationConfig memory) {
+        return userConfigs[user];
+    }
+    
+    function getTotalTVL() external view returns (uint256) {
+        uint256 total = 0;
+        for (uint256 i = 0; i < poolKeys.length; i++) {
+            total += pools[poolKeys[i]].tvl;
+        }
+        return total;
+    }
+    
+    // Internal functions
+    function _meetsCreationCriteria(address token0, address token1) internal view returns (bool) {
+        // Simplified criteria check
+        return true; // Would implement real volume/holder checks
+    }
+    
+    function _deployPool(address token0, address token1, PoolType poolType) internal returns (address) {
+        // Simplified pool deployment - would integrate with Uniswap V4
+        return address(uint160(uint256(keccak256(abi.encodePacked(token0, token1, poolType, block.timestamp)))));
+    }
+    
+    function _deployFractionalToken(
+        string memory name,
+        string memory symbol,
+        uint256 totalSupply
+    ) internal returns (address) {
+        // Simplified token deployment
+        return address(uint160(uint256(keccak256(abi.encodePacked(name, symbol, totalSupply, block.timestamp)))));
+    }
+    
+    function _mintFractionalShares(address token, address to, uint256 amount) internal {
+        // Simplified minting - would call actual token contract
+    }
+    
+    function _addLiquidityToPool(address pool, uint256 amount0, uint256 amount1) internal {
+        // Simplified liquidity addition - would interact with actual pool
+    }
+    
+    function _shouldCreateEthPool(address token) internal view returns (bool) {
+        return userConfigs[ZORA_WALLET].ethPoolsEnabled;
+    }
+    
+    function _shouldCreateUsdcPool(address token) internal view returns (bool) {
+        return userConfigs[ZORA_WALLET].usdcPoolsEnabled;
+    }
+    
+    function _createZoraPool(address token0, address token1, PoolType poolType) internal {
+        // Auto-create pool for Zora tokens
+        bytes32 poolKey = keccak256(abi.encodePacked(token0, token1, poolType));
+        
+        if (pools[poolKey].poolAddress == address(0)) {
+            address poolAddress = _deployPool(token0, token1, poolType);
+            
+            pools[poolKey] = PoolInfo({
+                token0: token0,
+                token1: token1,
+                poolAddress: poolAddress,
+                tvl: 0,
+                volume24h: 0,
+                apy: 0,
+                isActive: true,
+                createdAt: block.timestamp,
+                poolType: poolType
+            });
+            
+            poolKeys.push(poolKey);
+            
+            emit PoolCreated(poolKey, token0, token1, poolAddress, poolType);
+        }
+    }
+    
+    // Owner functions
+    function setThresholds(
+        uint256 _volumeThreshold,
+        uint256 _holderThreshold,
+        uint256 _timeDelay
+    ) external onlyOwner {
+        volumeThreshold = _volumeThreshold;
+        holderThreshold = _holderThreshold;
+        timeDelay = _timeDelay;
+    }
+    
+    function pause() external onlyOwner {
+        _pause();
+    }
+    
+    function unpause() external onlyOwner {
+        _unpause();
+    }
+    
+    function emergencyWithdraw(address token, uint256 amount) external onlyOwner {
+        if (token == address(0)) {
+            payable(owner()).transfer(amount);
+        } else {
+            IERC20(token).transfer(owner(), amount);
+        }
+    }
+    
+    // Receive ETH
+    receive() external payable {}
+}

@@ -135,7 +135,7 @@ app.get('*', (req, res) => {
     // All dashboard routes serve the main SPA
     const dashboardRoutes = [
         '/analytics', '/governance', '/community', '/payments', 
-        '/social', '/ai-insights', '/lawful', '/shop', '/deploy',
+        '/liquidity', '/social', '/ai-insights', '/lawful', '/shop', '/deploy',
         '/deployment-dashboard', '/ai', '/legal'
     ];
     
@@ -144,7 +144,11 @@ app.get('*', (req, res) => {
     );
     
     if (isValidRoute || req.path === '/') {
-        res.sendFile(path.join(__dirname, 'index.html'));
+        if (req.path === '/liquidity') {
+            res.sendFile(path.join(__dirname, 'liquidity.html'));
+        } else {
+            res.sendFile(path.join(__dirname, 'index.html'));
+        }
     } else {
         res.status(404).sendFile(path.join(__dirname, '404.html'));
     }

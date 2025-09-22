@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automated Liquidity Management - The Truth NFT</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 100%);
+            background-attachment: fixed;
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            background: rgba(15, 15, 35, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 212, 255, 0.3);
+            padding: 15px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 30px rgba(0, 212, 255, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #00d4ff, #090979);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: #00d4ff;
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        .wallet-btn {
+            background: linear-gradient(135deg, #00d4ff, #090979);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 100px 20px 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #00d4ff 0%, #4CAF50 50%, #FFD700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 30px;
+        }
+
+        .liquidity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .liquidity-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .liquidity-card:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.2);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-right: 15px;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #00d4ff;
+        }
+
+        .pool-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 5px;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #4CAF50, #00d4ff);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+        }
+
+        .action-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .zora-section {
+            background: rgba(138, 43, 226, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 40px 0;
+            border: 1px solid rgba(138, 43, 226, 0.3);
+        }
+
+        .automation-status {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .status-indicator {
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .status-active {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(76, 175, 80, 0.4);
+            color: #4CAF50;
+        }
+
+        .status-pending {
+            background: rgba(255, 193, 7, 0.2);
+            border: 1px solid rgba(255, 193, 7, 0.4);
+            color: #FFC107;
+        }
+
+        .status-inactive {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid rgba(244, 67, 54, 0.4);
+            color: #F44336;
+        }
+
+        .pool-list {
+            margin-top: 30px;
+        }
+
+        .pool-item {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .pool-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .pool-pair {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+
+        .pool-apy {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .auto-settings {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+            margin-left: 10px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #00d4ff;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .liquidity-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">🌊 Liquidity Management</div>
+            <div class="nav-links">
+                <a href="/" onclick="navigateToPage('home')">🏠 Home</a>
+                <a href="/analytics" onclick="navigateToPage('analytics')">📊 Analytics</a>
+                <a href="/governance" onclick="navigateToPage('governance')">🗳️ Governance</a>
+                <a href="/community" onclick="navigateToPage('community')">👥 Community</a>
+                <a href="/payments" onclick="navigateToPage('payments')">💳 Payments</a>
+                <a href="/liquidity" onclick="navigateToPage('liquidity')" class="active">🌊 Liquidity</a>
+                <a href="/social" onclick="navigateToPage('social')">📱 Social</a>
+                <a href="/ai-insights" onclick="navigateToPage('ai-insights')">🤖 AI Insights</a>
+                <a href="/lawful" onclick="navigateToPage('lawful')">⚖️ Legal</a>
+                <a href="/shop" onclick="navigateToPage('shop')">🛍️ Shop</a>
+                <a href="/deploy" onclick="navigateToPage('deploy')">🚀 Deploy</a>
+            </div>
+            <button class="wallet-btn" id="connectWallet">Connect Wallet</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1 class="page-title">🌊 Automated Liquidity Pools</h1>
+            <p class="page-subtitle">Unified NFT + Creator Coin + Zora Integration with Automated LP Management</p>
+        </div>
+
+        <!-- Unified Token Liquidity -->
+        <div class="liquidity-grid">
+            <!-- TRUTH Token Liquidity -->
+            <div class="liquidity-card">
+                <div class="card-header">
+                    <div class="card-icon">💎</div>
+                    <div>
+                        <div class="card-title">TRUTH Token Pools</div>
+                        <div style="font-size: 0.9rem; color: rgba(255,255,255,0.7);">Governance token liquidity</div>
+                    </div>
+                </div>
+                <div class="pool-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="truthTvl">$12.5K</div>
+                        <div class="stat-label">Total TVL</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="truthApy">24.7%</div>
+                        <div class="stat-label">Best APY</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="truthPools">3</div>
+                        <div class="stat-label">Active Pools</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="truthVolume">$2.8K</div>
+                        <div class="stat-label">24h Volume</div>
+                    </div>
+                </div>
+                <button class="action-btn" onclick="manageTruthLiquidity()">Manage TRUTH Liquidity</button>
+                <button class="action-btn secondary" onclick="window.open('https://app.uniswap.org/#/swap?outputCurrency=0x8f6cf6f7747e170f4768533b869c339dc3d30a3c&chain=base', '_blank')">Buy TRUTH Tokens</button>
+            </div>
+
+            <!-- Creator Coin Liquidity -->
+            <div class="liquidity-card">
+                <div class="card-header">
+                    <div class="card-icon">🎨</div>
+                    <div>
+                        <div class="card-title">Creator Coin Pools</div>
+                        <div style="font-size: 0.9rem; color: rgba(255,255,255,0.7);">@jacqueantoinedegraff token</div>
+                    </div>
+                </div>
+                <div class="pool-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="creatorTvl">$8.2K</div>
+                        <div class="stat-label">Total TVL</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="creatorApy">18.3%</div>
+                        <div class="stat-label">Best APY</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="creatorPools">2</div>
+                        <div class="stat-label">Active Pools</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="creatorVolume">$1.4K</div>
+                        <div class="stat-label">24h Volume</div>
+                    </div>
+                </div>
+                <button class="action-btn" onclick="manageCreatorLiquidity()">Manage Creator Liquidity</button>
+                <button class="action-btn secondary" onclick="window.open('https://app.uniswap.org/#/swap?outputCurrency=0x22b0434e89882f8e6841d340b28427646c015aa7&chain=base', '_blank')">Buy Creator Tokens</button>
+            </div>
+
+            <!-- NFT Fractionalization -->
+            <div class="liquidity-card">
+                <div class="card-header">
+                    <div class="card-icon">🎯</div>
+                    <div>
+                        <div class="card-title">NFT Fractional Pools</div>
+                        <div style="font-size: 0.9rem; color: rgba(255,255,255,0.7);">Truth NFT tokenization</div>
+                    </div>
+                </div>
+                <div class="pool-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="nftTvl">$45.7K</div>
+                        <div class="stat-label">Total TVL</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="nftApy">32.1%</div>
+                        <div class="stat-label">Best APY</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="fractionalNfts">12</div>
+                        <div class="stat-label">Fractionalized</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="nftVolume">$5.2K</div>
+                        <div class="stat-label">24h Volume</div>
+                    </div>
+                </div>
+                <button class="action-btn" onclick="manageNftLiquidity()">Fractionalize NFTs</button>
+                <button class="action-btn secondary" onclick="window.location.href='/'">View NFT Collections</button>
+            </div>
+        </div>
+
+        <!-- Zora Integration Section -->
+        <div class="zora-section">
+            <div class="card-header">
+                <div class="card-icon">🎭</div>
+                <div>
+                    <div class="card-title" style="color: #9b59b6;">Zora Creator Economy Integration</div>
+                    <div style="font-size: 0.9rem; color: rgba(255,255,255,0.7);">Wallet: 0xc4b8f1ab3499fac71975666a04a1c99de7609603</div>
+                </div>
+            </div>
+            
+            <div class="automation-status">
+                <div class="status-indicator status-active">
+                    <div style="font-weight: bold; margin-bottom: 5px;">✅ Zora Monitoring</div>
+                    <div style="font-size: 0.9rem;">Tracking creator coins</div>
+                </div>
+                <div class="status-indicator status-pending">
+                    <div style="font-weight: bold; margin-bottom: 5px;">⏳ Auto LP Creation</div>
+                    <div style="font-size: 0.9rem;">Volume threshold: $10K</div>
+                </div>
+                <div class="status-indicator status-active">
+                    <div style="font-weight: bold; margin-bottom: 5px;">✅ Revenue Sharing</div>
+                    <div style="font-size: 0.9rem;">30% to creators</div>
+                </div>
+                <div class="status-indicator status-active">
+                    <div style="font-weight: bold; margin-bottom: 5px;">✅ MEV Protection</div>
+                    <div style="font-size: 0.9rem;">Sandwich defense</div>
+                </div>
+            </div>
+
+            <div class="auto-settings">
+                <h3 style="color: #9b59b6; margin-bottom: 20px;">🤖 Automation Settings</h3>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin: 15px 0;">
+                    <span>Auto-create ETH pairs when volume > $10K</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="autoEthPairs" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin: 15px 0;">
+                    <span>Auto-create USDC pairs for stability</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="autoUsdcPairs" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin: 15px 0;">
+                    <span>NFT fractionalization at $25K floor</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="autoFractionalize">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin: 15px 0;">
+                    <span>Cross-DEX arbitrage monitoring</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="autoArbitrage" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Pools List -->
+        <div class="liquidity-card">
+            <div class="card-header">
+                <div class="card-icon">🏊</div>
+                <div class="card-title">Active Liquidity Pools</div>
+            </div>
+            
+            <div class="pool-list">
+                <div class="pool-item">
+                    <div class="pool-header">
+                        <div class="pool-pair">TRUTH/ETH</div>
+                        <div class="pool-apy">24.7% APY</div>
+                    </div>
+                    <div class="pool-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">$8.2K</div>
+                            <div class="stat-label">TVL</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">$1.8K</div>
+                            <div class="stat-label">24h Volume</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">0.3%</div>
+                            <div class="stat-label">Fee Tier</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">42</div>
+                            <div class="stat-label">LPs</div>
+                        </div>
+                    </div>
+                    <button class="action-btn secondary" onclick="window.open('https://app.uniswap.org/#/add/ETH/0x8f6cf6f7747e170f4768533b869c339dc3d30a3c', '_blank')">Add Liquidity</button>
+                </div>
+
+                <div class="pool-item">
+                    <div class="pool-header">
+                        <div class="pool-pair">CREATOR/USDC</div>
+                        <div class="pool-apy">18.3% APY</div>
+                    </div>
+                    <div class="pool-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">$5.4K</div>
+                            <div class="stat-label">TVL</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">$890</div>
+                            <div class="stat-label">24h Volume</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">0.3%</div>
+                            <div class="stat-label">Fee Tier</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">28</div>
+                            <div class="stat-label">LPs</div>
+                        </div>
+                    </div>
+                    <button class="action-btn secondary" onclick="window.open('https://app.uniswap.org/', '_blank')">Add Liquidity</button>
+                </div>
+
+                <div class="pool-item">
+                    <div class="pool-header">
+                        <div class="pool-pair">fTRUTH/ETH</div>
+                        <div class="pool-apy" style="background: linear-gradient(135deg, #FFD700, #FFA000);">32.1% APY</div>
+                    </div>
+                    <div class="pool-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">$32.1K</div>
+                            <div class="stat-label">TVL</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">$3.2K</div>
+                            <div class="stat-label">24h Volume</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">1.0%</div>
+                            <div class="stat-label">Fee Tier</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">15</div>
+                            <div class="stat-label">LPs</div>
+                        </div>
+                    </div>
+                    <button class="action-btn secondary" onclick="manageFractionalPool()">Manage Fractional Pool</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navigation function
+        function navigateToPage(page) {
+            if (page === 'home') {
+                window.location.href = '/';
+            } else {
+                window.location.href = `/${page}`;
+            }
+        }
+
+        // Liquidity management functions
+        function manageTruthLiquidity() {
+            alert('🌊 TRUTH Token Liquidity Management\n\n' +
+                  '• Add/Remove liquidity from ETH and USDC pairs\n' +
+                  '• Automatic rebalancing based on volume\n' +
+                  '• MEV protection for large trades\n' +
+                  '• Yield optimization strategies\n\n' +
+                  'Opening Uniswap interface...');
+            window.open('https://app.uniswap.org/#/pools', '_blank');
+        }
+
+        function manageCreatorLiquidity() {
+            alert('🎨 Creator Coin Liquidity Management\n\n' +
+                  '• Zora Creator Coin integration\n' +
+                  '• Automated LP pool creation\n' +
+                  '• Revenue sharing with creators\n' +
+                  '• Cross-platform arbitrage\n\n' +
+                  'Opening Uniswap interface...');
+            window.open('https://app.uniswap.org/#/pools', '_blank');
+        }
+
+        function manageNftLiquidity() {
+            alert('🎯 NFT Fractionalization & Liquidity\n\n' +
+                  '• Fractionalize Truth NFTs into tradeable tokens\n' +
+                  '• Create liquidity pools for NFT shares\n' +
+                  '• Enable instant NFT trading\n' +
+                  '• Revenue sharing for NFT holders\n\n' +
+                  'This feature will be available soon with NFTX integration!');
+        }
+
+        function manageFractionalPool() {
+            alert('💎 Fractional NFT Pool Management\n\n' +
+                  '• Trade fractions of Truth NFTs\n' +
+                  '• Earn yield on NFT holdings\n' +
+                  '• Participate in governance\n' +
+                  '• Instant liquidity for expensive NFTs\n\n' +
+                  'Opening fractional trading interface...');
+        }
+
+        // Connect wallet functionality
+        document.getElementById('connectWallet').onclick = function() {
+            alert('🔗 Wallet Connection\n\n' +
+                  'Connect your wallet to:\n' +
+                  '• Manage liquidity positions\n' +
+                  '• Monitor automated pools\n' +
+                  '• Track Zora creator earnings\n' +
+                  '• Access NFT fractionalization\n\n' +
+                  'Web3 wallet integration will be enabled soon!');
+        };
+
+        // Track analytics events
+        function trackAnalyticsEvent(event, details) {
+            console.log('Analytics Event:', event, details);
+            // Send to analytics endpoint
+            fetch('/api/track-event', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    event: event,
+                    page: 'liquidity',
+                    timestamp: new Date().toISOString(),
+                    details: details,
+                    userAgent: navigator.userAgent
+                })
+            }).catch(console.error);
+        }
+
+        // Track page view
+        trackAnalyticsEvent('liquidity_page_view', {
+            referrer: document.referrer,
+            zoraWallet: '0xc4b8f1ab3499fac71975666a04a1c99de7609603'
+        });
+
+        // Auto-refresh data every 30 seconds
+        setInterval(() => {
+            console.log('🔄 Refreshing liquidity data...');
+            // Update TVL, APY, and volume data
+            trackAnalyticsEvent('liquidity_data_refresh', {
+                truthTvl: document.getElementById('truthTvl').textContent,
+                creatorTvl: document.getElementById('creatorTvl').textContent,
+                nftTvl: document.getElementById('nftTvl').textContent
+            });
+        }, 30000);
+
+        console.log('🌊 Liquidity Dashboard initialized');
+        console.log('🎭 Zora Integration: 0xc4b8f1ab3499fac71975666a04a1c99de7609603');
+        console.log('💎 TRUTH Token: 0x8f6cf6f7747e170f4768533b869c339dc3d30a3c');
+        console.log('🎨 Creator Token: 0x22b0434e89882f8e6841d340b28427646c015aa7');
+    </script>
+</body>
+</html>

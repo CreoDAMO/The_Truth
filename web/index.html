@@ -455,6 +455,7 @@
                 <a href="#" onclick="navigateToPage('governance')">🗳️ Governance</a>
                 <a href="#" onclick="navigateToPage('community')">👥 Community</a>
                 <a href="#" onclick="navigateToPage('payments')">💳 Payments</a>
+                <a href="#" onclick="navigateToPage('liquidity')">🌊 Liquidity</a>
                 <a href="#" onclick="navigateToPage('social')">📱 Social</a>
                 <a href="#" onclick="navigateToPage('ai-insights')">🤖 AI Insights</a>
                 <a href="#" onclick="navigateToPage('lawful')">⚖️ Legal</a>
@@ -661,6 +662,9 @@
             </div>
 
             <div class="action-buttons">
+                <button class="action-btn secondary" onclick="navigateToPage('liquidity')">
+                    🌊 Manage Liquidity
+                </button>
                 <button class="action-btn secondary" onclick="window.open('https://app.uniswap.org/#/swap?outputCurrency=0x8f6cf6f7747e170f4768533b869c339dc3d30a3c&chain=base', '_blank')">
                     💰 Buy TRUTH Token
                 </button>
@@ -818,6 +822,13 @@
                     console.log('✅ Deployment status loaded');
                 } catch (error) {
                     console.warn('⚠️ Deployment status failed to load');
+                }
+
+                try {
+                    await loadSingleScript('auto-lp-integration.js');
+                    console.log('✅ Auto-LP integration loaded');
+                } catch (error) {
+                    console.warn('⚠️ Auto-LP integration failed to load');
                 }
 
                 console.log('✅ Application initialization completed');
