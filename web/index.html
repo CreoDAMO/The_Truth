@@ -6,6 +6,7 @@
     <title>The Truth NFT - Complete Web3 Creator Economy</title>
     <meta name="description" content="The Truth NFT ecosystem - where philosophy meets blockchain technology">
     <link rel="manifest" href="manifest.json">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.9/purify.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -1491,16 +1492,10 @@
             // Extract content between main content markers or body if not found
             const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
             if (bodyMatch) {
-                // Remove script tags and navbar to avoid conflicts
+                // Sanitize loaded content to remove scripts and other dangerous elements
                 let content = bodyMatch[1];
-                content = content.replace(/<nav[^>]*>[\s\S]*?<\/nav>/gi, '');
-                content = content.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
-                // Repeatedly remove <style> tags to fully sanitize
-                let previousContent;
-                do {
-                    previousContent = content;
-                    content = content.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
-                } while (content !== previousContent);
+                // Use DOMPurify to sanitize the HTML fragment safely
+                content = DOMPurify.sanitize(content, {SAFE_FOR_JQUERY: true});
                 return content;
             }
 
