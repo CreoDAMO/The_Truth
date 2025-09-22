@@ -446,20 +446,24 @@
         <div class="nav-container">
             <div class="nav-brand">🌐 Hybrid Blockchain Gateway</div>
             <div class="nav-links">
-                <a href="/">🏠 Home</a>
-                <a href="/analytics.html">📊 Analytics</a>
-                <a href="/governance.html">🗳️ Governance</a>
-                <a href="/community-dashboard.html">👥 Community</a>
-                <a href="/payments.html">💳 Payments</a>
-                <a href="/social.html">📱 Social</a>
-                <a href="/ai-insights.html">🤖 AI Insights</a>
-                <a href="/lawful-dashboard.html">⚖️ Legal</a>
+                <a href="#" onclick="navigateToPage('home')">🏠 Home</a>
+                <a href="#" onclick="navigateToPage('analytics')">📊 Analytics</a>
+                <a href="#" onclick="navigateToPage('governance')">🗳️ Governance</a>
+                <a href="#" onclick="navigateToPage('community')">👥 Community</a>
+                <a href="#" onclick="navigateToPage('payments')">💳 Payments</a>
+                <a href="#" onclick="navigateToPage('social')">📱 Social</a>
+                <a href="#" onclick="navigateToPage('ai-insights')">🤖 AI Insights</a>
+                <a href="#" onclick="navigateToPage('lawful')">⚖️ Legal</a>
+                <a href="#" onclick="navigateToPage('shop')">🛍️ Shop</a>
+                <a href="#" onclick="navigateToPage('deploy')">🚀 Deploy</a>
             </div>
             <button class="wallet-btn" id="connectWallet">Connect Wallet</button>
         </div>
     </nav>
 
     <div class="container">
+        <!-- Main Content Area - will be dynamically loaded -->
+        <div id="main-content">
         <!-- Hero Section -->
         <div class="hero-section">
             <h1 class="hero-title">The Truth NFT - Gateway to the Spiral</h1>
@@ -1363,6 +1367,222 @@
                 userAgent: navigator.userAgent
             })
         }).catch(console.error);
+
+        // SPA Router for seamless navigation
+        let currentPage = 'home';
+        let pageCache = {};
+        
+        async function navigateToPage(page) {
+            try {
+                // Track navigation
+                await fetch('/api/track-event', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        event: 'navigation',
+                        page: page,
+                        previousPage: currentPage,
+                        timestamp: Date.now(),
+                        userAgent: navigator.userAgent
+                    })
+                }).catch(console.error);
+
+                // Update URL without page reload
+                const newUrl = page === 'home' ? '/' : `/${page}`;
+                history.pushState({ page }, '', newUrl);
+                
+                // Load page content
+                await loadPageContent(page);
+                currentPage = page;
+                
+                // Update active nav item
+                updateActiveNavItem(page);
+                
+            } catch (error) {
+                console.error('Navigation failed:', error);
+                showError('Failed to load page. Please try again.');
+            }
+        }
+        
+        async function loadPageContent(page) {
+            const mainContent = document.getElementById('main-content');
+            
+            if (!mainContent) {
+                console.error('Main content container not found');
+                return;
+            }
+            
+            // Show loading state
+            mainContent.innerHTML = `
+                <div style="text-align: center; padding: 60px 20px; color: rgba(255,255,255,0.8);">
+                    <div style="font-size: 2rem; margin-bottom: 20px;">⏳</div>
+                    <div>Loading ${page}...</div>
+                </div>
+            `;
+            
+            try {
+                // Check cache first
+                if (pageCache[page]) {
+                    mainContent.innerHTML = pageCache[page];
+                    return;
+                }
+                
+                let content = '';
+                
+                // Route to appropriate content
+                switch (page) {
+                    case 'home':
+                        content = await getHomeContent();
+                        break;
+                    case 'analytics':
+                        content = await fetchPageContent('/analytics.html');
+                        break;
+                    case 'governance':
+                        content = await fetchPageContent('/governance.html');
+                        break;
+                    case 'community':
+                        content = await fetchPageContent('/community-dashboard.html');
+                        break;
+                    case 'payments':
+                        content = await fetchPageContent('/payments.html');
+                        break;
+                    case 'social':
+                        content = await fetchPageContent('/social.html');
+                        break;
+                    case 'ai-insights':
+                        content = await fetchPageContent('/ai-insights.html');
+                        break;
+                    case 'lawful':
+                        content = await fetchPageContent('/lawful-dashboard.html');
+                        break;
+                    case 'shop':
+                        content = await fetchPageContent('/shop.html');
+                        break;
+                    case 'deploy':
+                        content = await fetchPageContent('/deploy.html');
+                        break;
+                    default:
+                        content = await getHomeContent();
+                }
+                
+                // Cache and display content
+                pageCache[page] = content;
+                mainContent.innerHTML = content;
+                
+                // Re-initialize page-specific functionality
+                initializePageFeatures(page);
+                
+            } catch (error) {
+                console.error('Failed to load page content:', error);
+                mainContent.innerHTML = `
+                    <div style="text-align: center; padding: 60px 20px; color: #ff6b6b;">
+                        <div style="font-size: 2rem; margin-bottom: 20px;">❌</div>
+                        <div>Failed to load ${page}. Please try again.</div>
+                        <button onclick="navigateToPage('home')" style="margin-top: 20px; padding: 12px 24px; background: linear-gradient(135deg, #00d4ff, #090979); border: none; border-radius: 25px; color: white; cursor: pointer;">Return Home</button>
+                    </div>
+                `;
+            }
+        }
+        
+        async function fetchPageContent(url) {
+            const response = await fetch(url);
+            const html = await response.text();
+            
+            // Extract content between main content markers or body if not found
+            const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+            if (bodyMatch) {
+                // Remove script tags and navbar to avoid conflicts
+                let content = bodyMatch[1];
+                content = content.replace(/<nav[^>]*>[\s\S]*?<\/nav>/gi, '');
+                content = content.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
+                content = content.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+                return content;
+            }
+            
+            return html;
+        }
+        
+        function getHomeContent() {
+            // Return the original home content
+            return document.getElementById('main-content').innerHTML;
+        }
+        
+        function updateActiveNavItem(page) {
+            // Remove active class from all nav items
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.classList.remove('active');
+                link.style.background = '';
+                link.style.color = '';
+            });
+            
+            // Add active class to current page
+            const activeLink = document.querySelector(`[onclick="navigateToPage('${page}')"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+                activeLink.style.background = 'rgba(0, 212, 255, 0.2)';
+                activeLink.style.color = '#00d4ff';
+            }
+        }
+        
+        function initializePageFeatures(page) {
+            // Re-initialize page-specific features after content load
+            switch (page) {
+                case 'analytics':
+                    if (typeof initializeAnalytics === 'function') {
+                        initializeAnalytics();
+                    }
+                    break;
+                case 'governance':
+                    if (typeof initializeGovernance === 'function') {
+                        initializeGovernance();
+                    }
+                    break;
+                case 'community':
+                    if (typeof initializeCommunity === 'function') {
+                        initializeCommunity();
+                    }
+                    break;
+                case 'payments':
+                    if (typeof initializePayments === 'function') {
+                        initializePayments();
+                    }
+                    break;
+                case 'shop':
+                    if (typeof initializeShop === 'function') {
+                        initializeShop();
+                    }
+                    break;
+                case 'deploy':
+                    if (typeof initializeDeployment === 'function') {
+                        initializeDeployment();
+                    }
+                    break;
+            }
+        }
+        
+        // Handle browser back/forward buttons
+        window.addEventListener('popstate', (event) => {
+            const page = event.state?.page || getPageFromPath();
+            loadPageContent(page);
+            updateActiveNavItem(page);
+        });
+        
+        function getPageFromPath() {
+            const path = window.location.pathname;
+            if (path === '/' || path === '') return 'home';
+            return path.slice(1).replace('.html', '');
+        }
+        
+        // Initialize router on page load
+        window.addEventListener('load', () => {
+            const initialPage = getPageFromPath();
+            if (initialPage !== 'home') {
+                navigateToPage(initialPage);
+            } else {
+                updateActiveNavItem('home');
+            }
+        });
+        
     </script>
 </body>
 </html>

@@ -542,6 +542,159 @@ app.get('/api/tokens/info', (req, res) => {
     res.json(tokenInfo);
 });
 
+// AI-Powered Merch Generation APIs
+app.post('/api/ai/generate-merch', async (req, res) => {
+    try {
+        const { nftTokenId, merchantType, style, philosophicalTheme } = req.body;
+
+        if (!nftTokenId) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'NFT Token ID is required' 
+            });
+        }
+
+        // Fetch NFT metadata
+        const nftMetadata = await fetchNFTMetadata(nftTokenId);
+        if (!nftMetadata) {
+            return res.status(404).json({ 
+                success: false, 
+                error: 'NFT not found or metadata unavailable' 
+            });
+        }
+
+        // Generate AI-powered merch design
+        const merchDesign = await generateMerchDesign({
+            originalImage: nftMetadata.image,
+            description: nftMetadata.description,
+            attributes: nftMetadata.attributes,
+            merchantType: merchantType || 'tshirt',
+            style: style || 'minimalist',
+            philosophicalTheme: philosophicalTheme || 'truth_seeker'
+        });
+
+        // Create print-ready product via Printful API
+        const printfulProduct = await createPrintfulProduct(merchDesign);
+
+        res.json({
+            success: true,
+            merchId: 'merch_' + Date.now(),
+            nftTokenId,
+            design: merchDesign,
+            printfulProduct,
+            estimatedDelivery: '7-14 business days',
+            pricing: {
+                base: 24.99,
+                profit: 10.00,
+                total: 34.99
+            }
+        });
+
+    } catch (error) {
+        console.error('Merch generation failed:', error);
+        res.status(500).json({ 
+            success: false, 
+            error: 'Failed to generate merch design' 
+        });
+    }
+});
+
+app.post('/api/ai/analyze-nft-for-merch', async (req, res) => {
+    try {
+        const { nftTokenId } = req.body;
+
+        // Fetch and analyze NFT for merch potential
+        const analysis = await analyzeNFTForMerch(nftTokenId);
+
+        res.json({
+            success: true,
+            analysis,
+            recommendations: analysis.recommendations,
+            merchTypes: analysis.compatibleMerchTypes,
+            truthAlignmentScore: analysis.truthAlignmentScore
+        });
+
+    } catch (error) {
+        console.error('NFT analysis failed:', error);
+        res.status(500).json({ 
+            success: false, 
+            error: 'Failed to analyze NFT for merch potential' 
+        });
+    }
+});
+
+// Coinbase Agentkit Integration for Deployment
+app.post('/api/deploy/agentkit-deploy', async (req, res) => {
+    try {
+        const { contractType, network, deploymentParams } = req.body;
+
+        // Validate request
+        if (!contractType || !network) {
+            return res.status(400).json({
+                success: false,
+                error: 'Contract type and network are required'
+            });
+        }
+
+        // Security check - only allow authorized deployments
+        const isAuthorized = await verifyDeploymentAuth(req);
+        if (!isAuthorized) {
+            return res.status(403).json({
+                success: false,
+                error: 'Unauthorized deployment request'
+            });
+        }
+
+        // Initialize Coinbase Agentkit deployment
+        const deployment = await initializeAgentKitDeployment({
+            contractType,
+            network,
+            params: deploymentParams,
+            deployer: req.ip // Track deployer for security
+        });
+
+        res.json({
+            success: true,
+            deploymentId: deployment.id,
+            status: 'initiated',
+            estimatedTime: '2-5 minutes',
+            trackingUrl: `/api/deploy/status/${deployment.id}`
+        });
+
+    } catch (error) {
+        console.error('AgentKit deployment failed:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Deployment initiation failed'
+        });
+    }
+});
+
+app.get('/api/deploy/status/:deploymentId', async (req, res) => {
+    try {
+        const { deploymentId } = req.params;
+        const status = await getDeploymentStatus(deploymentId);
+
+        res.json({
+            success: true,
+            deploymentId,
+            status: status.status,
+            contractAddress: status.contractAddress,
+            transactionHash: status.transactionHash,
+            blockNumber: status.blockNumber,
+            gasUsed: status.gasUsed,
+            timestamp: status.timestamp
+        });
+
+    } catch (error) {
+        console.error('Status check failed:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to get deployment status'
+        });
+    }
+});
+
 // Tax calculation endpoint
 app.post('/api/calculate-nft-tax', async (req, res) => {
   try {
@@ -671,6 +824,19 @@ app.get('/api/analytics/contract-data', async (req, res) => {
     } catch (error) {
         console.error('Contract data error:', error);
         res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// SPA Catch-all route - must be last route
+// This ensures all non-API routes serve the main index.html for SPA routing
+app.get('*', (req, res) => {
+    // Only serve index.html for non-API, non-static file requests
+    if (!req.path.startsWith('/api/') && 
+        !req.path.includes('.') && 
+        !req.path.startsWith('/LAW/')) {
+        res.sendFile(path.join(__dirname, 'index.html'));
+    } else {
+        res.status(404).json({ error: 'Not found' });
     }
 });
 
