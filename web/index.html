@@ -455,6 +455,7 @@
                 <a href="#" onclick="navigateToPage('ai-insights')">🤖 AI Insights</a>
                 <a href="#" onclick="navigateToPage('lawful')">⚖️ Legal</a>
                 <a href="#" onclick="navigateToPage('shop')">🛍️ Shop</a>
+                <a href="#" onclick="navigateToPage('liquidity')">💧 Liquidity</a>
                 <a href="#" onclick="navigateToPage('deploy')">🚀 Deploy</a>
             </div>
             <button class="wallet-btn" id="connectWallet">Connect Wallet</button>
@@ -724,7 +725,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="bg-gradient-to-r from-purple-900/50 to-pink-900/50 rounded-xl p-6 backdrop-blur-sm border border-purple-500/30">
                         <h3 class="text-2xl font-bold mb-4 text-center">💎 Buy Creator Coin</h3>
                         <div class="space-y-4">
@@ -794,7 +795,7 @@
                             </div>
                         </div>
                     </div>
-                
+
                 <button class="action-btn secondary" onclick="window.open('https://app.uniswap.org/#/swap?outputCurrency=0x8f6cf6f7747e170f4768533b869c339dc3d30a3c&chain=base', '_blank')">
                     💰 Buy TRUTH Token
                 </button>
@@ -853,6 +854,7 @@
                 <a href="/ai-insights.html" class="action-btn secondary">🤖 AI Insights</a>
                 <a href="/lawful-dashboard.html" class="action-btn secondary">⚖️ Legal Framework</a>
                 <a href="/shop.html" class="action-btn secondary">🛒 Traditional Shop</a>
+                <a href="/liquidity-dashboard.html" class="action-btn secondary">💧 Liquidity</a>
             </div>
         </div>
     </div>
@@ -1603,6 +1605,9 @@
                     case 'shop':
                         content = createUnifiedShop();
                         break;
+                    case 'liquidity':
+                        content = await fetchPageContent('/liquidity-dashboard.html');
+                        break;
                     case 'deploy':
                         content = await fetchPageContent('/deploy.html');
                         break;
@@ -1957,7 +1962,7 @@
                 button.textContent = '🎨 Generate AI Merch Design';
             }
         }
-        
+
         async function orderMerch(nftId, merchType) {
             showSuccess("Initiating merch order process...");
             // Placeholder for actual order processing logic
@@ -2077,7 +2082,7 @@
             if (path === '/' || path === '') return 'home';
             return path.slice(1).replace('.html', '');
         }
-        
+
         // Placeholder functions for newly added button actions
         function buyCreatorCoin(source) {
             console.log(`Buying Creator Coin via ${source}`);
