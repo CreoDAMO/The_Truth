@@ -1797,14 +1797,19 @@
                             <div class="w-64 h-64 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg mx-auto mb-4 flex items-center justify-center text-white font-bold text-xl">
                                 AI Design Preview
                             </div>
-                            <h4 class="text-lg font-semibold mb-2">${result.design.philosophicalTheme} ${result.design.merchantType}</h4>
-                            <p class="text-gray-400 mb-4">Generated from The Truth #${nftId}</p>
-                            <div class="text-2xl font-bold text-green-400 mb-4">$${result.pricing.total}</div>
+                            <h4 class="text-lg font-semibold mb-2"><span id="design-theme-merchant"></span></h4>
+                            <p class="text-gray-400 mb-4">Generated from The Truth #<span id="design-nft-id"></span></p>
+                            <div class="text-2xl font-bold text-green-400 mb-4" id="design-pricing-total"></div>
                             <button class="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg font-semibold">
                                 🛒 Order Now
                             </button>
                         </div>
                     `;
+                    // Safely inject user data as text, not HTML
+                    document.getElementById('design-theme-merchant').textContent = result.design.philosophicalTheme + ' ' + result.design.merchantType;
+                    document.getElementById('design-nft-id').textContent = nftId;
+                    document.getElementById('design-pricing-total').textContent = '$' + result.pricing.total;
+
                     showSuccess('AI merch design generated successfully!');
                 } else {
                     showError('Failed to generate merch design');
