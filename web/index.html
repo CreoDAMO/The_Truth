@@ -58,7 +58,7 @@
                     // Remove all script tags and event handlers
                     let sanitized = html
                         .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-                        .replace(/javascript:/gi, '')
+                        .replace(/javascript:|data:|vbscript:/gi, '')
                         .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '')
                         .replace(/on\w+\s*=\s*[^>\s]+/gi, '');
 
