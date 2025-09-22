@@ -54,24 +54,24 @@
             window.DOMPurify = {
                 sanitize: (html, options = {}) => {
                     console.warn('Using enhanced security fallback for HTML sanitization');
-                    
+
                     // Remove all script tags and event handlers
                     let sanitized = html
                         .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
                         .replace(/javascript:/gi, '')
                         .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '')
                         .replace(/on\w+\s*=\s*[^>\s]+/gi, '');
-                    
+
                     // Allow only safe HTML elements and attributes
                     const allowedTags = ['div', 'span', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'strong', 'em', 'br', 'ul', 'ol', 'li', 'a'];
                     const allowedAttributes = ['class', 'style', 'href', 'target'];
-                    
+
                     // Basic tag filtering (simplified for fallback)
                     if (options.SAFE_FOR_JQUERY || sanitized.includes('<')) {
                         // Strip all tags except allowed ones as a safety measure
                         sanitized = sanitized.replace(/<(?!\/?(?:div|span|p|h[1-6]|strong|em|br|ul|ol|li|a)\b)[^>]*>/gi, '');
                     }
-                    
+
                     return sanitized;
                 }
             };
@@ -1091,7 +1091,7 @@
             return new Promise((resolve, reject) => {
                 const script = document.createElement('script');
                 script.src = src;
-                
+
                 let isResolved = false;
                 const onLoad = () => {
                     if (!isResolved) {
@@ -1105,7 +1105,7 @@
                         reject(error);
                     }
                 };
-                
+
                 script.onload = onLoad;
                 script.onerror = onError;
                 document.head.appendChild(script);
@@ -1178,11 +1178,26 @@
                 }
 
                 try {
+                    await loadSingleScript('unified-state-manager.js');
+                    console.log('✅ Unified state manager loaded');
+                } catch (error) {
+                    console.warn('⚠️ Unified state manager failed to load');
+                }
+                
+                try {
+                    await loadSingleScript('api-service.js');
+                    console.log('✅ API service loaded');
+                } catch (error) {
+                    console.warn('⚠️ API service failed to load');
+                }
+
+                try {
                     await loadSingleScript('unified-dashboard.js');
                     console.log('✅ Unified dashboard state manager loaded');
                 } catch (error) {
                     console.warn('⚠️ Unified dashboard failed to load');
                 }
+
 
                 // Initialize payments page error handler
                 if (window.location.pathname.includes('payments') || window.location.hash.includes('payments')) {

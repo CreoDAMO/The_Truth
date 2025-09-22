@@ -134,9 +134,15 @@ class TruthGovernance {
         }
     }
 
-    loadProposals() {
-        // Sample proposals - in production these would come from a backend/IPFS
-        this.proposals = [
+    async loadProposals() {
+        try {
+            const data = await window.TruthAPI.getGovernanceProposals();
+            this.proposals = data;
+            this.renderProposals();
+        } catch (error) {
+            console.error('Failed to load proposals:', error);
+            // Fallback to sample proposals
+            this.proposals = [
             {
                 id: 1,
                 title: "Bonus Gift Collection Pricing",
@@ -165,6 +171,33 @@ class TruthGovernance {
                 endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
             }
         ];
+        this.renderProposals();
+        }
+    }
+    
+    renderProposals() {
+        const proposalsList = document.getElementById('proposalsList');
+        if (!proposalsList) return;
+        
+        proposalsList.innerHTML = this.proposals.map(proposal => `
+            <div class="proposal-card glass rounded-2xl p-8 floating">
+                <h3 class="text-xl font-bold mb-4">${proposal.title}</h3>
+                <p class="text-gray-300 mb-6">${proposal.description}</p>
+                <div class="vote-progress mb-4">
+                    <div class="flex justify-between text-sm mb-2">
+                        <span>Yes: ${proposal.yesVotes}%</span>
+                        <span>No: ${proposal.noVotes}%</span>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar progress-yes" style="width: ${proposal.yesVotes}%"></div>
+                    </div>
+                </div>
+                <div class="vote-buttons">
+                    <button class="vote-btn vote-yes" onclick="vote(${proposal.id}, true)">Vote Yes</button>
+                    <button class="vote-btn vote-no" onclick="vote(${proposal.id}, false)">Vote No</button>
+                </div>
+            </div>
+        `).join('');
     }
 }
 

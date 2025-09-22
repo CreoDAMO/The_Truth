@@ -151,6 +151,27 @@ args = "npm run compile"
 task = "shell.exec"
 args = "npm start"
 
+[[workflows.workflow]]
+name = "Build Static Distribution"
+author = 47877341
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm install"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "chmod +x build-static.sh"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "./build-static.sh"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"✅ Static distribution built with unified state management\""
+
 [[ports]]
 localPort = 5000
 externalPort = 80
