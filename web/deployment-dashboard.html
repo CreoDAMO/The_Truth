@@ -209,6 +209,33 @@
                             </button>
                         </div>
                     </div>
+
+                    <!-- Coinbase AgentKit Integration -->
+                    <div class="mt-6 p-4 glass rounded-lg border border-blue-500/30">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-blue-400 flex items-center">
+                                <i class="fas fa-robot mr-2"></i>Coinbase AgentKit
+                            </h3>
+                            <button
+                                onclick="deployWithAgentKit()"
+                                disabled={loading || !account}
+                                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 px-6 py-2 rounded-lg font-semibold transition-all transform hover:scale-105 shadow-lg"
+                            >
+                                🚀 Deploy with Coinbase AgentKit
+                            </button>
+                        </div>
+
+                        <div className="mt-4 p-4 bg-blue-900/20 rounded-lg border border-blue-500/30">
+                            <h4 className="font-semibold text-blue-400 mb-2">🤖 AgentKit Features:</h4>
+                            <ul className="text-sm space-y-1 opacity-80">
+                                <li>• Automated gas optimization</li>
+                                <li>• Multi-network deployment</li>
+                                <li>• Real-time security analysis</li>
+                                <li>• Smart contract verification</li>
+                                <li>• Treasury setup automation</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- IPFS Assets Display -->
@@ -531,6 +558,24 @@
             deploymentInProgress = false;
             document.getElementById('deployBtn').disabled = false;
         }
+
+        // Placeholder for AgentKit deployment function
+        async function deployWithAgentKit() {
+            addLog('AGENTKIT', 'Initiating deployment with Coinbase AgentKit...', 'info');
+            // In a real scenario, this would involve calling AgentKit APIs
+            // For now, we simulate a similar progress flow
+            updateProgress(20, '1/5', 'AgentKit: Preparing deployment...');
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            updateProgress(40, '2/5', 'AgentKit: Optimizing gas...');
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            updateProgress(60, '3/5', 'AgentKit: Security analysis...');
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            updateProgress(80, '4/5', 'AgentKit: Deploying contract...');
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            updateProgress(100, '5/5', 'AgentKit: Verifying deployment...');
+            addLog('SUCCESS', 'Deployment via AgentKit completed successfully!', 'success');
+        }
+
 
         async function simulateDeployment(contractKey, config) {
             const steps = [

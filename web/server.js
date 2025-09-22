@@ -115,9 +115,9 @@ app.get('/api/community', (req, res) => {
     });
 });
 
-// Catch-all route for SPA - must be last
+// Complete SPA routing with proper dashboard handling
 app.get('*', (req, res) => {
-    // Don't intercept API calls or static assets
+    // Static assets and API routes
     if (req.path.startsWith('/api/') || 
         req.path.startsWith('/assets/') || 
         req.path.startsWith('/LAW/') ||
@@ -125,13 +125,30 @@ app.get('*', (req, res) => {
         req.path.includes('.css') || 
         req.path.includes('.png') || 
         req.path.includes('.jpg') || 
-        req.path.includes('.ico')) {
+        req.path.includes('.ico') ||
+        req.path.includes('.json') ||
+        req.path.includes('.txt') ||
+        req.path.includes('.md')) {
         return res.status(404).send('Not found');
     }
     
-    // Serve the main SPA for all dashboard routes
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
+    // All dashboard routes serve the main SPA
+    const dashboardRoutes = [
+        '/analytics', '/governance', '/community', '/payments', 
+        '/social', '/ai-insights', '/lawful', '/shop', '/deploy',
+        '/deployment-dashboard', '/ai', '/legal'
+    ];
+    
+    const isValidRoute = dashboardRoutes.some(route => 
+        req.path === route || req.path.startsWith(route + '/')
+    );
+    
+    if (isValidRoute || req.path === '/') {
+        res.sendFile(path.join(__dirname, 'index.html'));
+    } else {
+        res.status(404).sendFile(path.join(__dirname, '404.html'));
+    }
+});</proper_SPA_routing>
 
 // Serve PWA manifest with correct MIME type
 app.get('/manifest.json', (req, res) => {
