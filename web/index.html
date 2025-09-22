@@ -1495,7 +1495,12 @@
                 let content = bodyMatch[1];
                 content = content.replace(/<nav[^>]*>[\s\S]*?<\/nav>/gi, '');
                 content = content.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
-                content = content.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+                // Repeatedly remove <style> tags to fully sanitize
+                let previousContent;
+                do {
+                    previousContent = content;
+                    content = content.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+                } while (content !== previousContent);
                 return content;
             }
 
