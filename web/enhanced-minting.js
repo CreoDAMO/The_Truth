@@ -218,16 +218,29 @@ class EnhancedMintingInterface {
         
         // Create progress notification (you'd integrate with your UI framework)
         const notification = document.createElement('div');
-        notification.innerHTML = `
-            <div class="transaction-progress">
-                <div class="progress-indicator">⏳ Transaction pending...</div>
-                <div class="transaction-link">
-                    <a href="${explorerUrl}" target="_blank" rel="noopener noreferrer">
-                        View on BaseScan
-                    </a>
-                </div>
-            </div>
-        `;
+        // Create safe DOM elements to avoid XSS
+        const progressDiv = document.createElement('div');
+        progressDiv.className = 'transaction-progress';
+        
+        const indicatorDiv = document.createElement('div');
+        indicatorDiv.className = 'progress-indicator';
+        indicatorDiv.textContent = '⏳ Transaction pending...';
+        
+        const linkDiv = document.createElement('div');
+        linkDiv.className = 'transaction-link';
+        
+        const link = document.createElement('a');
+        link.href = explorerUrl;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = 'View on BaseScan';
+        
+        linkDiv.appendChild(link);
+        progressDiv.appendChild(indicatorDiv);
+        progressDiv.appendChild(linkDiv);
+        
+        notification.innerHTML = '';
+        notification.appendChild(progressDiv);
         
         document.body.appendChild(notification);
         

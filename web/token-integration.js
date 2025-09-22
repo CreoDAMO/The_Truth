@@ -335,25 +335,49 @@ class TruthTokenIntegration {
         const healthyCount = Object.values(this.healthStatus).filter(status => status).length;
 
         if (allHealthy) {
-            healthElement.innerHTML = `
-                <div class="flex items-center justify-center space-x-2">
-                    <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                    <span class="text-green-400 text-sm">System Operational</span>
-                </div>
-                <div class="text-xs text-center mt-1 opacity-70">
-                    All integrations active (${healthyCount}/4)
-                </div>
-            `;
+            // Create safe DOM elements for operational status
+            const containerDiv = document.createElement('div');
+            containerDiv.className = 'flex items-center justify-center space-x-2';
+            
+            const statusIndicator = document.createElement('span');
+            statusIndicator.className = 'w-2 h-2 bg-green-400 rounded-full animate-pulse';
+            
+            const statusText = document.createElement('span');
+            statusText.className = 'text-green-400 text-sm';
+            statusText.textContent = 'System Operational';
+            
+            const detailsDiv = document.createElement('div');
+            detailsDiv.className = 'text-xs text-center mt-1 opacity-70';
+            detailsDiv.textContent = `All integrations active (${healthyCount}/4)`;
+            
+            containerDiv.appendChild(statusIndicator);
+            containerDiv.appendChild(statusText);
+            
+            healthElement.innerHTML = '';
+            healthElement.appendChild(containerDiv);
+            healthElement.appendChild(detailsDiv);
         } else {
-            healthElement.innerHTML = `
-                <div class="flex items-center justify-center space-x-2">
-                    <span class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
-                    <span class="text-yellow-400 text-sm">Partial System Status</span>
-                </div>
-                <div class="text-xs text-center mt-1 opacity-70">
-                    ${healthyCount}/4 systems active
-                </div>
-            `;
+            // Create safe DOM elements for partial status
+            const containerDiv = document.createElement('div');
+            containerDiv.className = 'flex items-center justify-center space-x-2';
+            
+            const statusIndicator = document.createElement('span');
+            statusIndicator.className = 'w-2 h-2 bg-yellow-400 rounded-full animate-pulse';
+            
+            const statusText = document.createElement('span');
+            statusText.className = 'text-yellow-400 text-sm';
+            statusText.textContent = 'Partial System Status';
+            
+            const detailsDiv = document.createElement('div');
+            detailsDiv.className = 'text-xs text-center mt-1 opacity-70';
+            detailsDiv.textContent = `${healthyCount}/4 systems active`;
+            
+            containerDiv.appendChild(statusIndicator);
+            containerDiv.appendChild(statusText);
+            
+            healthElement.innerHTML = '';
+            healthElement.appendChild(containerDiv);
+            healthElement.appendChild(detailsDiv);
         }
     }
 }

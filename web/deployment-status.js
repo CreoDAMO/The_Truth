@@ -171,7 +171,8 @@ class DeploymentStatus {
             `;
         }
 
-        this.statusElement.innerHTML = html;
+        // Use DOMPurify to sanitize HTML content before setting innerHTML
+        this.statusElement.innerHTML = DOMPurify.sanitize(html);
     }
 }
 
