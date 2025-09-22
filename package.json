@@ -5,6 +5,8 @@
   "author": "Jacque Antoine DeGraff",
   "license": "MIT",
   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install-deps": "npm install @openzeppelin/contracts@4.9.0",
     "compile": "hardhat compile",
     "test": "npx hardhat test",
     "deploy": "hardhat run scripts/deployTheTruth.js",

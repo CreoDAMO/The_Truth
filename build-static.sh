@@ -2,6 +2,12 @@
 
 echo "🚀 Building static site for GitHub Pages..."
 
+# Install missing dependencies if needed
+if [ ! -d "node_modules/@openzeppelin" ]; then
+    echo "📦 Installing missing OpenZeppelin dependencies..."
+    npm install @openzeppelin/contracts@4.9.0 || echo "Warning: Could not install OpenZeppelin"
+fi
+
 # Create dist directory
 mkdir -p dist
 
@@ -15,7 +21,13 @@ cp web/*.html dist/ 2>/dev/null || true
 
 # Copy JavaScript files
 mkdir -p dist/js
-cp web/*.js dist/js/
+cp web/*.js dist/js/ 2>/dev/null || echo "No JS files to copy from web/"
+
+# Copy integration files
+cp integrations/*.js dist/js/ 2>/dev/null || echo "No integration files to copy"
+
+# Copy script files  
+cp scripts/*.js dist/js/ 2>/dev/null || echo "No script files to copy"
 
 # Copy CSS files if they exist
 mkdir -p dist/css

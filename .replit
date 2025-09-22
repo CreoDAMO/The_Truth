@@ -130,6 +130,27 @@ args = "npm run update-artifacts"
 task = "shell.exec"
 args = "echo \"✅ Contracts compiled and artifacts updated\""
 
+[[workflows.workflow]]
+name = "Deploy to Replit"
+author = 47863140
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm install"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run install-deps"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run compile"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm start"
+
 [[ports]]
 localPort = 5000
 externalPort = 80
