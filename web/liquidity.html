@@ -331,6 +331,99 @@
             transform: translateX(26px);
         }
 
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .mobile-nav-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1999;
+        }
+
+        .mobile-nav-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 280px;
+            height: 100%;
+            background: rgba(15, 15, 35, 0.98);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(0, 212, 255, 0.3);
+            z-index: 2000;
+            transition: right 0.3s ease;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .mobile-nav-menu.active {
+            right: 0;
+        }
+
+        .mobile-nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .mobile-nav-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .mobile-nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mobile-nav-links a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            padding: 15px 20px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mobile-nav-links a:hover {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            color: #00d4ff;
+            transform: translateX(5px);
+        }
+
+        @media (max-width: 968px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+        }
+
         @media (max-width: 768px) {
             .page-title {
                 font-size: 2rem;
@@ -340,8 +433,8 @@
                 grid-template-columns: 1fr;
             }
             
-            .nav-links {
-                display: none;
+            .mobile-nav-overlay.active {
+                display: block;
             }
         }
     </style>
@@ -363,14 +456,54 @@
                 <a href="/shop" onclick="navigateToPage('shop')">🛍️ Shop</a>
                 <a href="/deploy" onclick="navigateToPage('deploy')">🚀 Deploy</a>
             </div>
+            
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
+            
             <button class="wallet-btn" id="connectWallet">Connect Wallet</button>
         </div>
     </nav>
+
+    <!-- Mobile Navigation Overlay -->
+    <div class="mobile-nav-overlay" id="mobileNavOverlay" onclick="closeMobileMenu()"></div>
+    
+    <!-- Mobile Navigation Menu -->
+    <div class="mobile-nav-menu" id="mobileNavMenu">
+        <div class="mobile-nav-header">
+            <div class="nav-brand">🌊 Liquidity</div>
+            <button class="mobile-nav-close" onclick="closeMobileMenu()">✕</button>
+        </div>
+        
+        <div class="mobile-nav-links">
+            <a href="/" onclick="navigateToPage('home'); closeMobileMenu();">🏠 Home Dashboard</a>
+            <a href="/analytics" onclick="navigateToPage('analytics'); closeMobileMenu();">📊 Analytics & Metrics</a>
+            <a href="/governance" onclick="navigateToPage('governance'); closeMobileMenu();">🗳️ Governance & Voting</a>
+            <a href="/community" onclick="navigateToPage('community'); closeMobileMenu();">👥 Community Hub</a>
+            <a href="/liquidity" onclick="navigateToPage('liquidity'); closeMobileMenu();" class="active">🌊 Liquidity Pools</a>
+            <a href="/payments" onclick="navigateToPage('payments'); closeMobileMenu();">💳 Payments & Trading</a>
+            <a href="/social" onclick="navigateToPage('social'); closeMobileMenu();">📱 Social Network</a>
+            <a href="/ai-insights" onclick="navigateToPage('ai-insights'); closeMobileMenu();">🤖 AI Insights</a>
+            <a href="/lawful" onclick="navigateToPage('lawful'); closeMobileMenu();">⚖️ Legal Framework</a>
+            <a href="/shop" onclick="navigateToPage('shop'); closeMobileMenu();">🛍️ Marketplace</a>
+            <a href="/deploy" onclick="navigateToPage('deploy'); closeMobileMenu();">🚀 Deploy & Publish</a>
+        </div>
+    </div>
 
     <div class="container">
         <div class="header">
             <h1 class="page-title">🌊 Automated Liquidity Pools</h1>
             <p class="page-subtitle">Unified NFT + Creator Coin + Zora Integration with Automated LP Management</p>
+            
+            <!-- Cross-Dashboard Integration Notice -->
+            <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 15px; padding: 20px; margin: 20px 0; text-align: center;">
+                <h3 style="color: #00d4ff; margin-bottom: 10px;">🔗 Unified Ecosystem</h3>
+                <p style="margin: 0; color: rgba(255,255,255,0.8); font-size: 0.9rem;">Your liquidity positions connect to governance voting power, community rewards, and AI-driven insights across all dashboards.</p>
+                <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                    <a href="/governance" onclick="navigateToPage('governance')" style="background: rgba(255,255,255,0.1); padding: 8px 15px; border-radius: 20px; color: #4CAF50; text-decoration: none; font-size: 0.9rem;">🗳️ Vote with LP Power</a>
+                    <a href="/analytics" onclick="navigateToPage('analytics')" style="background: rgba(255,255,255,0.1); padding: 8px 15px; border-radius: 20px; color: #FFD700; text-decoration: none; font-size: 0.9rem;">📊 Track Performance</a>
+                    <a href="/ai-insights" onclick="navigateToPage('ai-insights')" style="background: rgba(255,255,255,0.1); padding: 8px 15px; border-radius: 20px; color: #9b59b6; text-decoration: none; font-size: 0.9rem;">🤖 AI Optimization</a>
+                </div>
+            </div>
         </div>
 
         <!-- Unified Token Liquidity -->
@@ -625,12 +758,44 @@
     </div>
 
     <script>
-        // Navigation function
+        // Mobile navigation functions
+        function toggleMobileMenu() {
+            const overlay = document.getElementById('mobileNavOverlay');
+            const menu = document.getElementById('mobileNavMenu');
+            
+            overlay.classList.add('active');
+            menu.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMobileMenu() {
+            const overlay = document.getElementById('mobileNavOverlay');
+            const menu = document.getElementById('mobileNavMenu');
+            
+            overlay.classList.remove('active');
+            menu.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Navigation function with unified state management
         function navigateToPage(page) {
-            if (page === 'home') {
-                window.location.href = '/';
+            // Update global ecosystem state if available
+            if (window.TruthEcosystem) {
+                window.TruthEcosystem.navigateTo(page, {
+                    fromLiquidity: true,
+                    liquidityData: {
+                        truthTvl: document.getElementById('truthTvl')?.textContent,
+                        creatorTvl: document.getElementById('creatorTvl')?.textContent,
+                        nftTvl: document.getElementById('nftTvl')?.textContent
+                    }
+                });
             } else {
-                window.location.href = `/${page}`;
+                // Fallback navigation
+                if (page === 'home') {
+                    window.location.href = '/';
+                } else {
+                    window.location.href = `/${page}`;
+                }
             }
         }
 
