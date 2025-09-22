@@ -179,25 +179,75 @@ class TruthGovernance {
         const proposalsList = document.getElementById('proposalsList');
         if (!proposalsList) return;
         
-        proposalsList.innerHTML = this.proposals.map(proposal => `
-            <div class="proposal-card glass rounded-2xl p-8 floating">
-                <h3 class="text-xl font-bold mb-4">${proposal.title}</h3>
-                <p class="text-gray-300 mb-6">${proposal.description}</p>
-                <div class="vote-progress mb-4">
-                    <div class="flex justify-between text-sm mb-2">
-                        <span>Yes: ${proposal.yesVotes}%</span>
-                        <span>No: ${proposal.noVotes}%</span>
-                    </div>
-                    <div class="progress-container">
-                        <div class="progress-bar progress-yes" style="width: ${proposal.yesVotes}%"></div>
-                    </div>
-                </div>
-                <div class="vote-buttons">
-                    <button class="vote-btn vote-yes" onclick="vote(${proposal.id}, true)">Vote Yes</button>
-                    <button class="vote-btn vote-no" onclick="vote(${proposal.id}, false)">Vote No</button>
-                </div>
-            </div>
-        `).join('');
+        // Clear existing content safely
+        proposalsList.textContent = '';
+        
+        this.proposals.forEach(proposal => {
+            // Create container
+            const proposalDiv = document.createElement('div');
+            proposalDiv.className = 'proposal-card glass rounded-2xl p-8 floating';
+            
+            // Create title (safe text content)
+            const titleH3 = document.createElement('h3');
+            titleH3.className = 'text-xl font-bold mb-4';
+            titleH3.textContent = proposal.title;
+            
+            // Create description (safe text content)
+            const descriptionP = document.createElement('p');
+            descriptionP.className = 'text-gray-300 mb-6';
+            descriptionP.textContent = proposal.description;
+            
+            // Create vote progress
+            const voteProgressDiv = document.createElement('div');
+            voteProgressDiv.className = 'vote-progress mb-4';
+            
+            const voteStatsDiv = document.createElement('div');
+            voteStatsDiv.className = 'flex justify-between text-sm mb-2';
+            
+            const yesSpan = document.createElement('span');
+            yesSpan.textContent = `Yes: ${proposal.yesVotes}%`;
+            const noSpan = document.createElement('span');
+            noSpan.textContent = `No: ${proposal.noVotes}%`;
+            
+            voteStatsDiv.appendChild(yesSpan);
+            voteStatsDiv.appendChild(noSpan);
+            
+            const progressContainer = document.createElement('div');
+            progressContainer.className = 'progress-container';
+            
+            const progressBar = document.createElement('div');
+            progressBar.className = 'progress-bar progress-yes';
+            progressBar.style.width = `${proposal.yesVotes}%`;
+            
+            progressContainer.appendChild(progressBar);
+            voteProgressDiv.appendChild(voteStatsDiv);
+            voteProgressDiv.appendChild(progressContainer);
+            
+            // Create vote buttons
+            const voteButtonsDiv = document.createElement('div');
+            voteButtonsDiv.className = 'vote-buttons';
+            
+            const yesButton = document.createElement('button');
+            yesButton.className = 'vote-btn vote-yes';
+            yesButton.textContent = 'Vote Yes';
+            yesButton.onclick = () => vote(proposal.id, true);
+            
+            const noButton = document.createElement('button');
+            noButton.className = 'vote-btn vote-no';
+            noButton.textContent = 'Vote No';
+            noButton.onclick = () => vote(proposal.id, false);
+            
+            voteButtonsDiv.appendChild(yesButton);
+            voteButtonsDiv.appendChild(noButton);
+            
+            // Assemble the proposal card
+            proposalDiv.appendChild(titleH3);
+            proposalDiv.appendChild(descriptionP);
+            proposalDiv.appendChild(voteProgressDiv);
+            proposalDiv.appendChild(voteButtonsDiv);
+            
+            proposalsList.appendChild(proposalDiv);
+        });
     }
 }
 
