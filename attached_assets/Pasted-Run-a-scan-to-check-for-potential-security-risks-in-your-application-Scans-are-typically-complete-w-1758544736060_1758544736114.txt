@@ -1,0 +1,46 @@
+Run a scan to check for potential security risks in your application. Scans are typically complete within minutes. Learn more
+4 potential vulnerabilities found.
+Last ran on
+ 
+8:35 am, Sep 22, 2025
+Detected potential vulnerability in web/deployment-status.js
+XSS Vulnerability: Unsafe DOM Manipulation. User controlled data in methods like `innerHTML`, `outerHTML` or `document.write` is an anti-pattern that can lead to XSS vulnerabilities. Replace with safe DOM methods: Use createElement() + appendChild() + textContent for dynamic content. Avoid use innerHTML with user data: Even escaped data can be risky. If HTML injection is absolutely necessary: Sanitize with DOMPurify library first.
+web/deployment-status.js
+        this.statusElement.innerHTML = html;
+Detected potential vulnerability in web/enhanced-minting.js
+XSS Vulnerability: Unsafe DOM Manipulation. User controlled data in methods like `innerHTML`, `outerHTML` or `document.write` is an anti-pattern that can lead to XSS vulnerabilities. Replace with safe DOM methods: Use createElement() + appendChild() + textContent for dynamic content. Avoid use innerHTML with user data: Even escaped data can be risky. If HTML injection is absolutely necessary: Sanitize with DOMPurify library first.
+web/enhanced-minting.js
+        notification.innerHTML = `
+            <div class="transaction-progress">
+                <div class="progress-indicator">⏳ Transaction pending...</div>
+                <div class="transaction-link">
+                    <a href="${explorerUrl}" target="_blank" rel="noopener noreferrer">
+                        View on BaseScan
+                    </a>
+                </div>
+            </div>
+        `;
+Detected potential vulnerability in web/token-integration.js
+XSS Vulnerability: Unsafe DOM Manipulation. User controlled data in methods like `innerHTML`, `outerHTML` or `document.write` is an anti-pattern that can lead to XSS vulnerabilities. Replace with safe DOM methods: Use createElement() + appendChild() + textContent for dynamic content. Avoid use innerHTML with user data: Even escaped data can be risky. If HTML injection is absolutely necessary: Sanitize with DOMPurify library first.
+web/token-integration.js
+            healthElement.innerHTML = `
+                <div class="flex items-center justify-center space-x-2">
+                    <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                    <span class="text-green-400 text-sm">System Operational</span>
+                </div>
+                <div class="text-xs text-center mt-1 opacity-70">
+                    All integrations active (${healthyCount}/4)
+                </div>
+            `;
+Detected potential vulnerability in web/token-integration.js
+XSS Vulnerability: Unsafe DOM Manipulation. User controlled data in methods like `innerHTML`, `outerHTML` or `document.write` is an anti-pattern that can lead to XSS vulnerabilities. Replace with safe DOM methods: Use createElement() + appendChild() + textContent for dynamic content. Avoid use innerHTML with user data: Even escaped data can be risky. If HTML injection is absolutely necessary: Sanitize with DOMPurify library first.
+web/token-integration.js
+            healthElement.innerHTML = `
+                <div class="flex items-center justify-center space-x-2">
+                    <span class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
+                    <span class="text-yellow-400 text-sm">Partial System Status</span>
+                </div>
+                <div class="text-xs text-center mt-1 opacity-70">
+                    ${healthyCount}/4 systems active
+                </div>
+            `;
