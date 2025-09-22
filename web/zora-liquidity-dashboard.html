@@ -35,18 +35,48 @@
         <div class="text-center mb-8">
             <h1 class="text-4xl font-bold mb-4">🌊 Zora Liquidity Automation</h1>
             <p class="text-xl opacity-80">Automated LP Pools for Creator Coins & Truth Ecosystem</p>
-            <div class="mt-4 flex justify-center space-x-4">
-                <div class="glass rounded-lg px-4 py-2">
+            <div class="mt-4 flex justify-center space-x-2 flex-wrap">
+                <div class="glass rounded-lg px-3 py-2 m-1">
                     <span class="text-sm opacity-70">Total Value Locked:</span>
                     <span class="font-bold ml-2" id="tvl">$0</span>
                 </div>
-                <div class="glass rounded-lg px-4 py-2">
+                <div class="glass rounded-lg px-3 py-2 m-1">
                     <span class="text-sm opacity-70">Active Pools:</span>
                     <span class="font-bold ml-2" id="activePools">0</span>
                 </div>
-                <div class="glass rounded-lg px-4 py-2">
+                <div class="glass rounded-lg px-3 py-2 m-1">
                     <span class="text-sm opacity-70">24h Volume:</span>
                     <span class="font-bold ml-2" id="volume24h">$0</span>
+                </div>
+                <div class="glass rounded-lg px-3 py-2 m-1">
+                    <span class="text-sm opacity-70">Zora Activity:</span>
+                    <span class="font-bold ml-2 text-blue-400" id="zoraActivity">Active</span>
+                </div>
+            </div>
+            
+            <!-- Zora Wallet Integration -->
+            <div class="mt-4 glass rounded-lg p-4">
+                <div class="text-sm font-semibold text-center mb-2">🌊 Unified Ecosystem Tracking</div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                    <div class="bg-black/30 rounded p-2">
+                        <div class="opacity-70">Truth Wallet</div>
+                        <div class="font-mono text-xs break-all">0x8f6cf6...30a3c</div>
+                    </div>
+                    <div class="bg-black/30 rounded p-2">
+                        <div class="opacity-70">Zora Wallet</div>
+                        <div class="font-mono text-xs break-all">0xc4b8f1...9603</div>
+                    </div>
+                </div>
+                <div class="mt-2 grid grid-cols-3 gap-2 text-xs">
+                    <div class="bg-green-900/30 rounded p-2 text-center">
+                        <div class="text-green-400">✓ NFTX Ready</div>
+                    </div>
+                    <div class="bg-blue-900/30 rounded p-2 text-center">
+                        <div class="text-blue-400">✓ Sudoswap Ready</div>
+                    </div>
+                    <div class="bg-purple-900/30 rounded p-2 text-center">
+                        <div class="text-purple-400">✓ 1inch Ready</div>
+                    </div>
                 </div>
             </div>
         </div>
