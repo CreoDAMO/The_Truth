@@ -171,8 +171,16 @@ class DeploymentStatus {
             `;
         }
 
-        // Use DOMPurify to sanitize HTML content before setting innerHTML
-        this.statusElement.innerHTML = DOMPurify.sanitize(html);
+        // Use DOMPurify to sanitize HTML content before setting innerHTML, with fallback
+        if (typeof DOMPurify !== 'undefined') {
+            this.statusElement.innerHTML = DOMPurify.sanitize(html);
+        } else {
+            // Fallback: create elements safely without innerHTML
+            this.statusElement.innerHTML = '';
+            const tempDiv = document.createElement('div');
+            tempDiv.textContent = html.replace(/<[^>]*>/g, ''); // Strip HTML tags as fallback
+            this.statusElement.appendChild(tempDiv);
+        }
     }
 }
 

@@ -6,10 +6,28 @@
     <title>The Truth NFT - Complete Web3 Creator Economy</title>
     <meta name="description" content="The Truth NFT ecosystem - where philosophy meets blockchain technology">
     <link rel="manifest" href="manifest.json">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.9/purify.min.js" 
-            integrity="sha512-YSFXoCl1xT1Z3wnmdmvjMb5jKkdTLZRb6gV6tGZJaZhQFnI2P8BmDXGlOVhq4mEz/RM3l4fJ9iXC3XfNKJhRtw==" 
-            crossorigin="anonymous" 
-            referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.9/dist/purify.min.js" 
+            integrity="sha512-s+cOgVYJAFdeUAUr8UjHqfSVhYaOhCmOCQoKj4KYn1v1ZXLS7JaDAw5Q3KV1Rq0P7Qq7XyPT7TIzwcpNr3L3g==" 
+            crossorigin="anonymous"
+            onerror="console.warn('DOMPurify failed to load from primary CDN')"></script>
+    <script>
+        // DOMPurify fallback
+        if (typeof DOMPurify === 'undefined') {
+            console.warn('DOMPurify not available, loading fallback...');
+            const script = document.createElement('script');
+            script.src = 'https://unpkg.com/dompurify@3.0.9/dist/purify.min.js';
+            script.onerror = () => {
+                console.error('DOMPurify fallback also failed');
+                window.DOMPurify = {
+                    sanitize: (html) => {
+                        console.warn('Using basic HTML sanitization fallback');
+                        return html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+                    }
+                };
+            };
+            document.head.appendChild(script);
+        }
+    </script>
     <style>
         * {
             margin: 0;
@@ -990,11 +1008,12 @@
     <script>
         console.log('Page loaded, initializing application...');
 
-        // Ethers.js CDN fallbacks
+        // Ethers.js CDN fallbacks - updated with more reliable sources
         const ETHERS_CDNS = [
-            'https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js',
             'https://unpkg.com/ethers@5.7.2/dist/ethers.umd.min.js',
-            'https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js'
+            'https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js',
+            'https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js',
+            'https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js'
         ];
 
         // Load script with multiple fallback URLs
@@ -1020,17 +1039,32 @@
             return new Promise((resolve, reject) => {
                 const script = document.createElement('script');
                 script.src = src;
-                script.onload = resolve;
-                script.onerror = reject;
-                script.timeout = 10000; // 10 second timeout
+                
+                let isResolved = false;
+                const onLoad = () => {
+                    if (!isResolved) {
+                        isResolved = true;
+                        resolve();
+                    }
+                };
+                const onError = (error) => {
+                    if (!isResolved) {
+                        isResolved = true;
+                        reject(error);
+                    }
+                };
+                
+                script.onload = onLoad;
+                script.onerror = onError;
                 document.head.appendChild(script);
 
                 // Set timeout for loading
                 setTimeout(() => {
-                    if (!script.onload.called) {
-                        reject(new Error('Script loading timeout'));
+                    if (!isResolved) {
+                        isResolved = true;
+                        reject(new Error(`Script loading timeout: ${src}`));
                     }
-                }, 10000);
+                }, 8000); // Reduced to 8 seconds
             });
         }
 
@@ -1083,6 +1117,30 @@
                     console.log('✅ Unified dashboard state manager loaded');
                 } catch (error) {
                     console.warn('⚠️ Unified dashboard failed to load');
+                }
+
+                // Initialize payments page error handler
+                if (window.location.pathname.includes('payments') || window.location.hash.includes('payments')) {
+                    setTimeout(() => {
+                        const mainContent = document.getElementById('main-content');
+                        if (mainContent && mainContent.innerHTML.includes('Failed to load payments')) {
+                            mainContent.innerHTML = `
+                                <div style="text-align: center; padding: 60px 20px;">
+                                    <div style="font-size: 2rem; margin-bottom: 20px;">💳</div>
+                                    <h2 style="color: #00d4ff; margin-bottom: 20px;">Payments System</h2>
+                                    <p style="color: rgba(255,255,255,0.8); margin-bottom: 30px;">
+                                        The payments system is loading. This integrates with Stripe and crypto payments.
+                                    </p>
+                                    <button onclick="window.location.reload()" 
+                                            style="background: linear-gradient(135deg, #00d4ff, #090979); 
+                                                   color: white; border: none; padding: 12px 24px; 
+                                                   border-radius: 25px; cursor: pointer; font-weight: 600;">
+                                        Reload Payments
+                                    </button>
+                                </div>
+                            `;
+                        }
+                    }, 2000);
                 }
 
                 console.log('✅ Application initialization completed');

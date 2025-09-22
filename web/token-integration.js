@@ -334,6 +334,9 @@ class TruthTokenIntegration {
         const allHealthy = Object.values(this.healthStatus).every(status => status);
         const healthyCount = Object.values(this.healthStatus).filter(status => status).length;
 
+        // Ensure we don't use innerHTML unsafely if DOMPurify isn't available
+        healthElement.innerHTML = '';
+
         if (allHealthy) {
             // Create safe DOM elements for operational status
             const containerDiv = document.createElement('div');
