@@ -1517,15 +1517,16 @@
             const walletAddress = document.getElementById('walletAddress');
             const connectButton = document.getElementById('connectWallet');
 
+            // Safe DOM element access with null checks
             if (account) {
-                walletConnected.style.display = 'block';
-                walletDisconnected.style.display = 'none';
-                walletAddress.textContent = account;
-                connectButton.textContent = `${account.substring(0, 6)}...${account.substring(38)}`;
+                if (walletConnected) walletConnected.style.display = 'block';
+                if (walletDisconnected) walletDisconnected.style.display = 'none';
+                if (walletAddress) walletAddress.textContent = account;
+                if (connectButton) connectButton.textContent = `${account.substring(0, 6)}...${account.substring(38)}`;
             } else {
-                walletConnected.style.display = 'none';
-                walletDisconnected.style.display = 'block';
-                connectButton.textContent = 'Connect Wallet';
+                if (walletConnected) walletConnected.style.display = 'none';
+                if (walletDisconnected) walletDisconnected.style.display = 'block';
+                if (connectButton) connectButton.textContent = 'Connect Wallet';
             }
         }
 
@@ -1886,7 +1887,11 @@
                 const newUrl = page === 'home' ? '/' : `/${page}`;
                 history.pushState({page}, '', newUrl);
 
-                // Load page content
+                // Store navigation state immediately for mobile/wallet browsers
+                sessionStorage.setItem('currentPage', page);
+                sessionStorage.setItem('navigationTimestamp', Date.now().toString());
+
+                // Load page content with better loading state management
                 await loadPageContent(page);
                 currentPage = page;
 
@@ -1907,18 +1912,27 @@
                 return;
             }
 
-            // Show loading state
+            // Show improved loading state with faster loading
             mainContent.innerHTML = `
-                <div style="text-align: center; padding: 60px 20px; color: rgba(255,255,255,0.8);">
-                    <div style="font-size: 2rem; margin-bottom: 20px;">⏳</div>
-                    <div>Loading ${page}...</div>
+                <div style="text-align: center; padding: 40px 20px; color: rgba(255,255,255,0.8);">
+                    <div style="font-size: 2rem; margin-bottom: 15px;">⚡</div>
+                    <div style="font-size: 1.2rem;">Loading ${page}...</div>
                 </div>
             `;
 
             try {
-                // Check cache first
+                // Check cache first - but always re-initialize features
                 if (pageCache[page]) {
+                    console.log(`📄 Loading ${page} from cache`);
+                    mainContent.style.opacity = '0.7';
                     mainContent.innerHTML = pageCache[page];
+                    // Always re-initialize features even for cached content
+                    await initializePageFeatures(page);
+                    mainContent.style.opacity = '1';
+                    
+                    // Store page state for mobile/wallet browsers
+                    sessionStorage.setItem('currentPage', page);
+                    sessionStorage.setItem('navigationTimestamp', Date.now().toString());
                     return;
                 }
 
@@ -1960,12 +1974,22 @@
                         content = await getHomeContent();
                 }
 
-                // Cache and display content
+                // Cache and display content with improved loading
                 pageCache[page] = content;
+                
+                // Smooth content transition to prevent jarring loading experience
+                mainContent.style.opacity = '0.5';
                 mainContent.innerHTML = content;
-
+                
                 // Re-initialize page-specific functionality
-                initializePageFeatures(page);
+                await initializePageFeatures(page);
+                
+                // Restore full opacity for smooth transition
+                mainContent.style.opacity = '1';
+                
+                // Store page state for mobile/wallet browsers (fix key mismatch)
+                sessionStorage.setItem('currentPage', page);
+                sessionStorage.setItem('navigationTimestamp', Date.now().toString());
 
             } catch (error) {
                 console.error('Failed to load page content:', error);
@@ -2394,11 +2418,18 @@
             }
         }
 
-        // Handle browser back/forward buttons
+        // Handle browser back/forward buttons with state restoration
         window.addEventListener('popstate', (event) => {
             const page = event.state?.page || getPageFromPath();
+            console.log(`⬅️ Popstate navigation to: ${page}`);
+            
+            // Update session storage for mobile/wallet browser consistency
+            sessionStorage.setItem('currentPage', page);
+            sessionStorage.setItem('navigationTimestamp', Date.now().toString());
+            
             loadPageContent(page);
             updateActiveNavItem(page);
+            currentPage = page;
         });
 
         function getPageFromPath() {
@@ -2407,7 +2438,7 @@
             return path.slice(1).replace('.html', '');
         }
 
-        // Handle GitHub Pages redirects and initialize router
+        // Enhanced router for mobile/wallet browsers
         window.addEventListener('load', () => {
             // Handle GitHub Pages SPA redirect
             if (sessionStorage.redirect) {
@@ -2417,6 +2448,18 @@
                 const path = url.pathname.slice(1) || 'home';
                 history.replaceState({page: path}, '', url.pathname);
                 navigateToPage(path);
+                return;
+            }
+
+            // Check for saved page state (important for mobile/wallet browsers)
+            const savedPage = sessionStorage.getItem('currentPage');
+            const savedTime = sessionStorage.getItem('navigationTimestamp');
+            const now = Date.now();
+            
+            // If recently navigated (within 30 seconds), restore the page
+            if (savedPage && savedTime && (now - parseInt(savedTime)) < 30000) {
+                console.log(`📱 Restoring page: ${savedPage} for mobile/wallet browser`);
+                navigateToPage(savedPage);
                 return;
             }
 
