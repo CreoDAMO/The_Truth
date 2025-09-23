@@ -117,109 +117,55 @@ app.get('/api/community', (req, res) => {
 
 // Serve specific HTML files for dashboard routes
 app.get('/analytics', (req, res) => {
-    // Check if this is an AJAX request
-    if (req.headers['x-requested-with'] === 'XMLHttpRequest') {
-        res.sendFile(path.join(__dirname, 'analytics.html'));
-    } else {
-        // Regular navigation - serve main page with proper routing
-        res.sendFile(path.join(__dirname, 'index.html'));
-    }
+    res.sendFile(path.join(__dirname, 'analytics.html'));
 });
 
 app.get('/governance', (req, res) => {
-    if (req.headers['x-requested-with'] === 'XMLHttpRequest') {
-        res.sendFile(path.join(__dirname, 'governance.html'));
-    } else {
-        res.sendFile(path.join(__dirname, 'index.html'));
-    }
+    res.sendFile(path.join(__dirname, 'governance.html'));
 });
 
 app.get('/community', (req, res) => {
-    if (req.headers['x-requested-with'] === 'XMLHttpRequest') {
-        res.sendFile(path.join(__dirname, 'community-dashboard.html'));
-    } else {
-        res.sendFile(path.join(__dirname, 'index.html'));
-    }
+    res.sendFile(path.join(__dirname, 'community-dashboard.html'));
 });
 
 app.get('/payments', (req, res) => {
-    if (req.headers['x-requested-with'] === 'XMLHttpRequest') {
-        res.sendFile(path.join(__dirname, 'payments.html'));
-    } else {
-        res.sendFile(path.join(__dirname, 'index.html'));
-    }
+    res.sendFile(path.join(__dirname, 'payments.html'));
 });
 
 app.get('/liquidity', (req, res) => {
-    if (req.headers['x-requested-with'] === 'XMLHttpRequest') {
-        res.sendFile(path.join(__dirname, 'liquidity.html'));
-    } else {
-        res.sendFile(path.join(__dirname, 'index.html'));
-    }
+    res.sendFile(path.join(__dirname, 'liquidity.html'));
 });
 
 app.get('/social', (req, res) => {
-    if (req.headers['x-requested-with'] === 'XMLHttpRequest') {
-        res.sendFile(path.join(__dirname, 'social.html'));
-    } else {
-        res.sendFile(path.join(__dirname, 'index.html'));
-    }
+    res.sendFile(path.join(__dirname, 'social.html'));
 });
 
 app.get('/ai-insights', (req, res) => {
-    if (req.headers['x-requested-with'] === 'XMLHttpRequest') {
-        res.sendFile(path.join(__dirname, 'ai-insights.html'));
-    } else {
-        res.sendFile(path.join(__dirname, 'index.html'));
-    }
+    res.sendFile(path.join(__dirname, 'ai-insights.html'));
 });
 
 app.get('/ai', (req, res) => {
-    if (req.headers['x-requested-with'] === 'XMLHttpRequest') {
-        res.sendFile(path.join(__dirname, 'ai-insights.html'));
-    } else {
-        res.sendFile(path.join(__dirname, 'index.html'));
-    }
+    res.sendFile(path.join(__dirname, 'ai-insights.html'));
 });
 
 app.get('/lawful', (req, res) => {
-    if (req.headers['x-requested-with'] === 'XMLHttpRequest') {
-        res.sendFile(path.join(__dirname, 'lawful-dashboard.html'));
-    } else {
-        res.sendFile(path.join(__dirname, 'index.html'));
-    }
+    res.sendFile(path.join(__dirname, 'lawful-dashboard.html'));
 });
 
 app.get('/legal', (req, res) => {
-    if (req.headers['x-requested-with'] === 'XMLHttpRequest') {
-        res.sendFile(path.join(__dirname, 'lawful-dashboard.html'));
-    } else {
-        res.sendFile(path.join(__dirname, 'index.html'));
-    }
+    res.sendFile(path.join(__dirname, 'lawful-dashboard.html'));
 });
 
 app.get('/shop', (req, res) => {
-    if (req.headers['x-requested-with'] === 'XMLHttpRequest') {
-        res.sendFile(path.join(__dirname, 'shop.html'));
-    } else {
-        res.sendFile(path.join(__dirname, 'index.html'));
-    }
+    res.sendFile(path.join(__dirname, 'shop.html'));
 });
 
 app.get('/deploy', (req, res) => {
-    if (req.headers['x-requested-with'] === 'XMLHttpRequest') {
-        res.sendFile(path.join(__dirname, 'deploy.html'));
-    } else {
-        res.sendFile(path.join(__dirname, 'index.html'));
-    }
+    res.sendFile(path.join(__dirname, 'deploy.html'));
 });
 
 app.get('/deployment-dashboard', (req, res) => {
-    if (req.headers['x-requested-with'] === 'XMLHttpRequest') {
-        res.sendFile(path.join(__dirname, 'deployment-dashboard.html'));
-    } else {
-        res.sendFile(path.join(__dirname, 'index.html'));
-    }
+    res.sendFile(path.join(__dirname, 'deployment-dashboard.html'));
 });
 
 // Catch-all for other routes - serve main page
