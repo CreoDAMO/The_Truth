@@ -73,8 +73,8 @@
                         sanitized = sanitized.replace(/on\w+\s*=\s*[^>\s]+/gi, '');
 
                         // Remove other dangerous elements
-                        sanitized = sanitized.replace(/<(iframe|object|embed|form|input|textarea|select|meta|link|style)\b[^>]*>/gi, '');
-                        sanitized = sanitized.replace(/<\/(iframe|object|embed|form|input|textarea|select|meta|link|style)>/gi, '');
+                        // Remove all opening/closing/incomplete fragments of dangerous elements iteratively
+                        sanitized = sanitized.replace(/<\/?(iframe|object|embed|form|input|textarea|select|meta|link|style)\b[^>]*>?/gi, '');
                     }
 
                     // Allow only safe HTML elements and attributes
