@@ -62,8 +62,12 @@
                     while (sanitized.length !== previousLength) {
                         previousLength = sanitized.length;
 
-                        // Remove script tags iteratively
-                        sanitized = sanitized.replace(/<script\b[^<]*(?:(?!<\/script\s*[^>]*>)[^<]*)*<\/script\s*[^>]*>/gi, '');
+                        // Remove script tags iteratively (apply until no change)
+                        let scriptPrev;
+                        do {
+                            scriptPrev = sanitized;
+                            sanitized = sanitized.replace(/<script\b[^<]*(?:(?!<\/script\s*[^>]*>)[^<]*)*<\/script\s*[^>]*>/gi, '');
+                        } while (sanitized !== scriptPrev);
 
                         // Remove dangerous protocols iteratively
                         sanitized = sanitized.replace(/javascript:|data:|vbscript:/gi, '');
