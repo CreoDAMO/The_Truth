@@ -21,12 +21,12 @@ class EnhancedMintingInterface {
             await this.provider.send("eth_requestAccounts", []);
             this.signer = this.provider.getSigner();
             this.userAddress = await this.signer.getAddress();
-            
+
             this.contract = new ethers.Contract(contractAddress, abi, this.signer);
-            
+
             // Check whitelist status and holder discounts
             await this.checkUserStatus();
-            
+
             console.log('✅ Enhanced minting interface initialized');
             return true;
         } catch (error) {
@@ -48,7 +48,7 @@ class EnhancedMintingInterface {
 
             // Check holder discount
             this.holderDiscount = await this.contract.getHolderDiscount(this.userAddress);
-            
+
             console.log(`User status: Whitelisted: ${this.isWhitelisted}, Discount: ${ethers.utils.formatEther(this.holderDiscount)} ETH`);
         } catch (error) {
             console.log('Could not verify user status:', error.message);
@@ -103,7 +103,7 @@ class EnhancedMintingInterface {
         try {
             const totalPrice = await this.contract.calculateTotalPrice(quantity);
             const discountedPrice = await this.contract.applyHolderDiscount(this.userAddress, totalPrice);
-            
+
             return {
                 originalPrice: ethers.utils.formatEther(totalPrice),
                 finalPrice: ethers.utils.formatEther(discountedPrice),
@@ -124,20 +124,20 @@ class EnhancedMintingInterface {
             }
 
             const whitelistPrice = await this.contract.getWhitelistPrice();
-            
+
             const tx = await this.contract.mintWhitelist(this.merkleProof, {
                 value: whitelistPrice,
                 gasLimit: 250000
             });
 
             console.log('🎉 Whitelist mint transaction sent:', tx.hash);
-            
+
             // Show transaction progress
             this.showTransactionProgress(tx.hash);
-            
+
             const receipt = await tx.wait();
             console.log('✅ Whitelist mint confirmed:', receipt.transactionHash);
-            
+
             return {
                 success: true,
                 transactionHash: receipt.transactionHash,
@@ -161,20 +161,20 @@ class EnhancedMintingInterface {
 
             const priceData = await this.calculateBatchPrice(quantity);
             const finalPriceWei = ethers.utils.parseEther(priceData.finalPrice);
-            
+
             const tx = await this.contract.mintPublic(quantity, {
                 value: finalPriceWei,
                 gasLimit: 100000 + (quantity * 75000) // Dynamic gas based on quantity
             });
 
             console.log(`🎉 Public mint transaction sent (${quantity} tokens):`, tx.hash);
-            
+
             // Show transaction progress
             this.showTransactionProgress(tx.hash);
-            
+
             const receipt = await tx.wait();
             console.log('✅ Public mint confirmed:', receipt.transactionHash);
-            
+
             return {
                 success: true,
                 transactionHash: receipt.transactionHash,
@@ -195,7 +195,7 @@ class EnhancedMintingInterface {
     // Extract token IDs from transaction receipt
     extractTokenIdsFromReceipt(receipt) {
         const tokenIds = [];
-        
+
         receipt.logs.forEach(log => {
             try {
                 const decoded = this.contract.interface.parseLog(log);
@@ -208,42 +208,42 @@ class EnhancedMintingInterface {
                 // Skip logs that can't be decoded
             }
         });
-        
+
         return tokenIds;
     }
 
     // Show transaction progress with link to block explorer
     showTransactionProgress(txHash) {
         const explorerUrl = `https://basescan.org/tx/${txHash}`;
-        
+
         // Create progress notification (you'd integrate with your UI framework)
         const notification = document.createElement('div');
         // Create safe DOM elements to avoid XSS
         const progressDiv = document.createElement('div');
         progressDiv.className = 'transaction-progress';
-        
+
         const indicatorDiv = document.createElement('div');
         indicatorDiv.className = 'progress-indicator';
         indicatorDiv.textContent = '⏳ Transaction pending...';
-        
+
         const linkDiv = document.createElement('div');
         linkDiv.className = 'transaction-link';
-        
+
         const link = document.createElement('a');
         link.href = explorerUrl;
         link.target = '_blank';
         link.rel = 'noopener noreferrer';
         link.textContent = 'View on BaseScan';
-        
+
         linkDiv.appendChild(link);
         progressDiv.appendChild(indicatorDiv);
         progressDiv.appendChild(linkDiv);
-        
+
         notification.innerHTML = '';
         notification.appendChild(progressDiv);
-        
+
         document.body.appendChild(notification);
-        
+
         // Remove after 30 seconds or when confirmed
         setTimeout(() => {
             if (notification.parentNode) {
@@ -257,7 +257,7 @@ class EnhancedMintingInterface {
         try {
             const balance = await this.contract.balanceOf(this.userAddress);
             const tokenIds = [];
-            
+
             for (let i = 0; i < balance; i++) {
                 const tokenId = await this.contract.tokenOfOwnerByIndex(this.userAddress, i);
                 const tokenURI = await this.contract.tokenURI(tokenId);
@@ -266,7 +266,7 @@ class EnhancedMintingInterface {
                     uri: tokenURI
                 });
             }
-            
+
             return tokenIds;
         } catch (error) {
             console.error('Error getting user collection:', error);
@@ -294,7 +294,7 @@ class EnhancedMintingInterface {
     async estimateGas(operation, quantity = 1) {
         try {
             let gasEstimate;
-            
+
             switch (operation) {
                 case 'whitelist':
                     gasEstimate = await this.contract.estimateGas.mintWhitelist(this.merkleProof);
@@ -306,7 +306,7 @@ class EnhancedMintingInterface {
                 default:
                     throw new Error('Invalid operation');
             }
-            
+
             return {
                 gasLimit: gasEstimate.toString(),
                 gasLimitFormatted: gasEstimate.toNumber().toLocaleString()
@@ -326,7 +326,7 @@ class EnhancedMintingInterface {
             const status = await this.getMintingStatus();
             const collection = await this.getUserCollection();
             const discounts = await this.checkPartnerDiscounts();
-            
+
             return {
                 userStats: {
                     totalMinted: collection.length,
@@ -377,12 +377,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 "function getHolderDiscount(address holder) external view returns (uint256)",
                 "function isWhitelisted(address account, bytes32[] calldata proof) external view returns (bool)"
             ];
-            
+
             window.enhancedMinting.initialize(window.contractAddresses.EnhancedTheTruth, abi);
             clearInterval(checkForContracts);
         }
     }, 1000);
-    
+
     // Clear interval after 30 seconds to avoid infinite checking
     setTimeout(() => clearInterval(checkForContracts), 30000);
 });

@@ -1,4 +1,3 @@
-
 // Deployment Status Checker
 class DeploymentStatus {
     constructor() {
@@ -9,31 +8,31 @@ class DeploymentStatus {
     async waitForDependencies() {
         let attempts = 0;
         const maxAttempts = 100; // 10 seconds max wait
-        
+
         // Wait for ethers.js to load
         while (typeof ethers === 'undefined' && attempts < maxAttempts) {
             await new Promise(resolve => setTimeout(resolve, 100));
             attempts++;
         }
-        
+
         if (typeof ethers === 'undefined') {
             console.error('Ethers.js failed to load after 10 seconds - deployment status will be limited');
             this.showLimitedStatus();
             return;
         }
-        
+
         // Wait for TRUTH_CONTRACTS to load
         attempts = 0;
         while (typeof TRUTH_CONTRACTS === 'undefined' && attempts < maxAttempts) {
             await new Promise(resolve => setTimeout(resolve, 100));
             attempts++;
         }
-        
+
         if (typeof TRUTH_CONTRACTS === 'undefined') {
             console.error('TRUTH_CONTRACTS config failed to load - using fallback config');
             this.initializeFallbackConfig();
         }
-        
+
         console.log('✅ Deployment status checker dependencies loaded successfully');
     }
 
@@ -76,7 +75,7 @@ class DeploymentStatus {
     init() {
         this.createStatusDisplay();
         this.checkDeploymentStatus();
-        
+
         // Auto-refresh every 30 seconds
         setInterval(() => this.checkDeploymentStatus(), 30000);
     }
@@ -119,7 +118,7 @@ class DeploymentStatus {
                         // Check if contract exists at address for other contracts
                         const provider = new ethers.providers.JsonRpcProvider(TRUTH_CONTRACTS.NETWORK.rpcUrl);
                         const code = await provider.getCode(address);
-                        
+
                         if (code === '0x') {
                             statuses[name] = { deployed: false, status: 'Invalid Address' };
                         } else {
@@ -138,7 +137,7 @@ class DeploymentStatus {
     updateStatusDisplay(statuses) {
         const totalContracts = Object.keys(statuses).length;
         const deployedCount = Object.values(statuses).filter(s => s.deployed).length;
-        
+
         let html = `
             <div style="font-weight: bold; margin-bottom: 10px; color: #00d4ff;">
                 🔗 Contract Status (${deployedCount}/${totalContracts})
@@ -148,7 +147,7 @@ class DeploymentStatus {
         for (const [name, status] of Object.entries(statuses)) {
             const icon = status.deployed ? '✅' : '❌';
             const color = status.deployed ? '#4CAF50' : '#ff6b6b';
-            
+
             html += `
                 <div style="margin: 5px 0; font-size: 0.8rem;">
                     ${icon} <span style="color: ${color};">${name}</span>

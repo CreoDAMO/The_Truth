@@ -60,13 +60,13 @@ class TruthTokenIntegration {
     // Initialize the token integration system
     init() {
         console.log('TruthTokenIntegration initializing...');
-        
+
         // Wait for ethers to be available
         if (!this.ethersAvailable && typeof ethers !== 'undefined') {
             this.ethersAvailable = true;
             console.log('Ethers.js now available');
         }
-        
+
         // Set up event listeners for wallet connection changes
         if (typeof window !== 'undefined' && window.ethereum) {
             window.ethereum.on('accountsChanged', (accounts) => {
@@ -84,7 +84,7 @@ class TruthTokenIntegration {
                 // Optionally reload or handle network change
             });
         }
-        
+
         console.log('TruthTokenIntegration initialization complete');
     }
 
@@ -93,7 +93,7 @@ class TruthTokenIntegration {
         if (!this.ethersAvailable && typeof ethers === 'undefined') {
             throw new Error('Ethers.js library not loaded. Please wait for the page to fully load.');
         }
-        
+
         if (typeof window.ethereum !== 'undefined') {
             try {
                 this.web3 = new ethers.providers.Web3Provider(window.ethereum);
@@ -334,53 +334,50 @@ class TruthTokenIntegration {
         const allHealthy = Object.values(this.healthStatus).every(status => status);
         const healthyCount = Object.values(this.healthStatus).filter(status => status).length;
 
-        // Ensure we don't use innerHTML unsafely if DOMPurify isn't available
-        healthElement.innerHTML = '';
-
         if (allHealthy) {
-            // Create safe DOM elements for operational status
-            const containerDiv = document.createElement('div');
-            containerDiv.className = 'flex items-center justify-center space-x-2';
-            
-            const statusIndicator = document.createElement('span');
-            statusIndicator.className = 'w-2 h-2 bg-green-400 rounded-full animate-pulse';
-            
+            // Create system health display safely
+            const flexDiv = document.createElement('div');
+            flexDiv.className = 'flex items-center justify-center space-x-2';
+
+            const statusDot = document.createElement('span');
+            statusDot.className = 'w-2 h-2 bg-green-400 rounded-full animate-pulse';
+
             const statusText = document.createElement('span');
             statusText.className = 'text-green-400 text-sm';
             statusText.textContent = 'System Operational';
-            
-            const detailsDiv = document.createElement('div');
-            detailsDiv.className = 'text-xs text-center mt-1 opacity-70';
-            detailsDiv.textContent = `All integrations active (${healthyCount}/4)`;
-            
-            containerDiv.appendChild(statusIndicator);
-            containerDiv.appendChild(statusText);
-            
+
+            const countDiv = document.createElement('div');
+            countDiv.className = 'text-xs text-center mt-1 opacity-70';
+            countDiv.textContent = `All integrations active (${healthyCount}/4)`;
+
+            flexDiv.appendChild(statusDot);
+            flexDiv.appendChild(statusText);
+
             healthElement.innerHTML = '';
-            healthElement.appendChild(containerDiv);
-            healthElement.appendChild(detailsDiv);
+            healthElement.appendChild(flexDiv);
+            healthElement.appendChild(countDiv);
         } else {
-            // Create safe DOM elements for partial status
-            const containerDiv = document.createElement('div');
-            containerDiv.className = 'flex items-center justify-center space-x-2';
-            
-            const statusIndicator = document.createElement('span');
-            statusIndicator.className = 'w-2 h-2 bg-yellow-400 rounded-full animate-pulse';
-            
+            // Create partial system status display safely
+            const flexDiv = document.createElement('div');
+            flexDiv.className = 'flex items-center justify-center space-x-2';
+
+            const statusDot = document.createElement('span');
+            statusDot.className = 'w-2 h-2 bg-yellow-400 rounded-full animate-pulse';
+
             const statusText = document.createElement('span');
             statusText.className = 'text-yellow-400 text-sm';
             statusText.textContent = 'Partial System Status';
-            
-            const detailsDiv = document.createElement('div');
-            detailsDiv.className = 'text-xs text-center mt-1 opacity-70';
-            detailsDiv.textContent = `${healthyCount}/4 systems active`;
-            
-            containerDiv.appendChild(statusIndicator);
-            containerDiv.appendChild(statusText);
-            
+
+            const countDiv = document.createElement('div');
+            countDiv.className = 'text-xs text-center mt-1 opacity-70';
+            countDiv.textContent = `${healthyCount}/4 systems active`;
+
+            flexDiv.appendChild(statusDot);
+            flexDiv.appendChild(statusText);
+
             healthElement.innerHTML = '';
-            healthElement.appendChild(containerDiv);
-            healthElement.appendChild(detailsDiv);
+            healthElement.appendChild(flexDiv);
+            healthElement.appendChild(countDiv);
         }
     }
 }

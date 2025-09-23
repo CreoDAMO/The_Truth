@@ -275,13 +275,26 @@ function initializeAnalytics() {
         console.log('✅ Analytics dashboard initialized successfully');
     } catch (error) {
         console.error('❌ Failed to initialize analytics dashboard:', error);
-        container.innerHTML = `
-            <div class="error-boundary">
-                <h3>📊 Analytics Dashboard Error</h3>
-                <p>Failed to initialize: ${error.message}</p>
-                <button onclick="location.reload()">Refresh Page</button>
-            </div>
-        `;
+        // Create error boundary safely without innerHTML
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-boundary';
+        
+        const title = document.createElement('h3');
+        title.textContent = '📊 Analytics Dashboard Error';
+        
+        const message = document.createElement('p');
+        message.textContent = `Failed to initialize: ${error.message}`;
+        
+        const button = document.createElement('button');
+        button.textContent = 'Refresh Page';
+        button.onclick = () => location.reload();
+        
+        errorDiv.appendChild(title);
+        errorDiv.appendChild(message);
+        errorDiv.appendChild(button);
+        
+        container.innerHTML = '';
+        container.appendChild(errorDiv);
     }
 }
 
