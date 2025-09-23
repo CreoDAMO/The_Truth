@@ -170,9 +170,17 @@ app.get('/deployment-dashboard', (req, res) => {
 
 // Catch-all for other routes - serve main page
 app.get('*', (req, res) => {
-    // Static assets and API routes
-    if (req.path.startsWith('/api/') || 
-        req.path.startsWith('/assets/') || 
+    // Handle API routes with proper JSON responses
+    if (req.path.startsWith('/api/')) {
+        return res.status(404).json({ 
+            error: 'API endpoint not found',
+            path: req.path,
+            message: 'This API endpoint is not implemented'
+        });
+    }
+    
+    // Static assets routes
+    if (req.path.startsWith('/assets/') || 
         req.path.startsWith('/LAW/') ||
         req.path.includes('.js') || 
         req.path.includes('.css') || 

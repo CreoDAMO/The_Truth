@@ -225,6 +225,130 @@ window.TruthEcosystem = window.TruthEcosystem || {
         return sharedData;
     },
     
+    // Centralized wallet connection
+    connectWallet: async function() {
+        try {
+            console.log('🦊 Attempting wallet connection...');
+            
+            if (typeof window.ethereum === 'undefined') {
+                alert('MetaMask not found! Please install MetaMask.');
+                return false;
+            }
+
+            // Request account access
+            const accounts = await window.ethereum.request({ 
+                method: 'eth_requestAccounts' 
+            });
+            
+            if (accounts.length === 0) {
+                throw new Error('No accounts returned');
+            }
+
+            const account = accounts[0];
+            console.log('✅ Wallet connected:', account);
+
+            // Switch to Base network if needed
+            await this.switchToBase();
+            
+            // Initialize Web3 provider
+            if (typeof ethers !== 'undefined') {
+                this.web3 = new ethers.providers.Web3Provider(window.ethereum);
+                this.signer = this.web3.getSigner();
+            }
+
+            // Update global state
+            this.updateGlobalState({
+                walletConnected: true,
+                walletAddress: account
+            });
+
+            // Update all wallet displays
+            this.updateWalletDisplay();
+            
+            // Load token balances if ethers is available
+            if (this.web3) {
+                await this.loadTokenBalances();
+            }
+
+            return true;
+
+        } catch (error) {
+            console.error('Wallet connection failed:', error);
+            alert('Failed to connect wallet. Please try again.');
+            return false;
+        }
+    },
+
+    // Switch to Base network
+    switchToBase: async function() {
+        try {
+            await window.ethereum.request({
+                method: 'wallet_switchEthereumChain',
+                params: [{ chainId: '0x2105' }], // Base mainnet
+            });
+        } catch (switchError) {
+            // Network doesn't exist, add it
+            if (switchError.code === 4902) {
+                try {
+                    await window.ethereum.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [{
+                            chainId: '0x2105',
+                            chainName: 'Base',
+                            nativeCurrency: {
+                                name: 'Ethereum',
+                                symbol: 'ETH',
+                                decimals: 18
+                            },
+                            rpcUrls: ['https://mainnet.base.org'],
+                            blockExplorerUrls: ['https://basescan.org']
+                        }]
+                    });
+                } catch (addError) {
+                    console.error('Failed to add Base network:', addError);
+                }
+            }
+        }
+    },
+
+    // Load token balances
+    loadTokenBalances: async function() {
+        try {
+            if (!this.web3 || !this.walletAddress) return;
+
+            // Contract addresses
+            const truthTokenAddress = '0x8f6cf6f7747e170f4768533b869c339dc3d30a3c';
+            const creatorTokenAddress = '0x22b0434e89882f8e6841d340b28427646c015aa7';
+            
+            // ERC20 ABI
+            const erc20ABI = [
+                "function balanceOf(address owner) view returns (uint256)",
+                "function transfer(address to, uint256 amount) returns (bool)",
+                "function approve(address spender, uint256 amount) returns (bool)"
+            ];
+
+            // Initialize contracts
+            const truthContract = new ethers.Contract(truthTokenAddress, erc20ABI, this.signer);
+            const creatorContract = new ethers.Contract(creatorTokenAddress, erc20ABI, this.signer);
+            
+            // Get balances
+            const truthBalance = await truthContract.balanceOf(this.walletAddress);
+            const truthFormatted = ethers.utils.formatUnits(truthBalance, 18);
+            
+            const creatorBalance = await creatorContract.balanceOf(this.walletAddress);
+            const creatorFormatted = ethers.utils.formatUnits(creatorBalance, 18);
+            
+            // Update global state
+            this.updateGlobalState({
+                truthBalance: parseFloat(truthFormatted),
+                creatorBalance: parseFloat(creatorFormatted)
+            });
+            
+        } catch (error) {
+            console.error('Failed to load token balances:', error);
+        }
+    },
+    
     // Initialize unified dashboard system
     initialize: function() {
         if (this.initialized) return;
@@ -248,6 +372,53 @@ window.TruthEcosystem = window.TruthEcosystem || {
     },
     
     setupEventListeners: function() {
+        // Set up ethereum event listeners for wallet changes
+        if (typeof window.ethereum !== 'undefined') {
+            window.ethereum.on('accountsChanged', (accounts) => {
+                if (accounts.length === 0) {
+                    this.updateGlobalState({
+                        walletConnected: false,
+                        walletAddress: null,
+                        truthBalance: 0,
+                        creatorBalance: 0,
+                        governancePower: 0
+                    });
+                    this.updateWalletDisplay();
+                } else {
+                    this.updateGlobalState({
+                        walletAddress: accounts[0]
+                    });
+                    this.updateWalletDisplay();
+                    // Reload token balances for new account
+                    if (this.web3) {
+                        this.loadTokenBalances();
+                    }
+                }
+            });
+
+            window.ethereum.on('chainChanged', (chainId) => {
+                console.log('Chain changed to:', chainId);
+                // Reload page to ensure clean state
+                window.location.reload();
+            });
+        }
+        
+        // Set up wallet connection buttons after DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            this.setupWalletButtons();
+        });
+        
+        // Also set up immediately if DOM is already ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                this.setupWalletButtons();
+            });
+        } else {
+            setTimeout(() => {
+                this.setupWalletButtons();
+            }, 100);
+        }
+        
         // Listen for state changes from other tabs/windows
         window.addEventListener('storage', (e) => {
             if (e.key === 'truthCrossDashboard') {
@@ -291,6 +462,25 @@ window.TruthEcosystem = window.TruthEcosystem || {
                 lpRewards: e.detail.rewards || this.lpRewards
             });
         });
+    },
+
+    // Set up wallet connection buttons
+    setupWalletButtons: function() {
+        // Find all wallet connection buttons
+        const walletButtons = document.querySelectorAll('#connectWallet, .wallet-btn, [onclick*="connectWallet"]');
+        
+        walletButtons.forEach(button => {
+            // Remove existing onclick handlers
+            button.removeAttribute('onclick');
+            
+            // Add unified wallet connection handler
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.connectWallet();
+            });
+        });
+        
+        console.log(`🔗 Set up ${walletButtons.length} wallet connection buttons`);
     },
     
     initializeCurrentPage: function() {

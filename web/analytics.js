@@ -48,9 +48,7 @@ const AnalyticsApp = () => {
     const fetchAnalytics = async () => {
         try {
             console.log('Loading real analytics...');
-            const response = await fetch('/api/analytics');
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const data = await response.json();
+            const data = await window.TruthAPI.getAnalytics();
             setAnalytics(data);
         } catch (error) {
             console.error('Error loading real analytics:', error);
@@ -139,49 +137,45 @@ const AnalyticsApp = () => {
 
             try {
                 // Load deployed contract addresses dynamically
-                const contractResponse = await fetch('/api/analytics/contract-data');
-                if (contractResponse.ok) {
-                    const contractData = await contractResponse.json();
+                const contractData = await window.TruthAPI.request('/api/analytics/contract-data');
 
-                    // Add deployed NFT contracts
-                    if (window.contractAddresses) {
-                        if (window.contractAddresses.TheTruth) {
-                            nftContracts.push({
-                                name: 'TheTruth',
-                                address: window.contractAddresses.TheTruth,
-                                price: '169548481700983700' // 0.169548... ETH
-                            });
-                        }
-                        if (window.contractAddresses.TruthBonusGift) {
-                            nftContracts.push({
-                                name: 'TruthBonusGift',
-                                address: window.contractAddresses.TruthBonusGift,
-                                price: '39047346203169000' // 0.039... ETH
-                            });
-                        }
-                        if (window.contractAddresses.TruthPartThree) {
-                            nftContracts.push({
-                                name: 'TruthPartThree',
-                                address: window.contractAddresses.TruthPartThree,
-                                price: '478719895287958000' // 0.478... ETH
-                            });
-                        }
-                    }
-
-                    // Add token contracts
-                    if (contractData.truthToken?.address) {
-                        tokenContracts.push({
-                            name: 'TRUTH',
-                            address: contractData.truthToken.address
+                // Add deployed NFT contracts
+                if (window.contractAddresses) {
+                    if (window.contractAddresses.TheTruth) {
+                        nftContracts.push({
+                            name: 'TheTruth',
+                            address: window.contractAddresses.TheTruth,
+                            price: '169548481700983700' // 0.169548... ETH
                         });
                     }
-                    if (contractData.creatorToken?.address) {
-                        tokenContracts.push({
-                            name: 'CREATOR',
-                            address: contractData.creatorToken.address
+                    if (window.contractAddresses.TruthBonusGift) {
+                        nftContracts.push({
+                            name: 'TruthBonusGift',
+                            address: window.contractAddresses.TruthBonusGift,
+                            price: '39047346203169000' // 0.039... ETH
+                        });
+                    }
+                    if (window.contractAddresses.TruthPartThree) {
+                        nftContracts.push({
+                            name: 'TruthPartThree',
+                            address: window.contractAddresses.TruthPartThree,
+                            price: '478719895287958000' // 0.478... ETH
                         });
                     }
                 }
+
+                // Add token contracts
+                if (contractData.truthToken?.address) {
+                    tokenContracts.push({
+                        name: 'TRUTH',
+                        address: contractData.truthToken.address
+                    });
+                }
+                if (contractData.creatorToken?.address) {
+                    tokenContracts.push({
+                        name: 'CREATOR',
+                        address: contractData.creatorToken.address
+                    });
             } catch (error) {
                 console.log('Using fallback contract addresses');
             }
@@ -320,10 +314,7 @@ const AnalyticsApp = () => {
     // Load geographic data from API
     const loadGeographicData = async () => {
         try {
-            const response = await fetch('/api/analytics/geographic');
-            if (response.ok) {
-                return await response.json();
-            }
+            return await window.TruthAPI.request('/api/analytics/geographic');
         } catch (error) {
             console.log('Using estimated geographic distribution');
         }
@@ -342,10 +333,7 @@ const AnalyticsApp = () => {
     // Load recent blockchain activity
     const loadRecentActivity = async () => {
         try {
-            const response = await fetch('/api/analytics/recent-activity');
-            if (response.ok) {
-                return await response.json();
-            }
+            return await window.TruthAPI.request('/api/analytics/recent-activity');
         } catch (error) {
             console.log('No recent activity data available yet');
         }

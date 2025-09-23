@@ -27,52 +27,8 @@ class TruthGovernance {
     }
 
     setupEventListeners() {
-        document.getElementById('connectWallet').addEventListener('click', () => this.connectWallet());
-    }
-
-    async connectWallet() {
-        try {
-            if (typeof window.ethereum !== 'undefined') {
-                this.web3 = new ethers.providers.Web3Provider(window.ethereum);
-                
-                // Request account access
-                const accounts = await window.ethereum.request({ 
-                    method: 'eth_requestAccounts' 
-                });
-                
-                this.account = accounts[0];
-                
-                // Switch to Base network if needed
-                await this.switchToBase();
-                
-                // Initialize contracts
-                this.truthContract = new ethers.Contract(
-                    this.truthTokenAddress,
-                    this.erc20ABI,
-                    this.web3.getSigner()
-                );
-                
-                this.creatorContract = new ethers.Contract(
-                    this.creatorTokenAddress,
-                    this.erc20ABI,
-                    this.web3.getSigner()
-                );
-                
-                // Update UI
-                document.getElementById('connectWallet').textContent = 
-                    `${this.account.substring(0, 6)}...${this.account.substring(38)}`;
-                
-                // Load token balances
-                await this.loadTokenBalances();
-                
-                console.log('Wallet connected:', this.account);
-            } else {
-                alert('MetaMask not found! Please install MetaMask.');
-            }
-        } catch (error) {
-            console.error('Connection failed:', error);
-            alert('Failed to connect wallet');
-        }
+        // Wallet connection is now handled by unified system
+        // The unified-dashboard.js will automatically attach the connectWallet handler
     }
 
     async switchToBase() {
@@ -256,7 +212,8 @@ const governance = new TruthGovernance();
 
 // Voting function
 async function vote(proposalId, voteYes) {
-    if (!governance.account) {
+    // Check unified wallet connection state
+    if (!window.TruthEcosystem.walletConnected || !window.TruthEcosystem.walletAddress) {
         alert('Please connect your wallet first');
         return;
     }
