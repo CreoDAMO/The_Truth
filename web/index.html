@@ -1065,7 +1065,7 @@
             'https://unpkg.com/ethers@5.7.2/dist/ethers.umd.min.js',
             'https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js',
             'https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js',
-            'https://cdn.ethers.io/lib/ethers-5-7.2.umd.min.js'
+            'https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js'
         ];
 
         // Load script with multiple fallback URLs
@@ -1183,6 +1183,13 @@
                 } catch (error) {
                     console.warn('⚠️ Unified state manager failed to load');
                 }
+                
+                try {
+                    await loadSingleScript('api-service.js');
+                    console.log('✅ API service loaded');
+                } catch (error) {
+                    console.warn('⚠️ API service failed to load');
+                }
 
                 try {
                     await loadSingleScript('unified-dashboard.js');
@@ -1286,18 +1293,6 @@
                     this.updateGlobalState(data);
                 }
                 navigateToPage(page);
-            },
-
-            // Track cross-dashboard actions
-            trackCrossDashboardAction: function(dashboard, action, details = {}) {
-                console.log(`Tracking action: Dashboard=${dashboard}, Action=${action}`, details);
-                // Placeholder for actual analytics tracking logic
-            },
-
-            // Synchronize state across all active dashboards
-            syncCrossDashboardState: function() {
-                console.log('Synchronizing cross-dashboard state...');
-                // Placeholder for state synchronization logic
             }
         };
 
@@ -2397,64 +2392,6 @@
             }
         });
 
-    </script>
-
-    <!-- Load unified dashboard system -->
-    <script src="unified-dashboard.js"></script>
-    <script src="api-service.js"></script>
-    <script src="unified-state-manager.js"></script>
-    <script src="app.js"></script>
-
-    <script>
-        // Enhanced cross-dashboard integration
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize unified dashboard coordination
-            if (window.TruthEcosystem) {
-                // Track all dashboard interactions
-                const dashboardButtons = document.querySelectorAll('.action-btn, .mint-btn, .wallet-btn');
-                dashboardButtons.forEach(button => {
-                    button.addEventListener('click', function(e) {
-                        const action = this.textContent.toLowerCase().trim();
-                        window.TruthEcosystem.trackCrossDashboardAction('home', action, {
-                            element: this.className,
-                            timestamp: new Date().toISOString()
-                        });
-                    });
-                });
-
-                // Update all dashboard links with state preservation
-                const navLinks = document.querySelectorAll('.nav-links a, .mobile-nav-links a, .action-btn[href]');
-                navLinks.forEach(link => {
-                    link.addEventListener('click', function(e) {
-                        if (this.href && this.href.includes('/')) {
-                            e.preventDefault();
-                            const page = this.href.split('/').pop() || 'home';
-                            window.TruthEcosystem.navigateTo(page, {
-                                source: 'home',
-                                context: 'navigation'
-                            });
-                        }
-                    });
-                });
-
-                // Real-time state synchronization
-                setInterval(() => {
-                    window.TruthEcosystem.syncCrossDashboardState();
-                }, 10000);
-            }
-        });
-
-        // Global function for cross-dashboard navigation
-        window.navigateToPage = function(page) {
-            if (window.TruthEcosystem) {
-                window.TruthEcosystem.navigateTo(page, {
-                    source: 'home',
-                    timestamp: new Date().toISOString()
-                });
-            } else {
-                window.location.href = page === 'home' ? '/' : `/${page}`;
-            }
-        };
     </script>
 </body>
 </html>

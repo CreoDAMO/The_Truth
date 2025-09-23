@@ -184,18 +184,6 @@ window.TruthEcosystem = window.TruthEcosystem || {
                     truth: this.truthBalance,
                     creator: this.creatorBalance
                 },
-                governance: {
-                    votingPower: this.governancePower,
-                    proposals: this.governanceData?.proposals || []
-                },
-                liquidity: {
-                    positions: this.liquidityPositions,
-                    totalValue: this.totalLPValue
-                },
-                analytics: {
-                    portfolioValue: this.portfolioValue,
-                    truthPowerScore: this.truthPowerScore
-                },
                 ...additionalData
             }
         };
@@ -215,80 +203,6 @@ window.TruthEcosystem = window.TruthEcosystem || {
         
         // Track analytics
         this.trackCrossDashboardNavigation(fromPage, page, additionalData);
-    },
-    
-    // Enhanced cross-dashboard state synchronization
-    syncCrossDashboardState: function() {
-        // Collect state from all dashboard sources
-        const allDashboardStates = {};
-        
-        // Analytics state
-        if (window.analyticsData) {
-            allDashboardStates.analytics = window.analyticsData;
-        }
-        
-        // Governance state
-        if (window.governance && window.governance.proposals) {
-            allDashboardStates.governance = {
-                proposals: window.governance.proposals,
-                votingPower: this.governancePower
-            };
-        }
-        
-        // Liquidity state
-        if (window.liquidityManager) {
-            allDashboardStates.liquidity = {
-                positions: this.liquidityPositions,
-                totalValue: this.totalLPValue,
-                rewards: this.lpRewards
-            };
-        }
-        
-        // Community state
-        if (window.communityData) {
-            allDashboardStates.community = window.communityData;
-        }
-        
-        // Update global state with all dashboard data
-        this.updateGlobalState({
-            dashboardStates: allDashboardStates,
-            lastSync: new Date().toISOString()
-        });
-        
-        // Broadcast sync event
-        window.dispatchEvent(new CustomEvent('dashboardStatesSync', {
-            detail: allDashboardStates
-        }));
-    },
-    
-    // Track cross-dashboard actions
-    trackCrossDashboardAction: function(dashboard, action, metadata = {}) {
-        const actionData = {
-            dashboard: dashboard,
-            action: action,
-            timestamp: new Date().toISOString(),
-            userState: {
-                walletConnected: this.walletConnected,
-                currentPage: this.currentPage,
-                truthBalance: this.truthBalance,
-                creatorBalance: this.creatorBalance
-            },
-            metadata: metadata
-        };
-        
-        // Store recent actions
-        if (!this.recentActions) {
-            this.recentActions = [];
-        }
-        this.recentActions.unshift(actionData);
-        this.recentActions = this.recentActions.slice(0, 50); // Keep last 50 actions
-        
-        // Broadcast action event
-        window.dispatchEvent(new CustomEvent('crossDashboardAction', {
-            detail: actionData
-        }));
-        
-        console.log('🎯 Cross-dashboard action tracked:', actionData);
     },
     
     // Data sharing between dashboards
