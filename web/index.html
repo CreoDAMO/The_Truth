@@ -73,8 +73,13 @@
                         sanitized = sanitized.replace(/javascript:|data:|vbscript:/gi, '');
 
                         // Remove event handlers iteratively
-                        sanitized = sanitized.replace(/on\w+\s*=\s*["'][^"']*["']/gi, '');
-                        sanitized = sanitized.replace(/on\w+\s*=\s*[^>\s]+/gi, '');
+                        // Apply both patterns repeatedly until no more matches
+                        let handlerPrev;
+                        do {
+                            handlerPrev = sanitized;
+                            sanitized = sanitized.replace(/on\w+\s*=\s*["'][^"']*["']/gi, '');
+                            sanitized = sanitized.replace(/on\w+\s*=\s*[^>\s]+/gi, '');
+                        } while (sanitized !== handlerPrev);
 
                         // Remove other dangerous elements
                         // Remove all opening/closing/incomplete fragments of dangerous elements iteratively
