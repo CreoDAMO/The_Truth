@@ -76,27 +76,6 @@ task = "shell.exec"
 args = "echo \"🔗 Enable GitHub Pages in your repo settings to deploy from /dist folder\""
 
 [[workflows.workflow]]
-name = "Project"
-mode = "parallel"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "The Truth NFT Server"
-
-[[workflows.workflow]]
-name = "The Truth NFT Server"
-author = "agent"
-
-[workflows.workflow.metadata]
-outputType = "webview"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm start"
-waitForPort = 5000
-
-[[workflows.workflow]]
 name = "Truth NFT Server"
 author = 47682465
 mode = "sequential"
@@ -172,25 +151,30 @@ args = "./build-static.sh"
 task = "shell.exec"
 args = "echo \"✅ Static distribution built with unified state management\""
 
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "The Truth NFT Server"
+
+[[workflows.workflow]]
+name = "The Truth NFT Server"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm start"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
 [[ports]]
 localPort = 5000
 externalPort = 80
-
-[[ports]]
-localPort = 5001
-externalPort = 3001
-
-[[ports]]
-localPort = 36331
-externalPort = 3003
-
-[[ports]]
-localPort = 38555
-externalPort = 3000
-
-[[ports]]
-localPort = 38809
-externalPort = 3002
 
 [agent]
 expertMode = true
