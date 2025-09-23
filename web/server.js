@@ -69,13 +69,59 @@ app.get('/LAW/*.md', (req, res) => {
     res.sendFile(filePath);
 });
 
-// API endpoints for dashboard data
-app.get('/api/analytics', (req, res) => {
-    res.json({
+// Unified dashboard state storage
+let unifiedDashboardState = {
+    analytics: {
         totalSupply: 77,
         mintedCount: 42,
         totalRevenue: "12.5 ETH",
         holders: 35,
+        truthPowerScore: 94.7
+    },
+    governance: {
+        activeProposals: 3,
+        totalVotingPower: 5000,
+        userVotingPower: 0
+    },
+    liquidity: {
+        totalTVL: 67400,
+        truthTVL: 12500,
+        creatorTVL: 8200,
+        nftTVL: 45700
+    },
+    community: {
+        totalHolders: 35,
+        activeMembers: 28,
+        engagementScore: 87.2
+    },
+    lastUpdated: new Date().toISOString()
+};
+
+// API endpoints for unified dashboard data
+app.get('/api/unified-state', (req, res) => {
+    res.json(unifiedDashboardState);
+});
+
+app.post('/api/unified-state', (req, res) => {
+    const { dashboard, data } = req.body;
+    
+    if (dashboard && data) {
+        unifiedDashboardState[dashboard] = {
+            ...unifiedDashboardState[dashboard],
+            ...data
+        };
+        unifiedDashboardState.lastUpdated = new Date().toISOString();
+        
+        console.log(`📊 Updated unified state for ${dashboard}:`, data);
+    }
+    
+    res.json({ success: true, state: unifiedDashboardState });
+});
+
+// API endpoints for dashboard data
+app.get('/api/analytics', (req, res) => {
+    res.json({
+        ...unifiedDashboardState.analytics,
         collections: [
             { name: "The Truth Original", supply: 77, minted: 42, price: "0.1695 ETH" },
             { name: "Bonus Gift", supply: 145000, minted: 1250, price: "0.039 ETH" },
@@ -85,6 +131,31 @@ app.get('/api/analytics', (req, res) => {
             { hash: "0x123...", amount: "0.1695 ETH", timestamp: new Date().toISOString() },
             { hash: "0x456...", amount: "0.039 ETH", timestamp: new Date().toISOString() }
         ]
+    });
+});
+
+// Cross-dashboard analytics endpoint
+app.get('/api/cross-dashboard-analytics', (req, res) => {
+    res.json({
+        dashboardUsage: {
+            analytics: 45,
+            governance: 23,
+            liquidity: 18,
+            community: 34,
+            payments: 12,
+            social: 8,
+            ai: 15,
+            lawful: 7,
+            shop: 11,
+            deploy: 5
+        },
+        crossDashboardFlows: [
+            { from: 'home', to: 'analytics', count: 156 },
+            { from: 'analytics', to: 'governance', count: 89 },
+            { from: 'governance', to: 'community', count: 67 },
+            { from: 'liquidity', to: 'analytics', count: 45 }
+        ],
+        unifiedState: unifiedDashboardState
     });
 });
 
@@ -114,6 +185,68 @@ app.get('/api/community', (req, res) => {
         ]
     });
 });
+
+// Middleware to inject dashboard coordinator into all HTML responses
+function injectDashboardCoordinator(req, res, next) {
+    const originalSend = res.sendFile;
+    res.sendFile = function(path, options, callback) {
+        // Check if it's an HTML file
+        if (path.endsWith('.html')) {
+            const fs = require('fs');
+            try {
+                let htmlContent = fs.readFileSync(path, 'utf8');
+                
+                // Inject dashboard coordinator script before closing body tag
+                const coordinatorScript = `
+    <!-- Dashboard Coordinator - Unified System -->
+    <script src="dashboard-coordinator.js"></script>
+    <script>
+        // Auto-register this dashboard when coordinator is ready
+        window.addEventListener('dashboardCoordinatorReady', function(event) {
+            const dashboardName = window.location.pathname.replace('/', '') || 'home';
+            event.detail.coordinator.registerDashboard(dashboardName);
+            console.log('📱 Dashboard registered with coordinator:', dashboardName);
+        });
+        
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', function() {
+            const dashboardName = window.location.pathname.replace('/', '') || 'home';
+            if (window.TruthDashboardCoordinator) {
+                window.TruthDashboardCoordinator.unregisterDashboard(dashboardName);
+            }
+        });
+    </script>
+</body>`;
+                
+                htmlContent = htmlContent.replace('</body>', coordinatorScript);
+                
+                res.setHeader('Content-Type', 'text/html');
+                res.send(htmlContent);
+            } catch (error) {
+                console.error('Error injecting dashboard coordinator:', error);
+                originalSend.call(this, path, options, callback);
+            }
+        } else {
+            originalSend.call(this, path, options, callback);
+        }
+    };
+    next();
+}
+
+// Apply middleware to dashboard routes
+app.use('/analytics', injectDashboardCoordinator);
+app.use('/governance', injectDashboardCoordinator);
+app.use('/community', injectDashboardCoordinator);
+app.use('/payments', injectDashboardCoordinator);
+app.use('/liquidity', injectDashboardCoordinator);
+app.use('/social', injectDashboardCoordinator);
+app.use('/ai-insights', injectDashboardCoordinator);
+app.use('/ai', injectDashboardCoordinator);
+app.use('/lawful', injectDashboardCoordinator);
+app.use('/legal', injectDashboardCoordinator);
+app.use('/shop', injectDashboardCoordinator);
+app.use('/deploy', injectDashboardCoordinator);
+app.use('/deployment-dashboard', injectDashboardCoordinator);
 
 // Serve specific HTML files for dashboard routes
 app.get('/analytics', (req, res) => {

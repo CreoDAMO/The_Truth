@@ -285,9 +285,50 @@ function initializeAnalytics() {
     }
 }
 
-// Auto-initialize when DOM is ready
+// Auto-initialize when DOM is ready and integrate with unified state
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeAnalytics);
+    document.addEventListener('DOMContentLoaded', () => {
+        initializeAnalytics();
+        integrateWithUnifiedState();
+    });
 } else {
     initializeAnalytics();
+    integrateWithUnifiedState();
+}
+
+// Integration with unified ecosystem state
+function integrateWithUnifiedState() {
+    // Listen for unified state updates
+    window.addEventListener('truthEcosystemUpdate', (event) => {
+        const { current, changed } = event.detail;
+        
+        // Update analytics data based on unified state changes
+        if (changed.walletConnected || changed.truthBalance || changed.creatorBalance) {
+            loadAnalyticsData();
+        }
+        
+        // Update wallet display in analytics
+        if (changed.walletConnected) {
+            updateAnalyticsWalletDisplay(current);
+        }
+    });
+    
+    // Initialize with current unified state if available
+    if (window.TruthEcosystem && window.TruthEcosystem.initialized) {
+        updateAnalyticsWalletDisplay(window.TruthEcosystem);
+    }
+}
+
+function updateAnalyticsWalletDisplay(state) {
+    // Update analytics dashboard with wallet state
+    const walletElements = document.querySelectorAll('.wallet-status, .wallet-indicator');
+    walletElements.forEach(element => {
+        if (state.walletConnected) {
+            element.textContent = `Connected: ${state.walletAddress?.slice(0, 6)}...${state.walletAddress?.slice(-4)}`;
+            element.className = element.className.replace('disconnected', 'connected');
+        } else {
+            element.textContent = 'Not Connected';
+            element.className = element.className.replace('connected', 'disconnected');
+        }
+    });
 }

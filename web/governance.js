@@ -210,6 +210,74 @@ class TruthGovernance {
 // Initialize governance system
 const governance = new TruthGovernance();
 
+// Integration with unified ecosystem state
+function integrateGovernanceWithUnifiedState() {
+    // Listen for unified state updates
+    window.addEventListener('truthEcosystemUpdate', (event) => {
+        const { current, changed } = event.detail;
+        
+        // Update governance power based on token changes
+        if (changed.truthBalance || changed.creatorBalance || changed.liquidityPositions) {
+            updateGovernancePower(current);
+        }
+        
+        // Update wallet connection state
+        if (changed.walletConnected) {
+            governance.account = current.walletAddress;
+            if (current.walletConnected && governance.web3) {
+                governance.loadTokenBalances();
+            }
+        }
+    });
+    
+    // Share governance data with unified state
+    function shareGovernanceData() {
+        if (window.TruthEcosystem) {
+            const governanceData = {
+                proposals: governance.proposals,
+                votingPower: calculateVotingPower(),
+                activeProposals: governance.proposals.filter(p => p.status === 'active').length
+            };
+            
+            window.TruthEcosystem.updateGlobalState({
+                governanceData: governanceData,
+                governancePower: calculateVotingPower()
+            });
+        }
+    }
+    
+    function calculateVotingPower() {
+        const truthPower = (window.TruthEcosystem?.truthBalance || 0) * 0.1;
+        const creatorPower = (window.TruthEcosystem?.creatorBalance || 0) * 0.05;
+        const lpPower = (window.TruthEcosystem?.totalLPValue || 0) * 0.03;
+        return Math.min(truthPower + creatorPower + lpPower, 100);
+    }
+    
+    function updateGovernancePower(state) {
+        const power = calculateVotingPower();
+        const powerElements = document.querySelectorAll('.governance-power, .voting-power');
+        powerElements.forEach(element => {
+            element.textContent = `${power.toFixed(1)}%`;
+        });
+        
+        const powerBars = document.querySelectorAll('.power-bar, .governance-bar');
+        powerBars.forEach(bar => {
+            bar.style.width = `${power}%`;
+        });
+    }
+    
+    // Initialize sharing
+    shareGovernanceData();
+    setInterval(shareGovernanceData, 30000); // Update every 30 seconds
+}
+
+// Initialize integration when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', integrateGovernanceWithUnifiedState);
+} else {
+    integrateGovernanceWithUnifiedState();
+}
+
 // Voting function
 async function vote(proposalId, voteYes) {
     // Check unified wallet connection state
