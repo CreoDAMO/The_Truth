@@ -466,21 +466,58 @@ window.TruthEcosystem = window.TruthEcosystem || {
 
     // Set up wallet connection buttons
     setupWalletButtons: function() {
-        // Find all wallet connection buttons
-        const walletButtons = document.querySelectorAll('#connectWallet, .wallet-btn, [onclick*="connectWallet"]');
-        
-        walletButtons.forEach(button => {
-            // Remove existing onclick handlers
-            button.removeAttribute('onclick');
+        // Wait for DOM to be fully loaded
+        const setupButtons = () => {
+            // Find all wallet connection buttons with multiple selectors
+            const selectors = [
+                '#connectWallet',
+                '.wallet-btn',
+                '[onclick*="connectWallet"]',
+                'button[class*="connect"]',
+                '.btn-connect'
+            ];
             
-            // Add unified wallet connection handler
-            button.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.connectWallet();
+            let walletButtons = [];
+            selectors.forEach(selector => {
+                try {
+                    const buttons = document.querySelectorAll(selector);
+                    walletButtons = [...walletButtons, ...buttons];
+                } catch (e) {
+                    console.warn('Selector error:', selector, e);
+                }
             });
-        });
-        
-        console.log(`🔗 Set up ${walletButtons.length} wallet connection buttons`);
+            
+            // Remove duplicates
+            walletButtons = [...new Set(walletButtons)];
+            
+            walletButtons.forEach((button, index) => {
+                try {
+                    // Remove existing onclick handlers
+                    button.removeAttribute('onclick');
+                    
+                    // Remove existing event listeners by cloning the node
+                    const newButton = button.cloneNode(true);
+                    button.parentNode.replaceChild(newButton, button);
+                    
+                    // Add unified wallet connection handler
+                    newButton.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log(`🔗 Wallet button clicked: ${index}`);
+                        this.connectWallet();
+                    });
+                } catch (error) {
+                    console.warn('Error setting up wallet button:', error);
+                }
+            });
+            
+            console.log(`🔗 Set up ${walletButtons.length} wallet connection buttons`);
+        };
+
+        // Setup immediately and after a delay
+        setupButtons();
+        setTimeout(setupButtons, 1000);
+        setTimeout(setupButtons, 3000);
     },
     
     initializeCurrentPage: function() {

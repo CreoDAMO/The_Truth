@@ -138,9 +138,12 @@ function App() {
         }
     };
 
-    // Connect wallet with improved MetaMask detection
+    // Connect wallet with improved MetaMask detection and error handling
     const connectWallet = async () => {
         try {
+            setSuccess("Initializing wallet connection...");
+            setError("");
+
             // Check if ethers is available
             if (typeof ethers === 'undefined') {
                 setError("Ethers.js library not loaded. Please refresh the page and try again.");
@@ -149,46 +152,48 @@ function App() {
 
             let ethereum;
 
-            // Check for MetaMask in multiple ways
+            // Enhanced MetaMask detection
             if (typeof window.ethereum !== 'undefined') {
                 if (window.ethereum.isMetaMask) {
                     ethereum = window.ethereum;
-                    console.log("Using MetaMask browser extension");
+                    console.log("✅ Using MetaMask browser extension");
                 } else if (window.ethereum.providers && Array.isArray(window.ethereum.providers)) {
                     // Multiple wallet providers - find MetaMask
                     const provider = window.ethereum.providers.find(p => p.isMetaMask);
                     if (provider) {
                         ethereum = provider;
-                        console.log("Using MetaMask from multiple providers");
+                        console.log("✅ Using MetaMask from multiple providers");
                     } else {
                         // Try first provider if available
                         ethereum = window.ethereum.providers[0] || window.ethereum;
-                        console.log("Using first available wallet provider");
+                        console.log("⚠️ Using first available wallet provider (not MetaMask)");
                     }
                 } else {
                     ethereum = window.ethereum;
-                    console.log("Using default ethereum provider");
+                    console.log("⚠️ Using default ethereum provider");
                 }
             } else if (sdk && sdk.getProvider) {
                 ethereum = sdk.getProvider();
-                console.log("Using MetaMask SDK provider");
+                console.log("✅ Using MetaMask SDK provider");
             } else {
-                // More user-friendly error message
-                setError("Please install MetaMask or use a Web3-enabled browser to continue.");
-                return null;
+                throw new Error("No Web3 wallet detected. Please install MetaMask from metamask.io");
             }
 
-            // Verify connection
-            setSuccess("Connecting to wallet...");
-            setError("");
+            setSuccess("Requesting account access...");
 
-            // Request account access with verification
-            const accounts = await ethereum.request({
+            // Request account access with timeout
+            const requestPromise = ethereum.request({
                 method: 'eth_requestAccounts'
             });
 
+            const timeoutPromise = new Promise((_, reject) => 
+                setTimeout(() => reject(new Error("Request timed out after 30 seconds")), 30000)
+            );
+
+            const accounts = await Promise.race([requestPromise, timeoutPromise]);
+
             if (!accounts || accounts.length === 0) {
-                throw new Error("No accounts found. Please unlock MetaMask.");
+                throw new Error("No accounts found. Please unlock MetaMask and try again.");
             }
 
             // Verify account format
@@ -196,80 +201,109 @@ function App() {
                 throw new Error("Invalid wallet address received from MetaMask");
             }
 
+            setSuccess("Creating provider connection...");
+
             const web3Provider = new ethers.providers.Web3Provider(ethereum);
             const networkInfo = await web3Provider.getNetwork();
 
-            console.log("Connected to network:", networkInfo);
-            setSuccess("MetaMask connected successfully!");
+            console.log("🌐 Connected to network:", networkInfo);
 
             // Check if we're on the correct network
             if (networkInfo.chainId !== parseInt(CURRENT_NETWORK.chainId, 16)) {
-                setError(`Connected to ${networkInfo.name} (Chain ID: ${networkInfo.chainId}). Please switch to ${CURRENT_NETWORK.chainName}.`);
-                await switchToBase();
-                return connectWallet();
+                setError(`Connected to ${networkInfo.name} (Chain ID: ${networkInfo.chainId}). Switching to ${CURRENT_NETWORK.chainName}...`);
+                try {
+                    await switchToBase();
+                    // Recursive call after network switch
+                    return await connectWallet();
+                } catch (switchError) {
+                    throw new Error(`Failed to switch to Base network: ${switchError.message}`);
+                }
             }
 
-            const web3Signer = web3Provider.getSigner();
+            setSuccess("Verifying signer...");
 
-            // Verify signer
+            const web3Signer = web3Provider.getSigner();
             const signerAddress = await web3Signer.getAddress();
+            
             if (signerAddress.toLowerCase() !== accounts[0].toLowerCase()) {
                 throw new Error("Signer address mismatch. Please try reconnecting.");
             }
 
+            // Update state
             setAccount(accounts[0]);
             setProvider(web3Provider);
             setSigner(web3Signer);
             setNetwork(networkInfo);
 
-            // Initialize contract
-            if (CONTRACT_CONFIG.address !== "0x...") {
-                const nftContract = new ethers.Contract(
-                    CONTRACT_CONFIG.address,
-                    CONTRACT_CONFIG.abi,
-                    web3Signer
-                );
-                setContract(nftContract);
-                await loadContractData(nftContract, accounts[0]);
+            setSuccess("Loading contract data...");
+
+            // Initialize contract if available
+            if (CONTRACT_CONFIG.address && CONTRACT_CONFIG.address !== "0x...") {
+                try {
+                    const nftContract = new ethers.Contract(
+                        CONTRACT_CONFIG.address,
+                        CONTRACT_CONFIG.abi,
+                        web3Signer
+                    );
+                    setContract(nftContract);
+                    await loadContractData(nftContract, accounts[0]);
+                } catch (contractError) {
+                    console.warn("Contract initialization failed:", contractError);
+                    // Don't fail the entire connection for contract errors
+                }
             }
 
+            setSuccess(`✅ Successfully connected! Address: ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`);
             setError("");
-            setSuccess("✅ MetaMask connected and verified!");
 
-            // Listen for account changes
-            ethereum.on('accountsChanged', (accounts) => {
-                if (accounts.length === 0) {
-                    // User disconnected
-                    setAccount(null);
-                    setProvider(null);
-                    setSigner(null);
-                    setContract(null);
-                    setSuccess("");
-                    console.log("MetaMask disconnected");
-                } else {
-                    // Account changed
-                    console.log("MetaMask account changed to:", accounts[0]);
-                    connectWallet();
-                }
-            });
+            // Set up event listeners (only once)
+            if (!ethereum._truthListenersSet) {
+                ethereum.on('accountsChanged', (newAccounts) => {
+                    if (newAccounts.length === 0) {
+                        // User disconnected
+                        setAccount(null);
+                        setProvider(null);
+                        setSigner(null);
+                        setContract(null);
+                        setSuccess("Wallet disconnected");
+                        console.log("🔌 MetaMask disconnected");
+                    } else {
+                        // Account changed
+                        console.log("🔄 MetaMask account changed to:", newAccounts[0]);
+                        connectWallet();
+                    }
+                });
 
-            // Listen for network changes
-            ethereum.on('chainChanged', (chainId) => {
-                console.log("Network changed to chain ID:", chainId);
-                window.location.reload(); // Reload to ensure clean state
-            });
+                ethereum.on('chainChanged', (chainId) => {
+                    console.log("🌐 Network changed to chain ID:", chainId);
+                    setSuccess("Network changed, reconnecting...");
+                    // Reload to ensure clean state
+                    setTimeout(() => window.location.reload(), 1000);
+                });
+
+                ethereum._truthListenersSet = true;
+            }
+
+            return accounts[0];
 
         } catch (err) {
-            console.error("Wallet connection error:", err);
-            // More helpful error messages
-            if (err.message.includes('User rejected')) {
-                setError("Connection cancelled. Please try again and approve the connection.");
-            } else if (err.message.includes('not installed') || err.message.includes('ethereum')) {
-                setError("Please install MetaMask or use a Web3-enabled browser. Visit metamask.io to get started.");
+            console.error("💥 Wallet connection error:", err);
+            
+            // Provide specific error messages
+            if (err.message.includes('User rejected') || err.message.includes('User denied')) {
+                setError("❌ Connection cancelled. Please approve the connection in MetaMask to continue.");
+            } else if (err.message.includes('not installed') || err.message.includes('ethereum') || err.message.includes('No Web3 wallet')) {
+                setError("❌ MetaMask not found. Please install MetaMask from metamask.io and refresh the page.");
+            } else if (err.message.includes('timeout') || err.message.includes('timed out')) {
+                setError("❌ Connection timed out. Please check MetaMask and try again.");
+            } else if (err.message.includes('network') || err.message.includes('switch')) {
+                setError(`❌ Network error: ${err.message}`);
             } else {
-                setError(`Connection failed: ${err.message}`);
+                setError(`❌ Connection failed: ${err.message.substring(0, 100)}...`);
             }
+            
             setSuccess("");
+            return null;
         }
     };
 

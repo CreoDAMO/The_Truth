@@ -397,41 +397,55 @@
                 return;
             }
 
-            console.log('📋 Rendering contracts:', Object.keys(CONTRACTS));
+            try {
+                console.log('📋 Rendering contracts:', Object.keys(CONTRACTS));
 
-            container.innerHTML = Object.entries(CONTRACTS).map(([key, contract]) => `
-                <div class="contract-option deployment-card" onclick="selectContract('${key}')" id="contract-${key}">
-                    <div class="flex items-start justify-between mb-3">
-                        <div>
-                            <h3 class="text-lg font-semibold text-white">${contract.name}</h3>
-                            <p class="text-sm opacity-80 mt-1">${contract.description}</p>
+                container.innerHTML = Object.entries(CONTRACTS).map(([key, contract]) => `
+                    <div class="contract-option deployment-card" onclick="selectContract('${key}')" id="contract-${key}">
+                        <div class="flex items-start justify-between mb-3">
+                            <div>
+                                <h3 class="text-lg font-semibold text-white">${contract.name}</h3>
+                                <p class="text-sm opacity-80 mt-1">${contract.description}</p>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-sm font-medium text-cyan-400">${contract.supply}</div>
+                                <div class="text-xs opacity-60">${contract.price}</div>
+                            </div>
                         </div>
-                        <div class="text-right">
-                            <div class="text-sm font-medium text-cyan-400">${contract.supply}</div>
-                            <div class="text-xs opacity-60">${contract.price}</div>
+
+                        <div class="grid grid-cols-2 gap-2 text-xs">
+                            <div class="flex items-center">
+                                <i class="fas fa-file-code mr-2 text-purple-400"></i>
+                                <span>Smart Contract</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-cloud mr-2 text-blue-400"></i>
+                                <span>${Object.keys(contract.ipfsAssets).length} IPFS Assets</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-shield-alt mr-2 text-green-400"></i>
+                                <span>Verified Source</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-network-wired mr-2 text-orange-400"></i>
+                                <span>Base Network</span>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="grid grid-cols-2 gap-2 text-xs">
-                        <div class="flex items-center">
-                            <i class="fas fa-file-code mr-2 text-purple-400"></i>
-                            <span>Smart Contract</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-cloud mr-2 text-blue-400"></i>
-                            <span>${Object.keys(contract.ipfsAssets).length} IPFS Assets</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-shield-alt mr-2 text-green-400"></i>
-                            <span>Verified Source</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-network-wired mr-2 text-orange-400"></i>
-                            <span>Base Network</span>
-                        </div>
+                `).join('');
+            } catch (error) {
+                console.error('❌ Error rendering contracts:', error);
+                container.innerHTML = `
+                    <div class="col-span-2 text-center p-8">
+                        <h3 class="text-xl font-bold text-red-400 mb-4">⚠️ Error Loading Contracts</h3>
+                        <p class="text-gray-300 mb-4">Failed to load contract configurations.</p>
+                        <button onclick="initializeInterface()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">
+                            Retry Initialization
+                        </button>
                     </div>
-                </div>
-            `).join('');
+                `;
+                addLog('ERROR', `Error rendering contracts: ${error.message}`, 'error');
+            }
         }
 
         function selectContract(contractKey) {
