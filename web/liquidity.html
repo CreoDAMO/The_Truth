@@ -428,11 +428,11 @@
             .page-title {
                 font-size: 2rem;
             }
-            
+
             .liquidity-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .mobile-nav-overlay.active {
                 display: block;
             }
@@ -456,24 +456,24 @@
                 <a href="/shop" onclick="navigateToPage('shop')">🛍️ Shop</a>
                 <a href="/deploy" onclick="navigateToPage('deploy')">🚀 Deploy</a>
             </div>
-            
+
             <!-- Mobile Menu Toggle -->
             <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
-            
+
             <button class="wallet-btn" id="connectWallet">Connect Wallet</button>
         </div>
     </nav>
 
     <!-- Mobile Navigation Overlay -->
     <div class="mobile-nav-overlay" id="mobileNavOverlay" onclick="closeMobileMenu()"></div>
-    
+
     <!-- Mobile Navigation Menu -->
     <div class="mobile-nav-menu" id="mobileNavMenu">
         <div class="mobile-nav-header">
             <div class="nav-brand">🌊 Liquidity</div>
             <button class="mobile-nav-close" onclick="closeMobileMenu()">✕</button>
         </div>
-        
+
         <div class="mobile-nav-links">
             <a href="/" onclick="navigateToPage('home'); closeMobileMenu();">🏠 Home Dashboard</a>
             <a href="/analytics" onclick="navigateToPage('analytics'); closeMobileMenu();">📊 Analytics & Metrics</a>
@@ -493,7 +493,7 @@
         <div class="header">
             <h1 class="page-title">🌊 Automated Liquidity Pools</h1>
             <p class="page-subtitle">Unified NFT + Creator Coin + Zora Integration with Automated LP Management</p>
-            
+
             <!-- Cross-Dashboard Integration Notice -->
             <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 15px; padding: 20px; margin: 20px 0; text-align: center;">
                 <h3 style="color: #00d4ff; margin-bottom: 10px;">🔗 Unified Ecosystem</h3>
@@ -611,7 +611,7 @@
                     <div style="font-size: 0.9rem; color: rgba(255,255,255,0.7);">Wallet: 0xc4b8f1ab3499fac71975666a04a1c99de7609603</div>
                 </div>
             </div>
-            
+
             <div class="automation-status">
                 <div class="status-indicator status-active">
                     <div style="font-weight: bold; margin-bottom: 5px;">✅ Zora Monitoring</div>
@@ -633,7 +633,7 @@
 
             <div class="auto-settings">
                 <h3 style="color: #9b59b6; margin-bottom: 20px;">🤖 Automation Settings</h3>
-                
+
                 <div style="display: flex; justify-content: space-between; align-items: center; margin: 15px 0;">
                     <span>Auto-create ETH pairs when volume > $10K</span>
                     <label class="toggle-switch">
@@ -641,7 +641,7 @@
                         <span class="slider"></span>
                     </label>
                 </div>
-                
+
                 <div style="display: flex; justify-content: space-between; align-items: center; margin: 15px 0;">
                     <span>Auto-create USDC pairs for stability</span>
                     <label class="toggle-switch">
@@ -649,7 +649,7 @@
                         <span class="slider"></span>
                     </label>
                 </div>
-                
+
                 <div style="display: flex; justify-content: space-between; align-items: center; margin: 15px 0;">
                     <span>NFT fractionalization at $25K floor</span>
                     <label class="toggle-switch">
@@ -657,7 +657,7 @@
                         <span class="slider"></span>
                     </label>
                 </div>
-                
+
                 <div style="display: flex; justify-content: space-between; align-items: center; margin: 15px 0;">
                     <span>Cross-DEX arbitrage monitoring</span>
                     <label class="toggle-switch">
@@ -668,13 +668,52 @@
             </div>
         </div>
 
+        <!-- LP Revenue Sharing Section -->
+        <div class="liquidity-card" style="background: rgba(76, 175, 80, 0.1); border: 1px solid rgba(76, 175, 80, 0.2);">
+            <div class="card-header">
+                <div class="card-icon">💰</div>
+                <div>
+                    <div class="card-title" style="color: #4CAF50;">LP Revenue Sharing</div>
+                    <div style="font-size: 0.9rem; color: rgba(255,255,255,0.7);">Boosted by 25% of The Truth Shop revenue</div>
+                </div>
+            </div>
+
+            <div class="pool-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="shopRevenue24h">$1,250.00</div>
+                    <div class="stat-label">Shop Revenue (24h)</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="lpAllocation">$312.50</div>
+                    <div class="stat-label">LP Allocation (25%)</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="userLpShare">5.0%</div>
+                    <div class="stat-label">Your LP Share</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="userRewards">$15.63</div>
+                    <div class="stat-label">Your Share (Est.)</div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="action-btn" onclick="claimLpRewards()">💰 Claim LP Rewards</button>
+                <button class="action-btn secondary" onclick="viewRevenueHistory()" style="margin-left: 10px;">📊 View Revenue History</button>
+            </div>
+
+            <div style="text-align: center; margin-top: 15px; font-size: 0.8rem; color: rgba(255,255,255,0.6);">
+                Current Claimable Rewards: <span id="claimableRewards">$15.63</span>
+            </div>
+        </div>
+
         <!-- Active Pools List -->
         <div class="liquidity-card">
             <div class="card-header">
                 <div class="card-icon">🏊</div>
                 <div class="card-title">Active Liquidity Pools</div>
             </div>
-            
+
             <div class="pool-list">
                 <div class="pool-item">
                     <div class="pool-header">
@@ -758,11 +797,41 @@
     </div>
 
     <script>
+        // Initialize TruthEcosystem (mock for this example)
+        if (!window.TruthEcosystem) {
+            window.TruthEcosystem = {
+                walletConnected: false,
+                lpRevenueShare: 0.25, // 25% of revenue goes to LPs
+                lpRewards: 0,
+                revenueShare: 0, // Total revenue share pool
+                totalLPValue: 20000, // Mock total LP value
+                navigateTo: function(page, options) {
+                    console.log(`Navigating to ${page}`, options);
+                    // In a real app, this would handle routing and state transfer
+                },
+                updateGlobalState: function(newState) {
+                    console.log("Updating global state:", newState);
+                    Object.assign(this, newState);
+                }
+            };
+        }
+
+        // Update connect wallet button logic (mock connection)
+        document.getElementById('connectWallet').onclick = function() {
+            if (!window.TruthEcosystem.walletConnected) {
+                alert('Simulating wallet connection...');
+                window.TruthEcosystem.walletConnected = true;
+                this.textContent = 'Wallet Connected';
+                // In a real app, this would trigger MetaMask or other wallet connection
+                updateLpRewardsDisplay(); // Update display after connection
+            }
+        };
+
         // Mobile navigation functions
         function toggleMobileMenu() {
             const overlay = document.getElementById('mobileNavOverlay');
             const menu = document.getElementById('mobileNavMenu');
-            
+
             overlay.classList.add('active');
             menu.classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -771,7 +840,7 @@
         function closeMobileMenu() {
             const overlay = document.getElementById('mobileNavOverlay');
             const menu = document.getElementById('mobileNavMenu');
-            
+
             overlay.classList.remove('active');
             menu.classList.remove('active');
             document.body.style.overflow = 'auto';
@@ -838,16 +907,95 @@
                   'Opening fractional trading interface...');
         }
 
-        // Connect wallet functionality
-        document.getElementById('connectWallet').onclick = function() {
-            alert('🔗 Wallet Connection\n\n' +
-                  'Connect your wallet to:\n' +
-                  '• Manage liquidity positions\n' +
-                  '• Monitor automated pools\n' +
-                  '• Track Zora creator earnings\n' +
-                  '• Access NFT fractionalization\n\n' +
-                  'Web3 wallet integration will be enabled soon!');
-        };
+        // LP Revenue Sharing Functions
+        async function claimLpRewards() {
+            if (!window.TruthEcosystem || !window.TruthEcosystem.walletConnected) {
+                alert('Please connect your wallet first');
+                return;
+            }
+
+            try {
+                const button = event.target;
+                button.disabled = true;
+                button.textContent = '⏳ Claiming...';
+
+                // Calculate claimable rewards
+                const userLpShare = await calculateUserLpShare();
+                const claimableAmount = userLpShare * window.TruthEcosystem.lpRevenueShare;
+
+                if (claimableAmount === 0) {
+                    alert('No rewards available to claim');
+                    return;
+                }
+
+                // Simulate claiming transaction
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
+                // Update rewards
+                window.TruthEcosystem.updateGlobalState({
+                    lpRewards: window.TruthEcosystem.lpRewards + claimableAmount,
+                    revenueShare: window.TruthEcosystem.revenueShare + claimableAmount
+                });
+
+                alert(`🎉 Successfully claimed $${claimableAmount.toFixed(2)} in LP rewards!`);
+
+                // Refresh display
+                updateLpRewardsDisplay();
+
+            } catch (error) {
+                console.error('LP reward claiming failed:', error);
+                alert('Failed to claim rewards. Please try again.');
+            } finally {
+                const button = event.target;
+                button.disabled = false;
+                button.textContent = '💰 Claim LP Rewards';
+            }
+        }
+
+        async function calculateUserLpShare() {
+            // Simulate calculating user's LP share based on holdings
+            if (!window.TruthEcosystem.walletConnected) return 0;
+
+            // Mock calculation - in production, this would query actual LP tokens
+            const totalLpValue = window.TruthEcosystem.totalLPValue || 20000;
+            const userLpValue = Math.random() * 1000; // Mock user LP value
+
+            return userLpValue / totalLpValue;
+        }
+
+        async function updateLpRewardsDisplay() {
+            try {
+                // Simulate shop revenue data
+                const shopRevenue24h = 1250; // Mock daily revenue
+                const lpAllocation = shopRevenue24h * 0.25;
+                const userLpShare = await calculateUserLpShare();
+                const userRewards = lpAllocation * userLpShare;
+
+                // Update display elements
+                document.getElementById('shopRevenue24h').textContent = `$${shopRevenue24h.toFixed(2)}`;
+                document.getElementById('lpAllocation').textContent = `$${lpAllocation.toFixed(2)}`;
+                document.getElementById('userLpShare').textContent = `${(userLpShare * 100).toFixed(1)}%`;
+                document.getElementById('userRewards').textContent = `$${userRewards.toFixed(2)}`;
+                document.getElementById('claimableRewards').textContent = userRewards.toFixed(2);
+
+            } catch (error) {
+                console.error('Failed to update LP rewards display:', error);
+            }
+        }
+
+        function viewRevenueHistory() {
+            alert('📊 Revenue History\n\n' +
+                  'Past 7 days LP rewards:\n' +
+                  '• Day 1: $47.25\n' +
+                  '• Day 2: $52.10\n' +
+                  '• Day 3: $38.75\n' +
+                  '• Day 4: $61.50\n' +
+                  '• Day 5: $44.80\n' +
+                  '• Day 6: $56.90\n' +
+                  '• Day 7: $41.25 (today)\n\n' +
+                  'Total 7-day rewards: $342.55\n' +
+                  'Average daily: $48.94');
+        }
 
         // Track analytics events
         function trackAnalyticsEvent(event, details) {
@@ -866,11 +1014,16 @@
             }).catch(console.error);
         }
 
-        // Track page view
-        trackAnalyticsEvent('liquidity_page_view', {
-            referrer: document.referrer,
-            zoraWallet: '0xc4b8f1ab3499fac71975666a04a1c99de7609603'
+        // Initial data load and display update
+        document.addEventListener('DOMContentLoaded', () => {
+            updateLpRewardsDisplay();
+            // Track page view after initial rendering
+            trackAnalyticsEvent('liquidity_page_view', {
+                referrer: document.referrer,
+                zoraWallet: '0xc4b8f1ab3499fac71975666a04a1c99de7609603'
+            });
         });
+
 
         // Auto-refresh data every 30 seconds
         setInterval(() => {
@@ -881,6 +1034,8 @@
                 creatorTvl: document.getElementById('creatorTvl').textContent,
                 nftTvl: document.getElementById('nftTvl').textContent
             });
+            // Update LP rewards display on interval as well
+            updateLpRewardsDisplay();
         }, 30000);
 
         console.log('🌊 Liquidity Dashboard initialized');

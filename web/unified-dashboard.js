@@ -23,15 +23,17 @@ window.TruthEcosystem = window.TruthEcosystem || {
     communityLevel: 'Basic',
     truthPowerScore: 94.7,
 
-    // Liquidity and trading
+    // Liquidity and trading with revenue sharing
     liquidityPositions: [],
     totalLPValue: 0,
     lpRewards: 0,
+    lpRevenueShare: 0.25, // 25% of shop revenue goes to LPs
 
     // Analytics and insights
     portfolioValue: 0,
     totalVolume: 0,
     revenueShare: 0,
+    shopRevenue: 0, // Track shop revenue for LP distribution
 
     // Cross-dashboard methods
     updateGlobalState: function(newState) {
@@ -668,6 +670,14 @@ window.TruthEcosystem = window.TruthEcosystem || {
             truthPowerScore: Math.min(this.truthPowerScore + Math.random() * 0.5, 100)
         };
 
+        // Simulate shop revenue for LP distribution
+        if (Math.random() > 0.5) {
+            mockUpdates.shopRevenue = (Math.random() * 500).toFixed(2);
+            // Distribute shop revenue to LPs
+            this.distributeShopRevenueToLPs(parseFloat(mockUpdates.shopRevenue));
+        }
+
+
         this.updateGlobalState(mockUpdates);
     },
 
@@ -767,6 +777,107 @@ window.TruthEcosystem = window.TruthEcosystem || {
             lastSharedData: sharedData,
             crossDashboardSync: new Date().toISOString()
         });
+    },
+
+    // Liquidity Dashboard Specific Methods
+    displayLiquidityPositions: function() {
+        const lpTableBody = document.getElementById('lpTableBody'); // Assuming you have a table with this ID
+        if (!lpTableBody) return;
+
+        lpTableBody.innerHTML = ''; // Clear existing rows
+
+        this.liquidityPositions.forEach((lp, index) => {
+            const row = lpTableBody.insertRow();
+            row.innerHTML = `
+                <td>${lp.pool}</td>
+                <td>${lp.amount.toFixed(4)}</td>
+                <td>$${lp.value.toLocaleString()}</td>
+                <td>${lp.apy.toFixed(2)}%</td>
+                <td>$${lp.rewards.toFixed(2)}</td>
+                <td>
+                    <button onclick="window.TruthEcosystem.claimLPRewards(${index})">Claim</button>
+                </td>
+            `;
+        });
+    },
+
+    claimLPRewards: function(index) {
+        if (index < 0 || index >= this.liquidityPositions.length) {
+            console.error('Invalid LP index');
+            return;
+        }
+        const lp = this.liquidityPositions[index];
+        console.log(`Claiming rewards for LP: ${lp.pool}`);
+        // Implement actual reward claiming logic here
+        alert(`Claimed $${lp.rewards.toFixed(2)} rewards for ${lp.pool}! (Simulated)`);
+        // Update state after claiming
+        const updatedPositions = [...this.liquidityPositions];
+        updatedPositions[index].rewards = 0; // Reset rewards after claiming
+        this.updateGlobalState({ liquidityPositions: updatedPositions });
+    },
+
+    // Method to distribute shop revenue to LPs
+    distributeShopRevenueToLPs: function(shopRevenueAmount) {
+        if (!this.walletConnected || shopRevenueAmount <= 0) {
+            console.log('Wallet not connected or no shop revenue to distribute.');
+            return;
+        }
+
+        // Calculate the amount to distribute based on the configured share
+        const distributionAmount = shopRevenueAmount * this.lpRevenueShare;
+
+        if (distributionAmount <= 0) {
+            console.log('No LP revenue to distribute after applying share.');
+            return;
+        }
+
+        console.log(`Distributing $${distributionAmount.toFixed(2)} of shop revenue to LPs.`);
+
+        // In a real scenario, this would involve interacting with smart contracts
+        // to split the distributionAmount among all active LPs.
+        // For this simulation, we'll just log the action and update a placeholder.
+
+        // Update global state to reflect new LP rewards (simulated)
+        // This is a simplified approach; a real implementation would
+        // calculate per-LP distribution.
+        const updatedLPRewards = this.lpRewards + distributionAmount;
+
+        this.updateGlobalState({
+            lpRewards: updatedLPRewards,
+            shopRevenue: 0 // Reset shop revenue after distribution
+        });
+
+        // Optionally, trigger an update to the LP display if it shows rewards
+        // this.updateLiquidityDashboardDisplay();
+    },
+
+    // Method to update shop revenue (e.g., from The Truth Shop transactions)
+    updateShopRevenue: function(amount) {
+        console.log(`Adding $${amount.toFixed(2)} to shop revenue.`);
+        this.updateGlobalState({ shopRevenue: this.shopRevenue + amount });
+    },
+
+    // Placeholder for shop image loading logic
+    fixShopImages: function() {
+        console.log("Attempting to fix shop images...");
+        // Actual implementation would involve checking image sources,
+        // ensuring they are correctly linked and loaded.
+        // This might involve:
+        // 1. Verifying image paths in the shop.html or related JS.
+        // 2. Ensuring images are present in the asset directory.
+        // 3. Checking for CORS issues if images are hosted externally.
+        // 4. Debugging JavaScript that might be manipulating image elements.
+
+        // For now, we'll just log a message indicating the fix attempt.
+        console.log("Shop images fix process initiated. Please check console for specific errors.");
+        // If there are specific image elements to target, they would be selected and manipulated here.
+        // Example:
+        // document.querySelectorAll('.shop-item img').forEach(img => {
+        //     if (!img.complete || typeof img.naturalWidth == "undefined" || img.naturalWidth == 0) {
+        //         console.warn('Shop image failed to load:', img.src);
+        //         // Potentially re-set src or add a placeholder
+        //     }
+        // });
     }
 };
 
@@ -775,6 +886,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Small delay to ensure other scripts are loaded
     setTimeout(() => {
         window.TruthEcosystem.initialize();
+        // Call the shop image fix function after initialization
+        window.TruthEcosystem.fixShopImages();
     }, 500);
 });
 
