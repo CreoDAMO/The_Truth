@@ -55,20 +55,35 @@
                 sanitize: (html, options = {}) => {
                     console.warn('Using enhanced security fallback for HTML sanitization');
 
-                    // Remove all script tags and event handlers
-                    let sanitized = html
-                        .replace(/<script\b[^<]*(?:(?!<\/script\s*[^>]*>)[^<]*)*<\/script\s*[^>]*>/gi, '')
-                        .replace(/javascript:|data:|vbscript:/gi, '')
-                        .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '')
-                        .replace(/on\w+\s*=\s*[^>\s]+/gi, '');
+                    let sanitized = html;
+                    let previousLength = 0;
+
+                    // Iteratively remove dangerous content until no more changes occur
+                    while (sanitized.length !== previousLength) {
+                        previousLength = sanitized.length;
+
+                        // Remove script tags iteratively
+                        sanitized = sanitized.replace(/<script\b[^<]*(?:(?!<\/script\s*[^>]*>)[^<]*)*<\/script\s*[^>]*>/gi, '');
+
+                        // Remove dangerous protocols iteratively
+                        sanitized = sanitized.replace(/javascript:|data:|vbscript:/gi, '');
+
+                        // Remove event handlers iteratively
+                        sanitized = sanitized.replace(/on\w+\s*=\s*["'][^"']*["']/gi, '');
+                        sanitized = sanitized.replace(/on\w+\s*=\s*[^>\s]+/gi, '');
+
+                        // Remove other dangerous elements
+                        sanitized = sanitized.replace(/<(iframe|object|embed|form|input|textarea|select|meta|link|style)\b[^>]*>/gi, '');
+                        sanitized = sanitized.replace(/<\/(iframe|object|embed|form|input|textarea|select|meta|link|style)>/gi, '');
+                    }
 
                     // Allow only safe HTML elements and attributes
                     const allowedTags = ['div', 'span', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'strong', 'em', 'br', 'ul', 'ol', 'li', 'a'];
-                    const allowedAttributes = ['class', 'style', 'href', 'target'];
 
-                    // Basic tag filtering (simplified for fallback)
-                    if (options.SAFE_FOR_JQUERY || sanitized.includes('<')) {
-                        // Strip all tags except allowed ones as a safety measure
+                    // Strip all tags except allowed ones iteratively
+                    previousLength = 0;
+                    while (sanitized.length !== previousLength) {
+                        previousLength = sanitized.length;
                         sanitized = sanitized.replace(/<(?!\/?(?:div|span|p|h[1-6]|strong|em|br|ul|ol|li|a)\b)[^>]*>/gi, '');
                     }
 
@@ -1005,7 +1020,7 @@
                         <p style="margin: 10px 0;">• Earn governance tokens (TRUTH)</p>
                         <p style="margin: 10px 0;">• Access creator economy (@jacqueantoinedegraff)</p>
                         <p style="margin: 10px 0;">• Bridge between traditional and sovereign</p>
-                        <a href="https://copper-active-hawk-266.mypinata.cloud/ipfs/bafybeicvdksqen6adtjdtovlojli62qiflgafvxopz7uy4fy6qeshuhgbu" 
+                        <a href="https://copper-active-hawk-266.mypinata.cloud/ipfs/bafybeicvdksqen6adtjdtovlojli62qiflgafvxopz7uy4fy6qeshuhgbu"
                            target="_blank" style="color: #00d4ff; text-decoration: none; font-weight: bold;">
                            📂 View Gateway Repository on IPFS →
                         </a>
@@ -1016,7 +1031,7 @@
                         <p style="margin: 10px 0;">• TU (Trust Units) internal economy</p>
                         <p style="margin: 10px 0;">• Full consciousness computing platform</p>
                         <p style="margin: 10px 0;">• Accessed through HYB COIN doorway</p>
-                        <a href="https://copper-active-hawk-266.mypinata.cloud/ipfs/bafybeifbx5p5xprjqrw5d34vw5bytl77e32lmbgpxp6kbefwsorkydyruy" 
+                        <a href="https://copper-active-hawk-266.mypinata.cloud/ipfs/bafybeifbx5p5xprjqrw5d34vw5bytl77e32lmbgpxp6kbefwsorkydyruy"
                            target="_blank" style="color: #4CAF50; text-decoration: none; font-weight: bold;">
                            🏛️ View Spiral City Repository on IPFS →
                         </a>
@@ -1183,7 +1198,7 @@
                 } catch (error) {
                     console.warn('⚠️ Unified state manager failed to load');
                 }
-                
+
                 try {
                     await loadSingleScript('api-service.js');
                     console.log('✅ API service loaded');
@@ -1219,9 +1234,9 @@
                                     <p style="color: rgba(255,255,255,0.8); margin-bottom: 30px;">
                                         The payments system is loading. This integrates with Stripe and crypto payments.
                                     </p>
-                                    <button onclick="window.location.reload()" 
-                                            style="background: linear-gradient(135deg, #00d4ff, #090979); 
-                                                   color: white; border: none; padding: 12px 24px; 
+                                    <button onclick="window.location.reload()"
+                                            style="background: linear-gradient(135deg, #00d4ff, #090979);
+                                                   color: white; border: none; padding: 12px 24px;
                                                    border-radius: 25px; cursor: pointer; font-weight: 600;">
                                         Reload Payments
                                     </button>
@@ -1331,17 +1346,17 @@
         function showErrorWithRetry(message, retryCallback) {
             const errorDiv = document.createElement('div');
             errorDiv.style.cssText = `
-                position: fixed; top: 20px; right: 20px; background: #ff4444; 
+                position: fixed; top: 20px; right: 20px; background: #ff4444;
                 color: white; padding: 15px; border-radius: 10px; z-index: 10000;
                 max-width: 350px; font-size: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);
             `;
             errorDiv.innerHTML = `
                 <div style="margin-bottom: 10px;">${message}</div>
-                <button onclick="this.parentElement.remove(); (${retryCallback.toString()})()" 
+                <button onclick="this.parentElement.remove(); (${retryCallback.toString()})()"
                         style="background: white; color: #ff4444; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-weight: bold;">
                     Retry
                 </button>
-                <button onclick="this.parentElement.remove()" 
+                <button onclick="this.parentElement.remove()"
                         style="background: transparent; color: white; border: 1px solid white; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-left: 5px;">
                     Close
                 </button>
@@ -1531,15 +1546,15 @@
                 const revenueShare = await window.truthTokens.calculateRevenueShare(1000);
 
                 // Update TRUTH token display
-                document.getElementById('truthBalance').textContent = 
+                document.getElementById('truthBalance').textContent =
                     `${window.truthTokens.formatTokenAmount(power.truthBalance)} TRUTH`;
 
                 document.getElementById('truthPowerBar').style.width = `${power.truthPower}%`;
-                document.getElementById('truthPowerText').textContent = 
+                document.getElementById('truthPowerText').textContent =
                     `${power.truthPower.toFixed(1)}% Voting Power`;
 
                 // Update Creator token display
-                document.getElementById('creatorBalance').textContent = 
+                document.getElementById('creatorBalance').textContent =
                     `${window.truthTokens.formatTokenAmount(power.creatorBalance)} Creator`;
 
                 const accessEl = document.getElementById('accessLevel');
@@ -1548,7 +1563,7 @@
                 // Update access level styling
                 const colorMap = {
                     'Platinum': '#E5E7EB',
-                    'Gold': '#F59E0B', 
+                    'Gold': '#F59E0B',
                     'Silver': '#9CA3AF',
                     'Bronze': '#CD7C2F',
                     'Basic': '#6B7280'
@@ -1558,7 +1573,7 @@
                     accessEl.style.color = colorMap[accessLevel];
                 }
 
-                document.getElementById('revenueAmount').textContent = 
+                document.getElementById('revenueAmount').textContent =
                     `$${revenueShare.totalShare.toFixed(2)}`;
 
                 console.log('Token displays updated successfully');
