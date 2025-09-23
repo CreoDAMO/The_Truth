@@ -83,8 +83,11 @@
 
                         // Remove other dangerous elements
                         // Remove all opening/closing/incomplete fragments of dangerous elements iteratively
-                        sanitized = sanitized.replace(/<\/?(iframe|object|embed|form|input|textarea|select|meta|link|style)\b[^>]*>?/gi, '');
-                    }
+                        let tagPrev;
+                        do {
+                            tagPrev = sanitized;
+                            sanitized = sanitized.replace(/<\/?(iframe|object|embed|form|input|textarea|select|meta|link|style)\b[^>]*>?/gi, '');
+                        } while (sanitized !== tagPrev);
 
                     // Allow only safe HTML elements and attributes
                     const allowedTags = ['div', 'span', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'strong', 'em', 'br', 'ul', 'ol', 'li', 'a'];
