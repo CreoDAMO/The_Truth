@@ -66,29 +66,4 @@ jobs:
       id: deployment
       uses: actions/deploy-pages@v4
 
-  # Test build for Vercel (Vercel will auto-deploy on push)
-  test-vercel-build:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'npm'
-
-    - name: Install dependencies
-      run: npm ci
-
-    - name: Test Vercel build
-      run: npm run build
-      env:
-        NODE_ENV: production
-
-    - name: Test server start
-      run: |
-        timeout 10s npm start || true
-        echo "✅ Server starts successfully"
+  

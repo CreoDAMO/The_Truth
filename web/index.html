@@ -1198,6 +1198,14 @@
                     console.warn('⚠️ Unified dashboard failed to load');
                 }
 
+                // Load static fallbacks for GitHub Pages
+                try {
+                    await loadSingleScript('static-fallbacks.js');
+                    console.log('✅ Static fallbacks loaded for GitHub Pages mode');
+                } catch (error) {
+                    console.warn('⚠️ Static fallbacks not available (normal in dev mode)');
+                }
+
 
                 // Initialize payments page error handler
                 if (window.location.pathname.includes('payments') || window.location.hash.includes('payments')) {

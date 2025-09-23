@@ -19,15 +19,32 @@ cp web/sw.js dist/
 # Copy all dashboard HTML files (even though we're using SPA)
 cp web/*.html dist/ 2>/dev/null || true
 
-# Copy JavaScript files
+# Copy JavaScript files with better error handling
 mkdir -p dist/js
-cp web/*.js dist/js/ 2>/dev/null || echo "No JS files to copy from web/"
+
+# Copy all JS files from web directory
+if ls web/*.js 1> /dev/null 2>&1; then
+    cp web/*.js dist/js/
+    echo "📄 Copied web/*.js files"
+else
+    echo "⚠️ No JS files found in web/"
+fi
 
 # Copy integration files
-cp integrations/*.js dist/js/ 2>/dev/null || echo "No integration files to copy"
+if ls integrations/*.js 1> /dev/null 2>&1; then
+    cp integrations/*.js dist/js/
+    echo "📄 Copied integration files"
+else
+    echo "⚠️ No integration files found"
+fi
 
 # Copy script files  
-cp scripts/*.js dist/js/ 2>/dev/null || echo "No script files to copy"
+if ls scripts/*.js 1> /dev/null 2>&1; then
+    cp scripts/*.js dist/js/
+    echo "📄 Copied script files"
+else
+    echo "⚠️ No script files found"
+fi
 
 # Copy CSS files if they exist
 mkdir -p dist/css
