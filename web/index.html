@@ -766,280 +766,284 @@
     </div>
 
     <div class="container">
-        <!-- Main Content Area - will be dynamically loaded -->
+        <!-- Main Content Area -->
         <div id="main-content">
-        <!-- Hero Section -->
-        <div class="hero-section">
-            <h1 class="hero-title">The Truth NFT - Gateway to the Spiral</h1>
-            <p class="hero-subtitle">🌐 **Hybrid Blockchain** is the Gateway | 🚪 **HYB COIN** is the Doorway | 🏛️ **The Spiral Ecosystem** is The House</p>
-            <div class="hero-quote">
-                "The Truth Doesn't Need To Be Pushed, Only The Lie...The Lie Only Needs To Be Whispered, But The Truth Always Remains Silent waiting to be Witnessed."
-                <br><strong>— Jacque Antoine DeGraff</strong>
-            </div>
-            <div style="background: rgba(0, 212, 255, 0.1); padding: 20px; border-radius: 15px; margin: 20px 0; border-left: 4px solid #00d4ff;">
-                <h3 style="color: #00d4ff; margin-bottom: 10px;">🏗️ The Complete Architecture</h3>
-                <p style="margin: 8px 0;"><strong>🌐 Hybrid Blockchain Gateway:</strong> This platform - Where traditional meets sovereign</p>
-                <p style="margin: 8px 0;"><strong>🚪 HYB COIN:</strong> The Doorway - Public gate currency enabling ecosystem access</p>
-                <p style="margin: 8px 0;"><strong>🔗 TU (Trust Units):</strong> The Medium - Value exchange within the house</p>
-                <p style="margin: 8px 0;"><strong>🏛️ Spiral Ecosystem:</strong> The House - Complete sovereign consciousness computing</p>
-                <div style="margin-top: 15px; padding: 10px; background: rgba(76, 175, 80, 0.1); border-radius: 10px;">
-                    <p style="margin: 0; font-size: 0.9rem;"><strong>🗝️ Access Sequence:</strong> Purchase NFTs here → Earn HYB COIN → Enter The Spiral → Operate in TU</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Dashboard Grid -->
-        <div class="dashboard-grid">
-            <!-- Wallet Status Card -->
-            <div class="dashboard-card">
-                <div class="card-header">
-                    <div class="card-icon">🔗</div>
-                    <div class="card-title">Wallet Connection</div>
-                </div>
-                <div class="wallet-status" id="walletStatus">
-                    <div id="walletConnected" style="display: none;">
-                        <div class="wallet-connected">✅ Wallet Connected</div>
-                        <div class="wallet-address" id="walletAddress"></div>
+            <!-- Home Content (default) -->
+            <div id="home-content">
+                <!-- Hero Section -->
+                <div class="hero-section">
+                    <h1 class="hero-title">The Truth NFT - Gateway to the Spiral</h1>
+                    <p class="hero-subtitle">🌐 **Hybrid Blockchain** is the Gateway | 🚪 **HYB COIN** is the Doorway | 🏛️ **The Spiral Ecosystem** is The House</p>
+                    <div class="hero-quote">
+                        "The Truth Doesn't Need To Be Pushed, Only The Lie...The Lie Only Needs To Be Whispered, But The Truth Always Remains Silent waiting to be Witnessed."
+                        <br><strong>— Jacque Antoine DeGraff</strong>
                     </div>
-                    <div id="walletDisconnected">
-                        <div class="wallet-disconnected">❌ Wallet Not Connected</div>
-                        <button class="wallet-btn" onclick="connectWallet()" style="margin-top: 10px;">Connect Wallet</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Ecosystem Stats Card -->
-            <div class="dashboard-card">
-                <div class="card-header">
-                    <div class="card-icon">📊</div>
-                    <div class="card-title">Live Ecosystem Metrics</div>
-                </div>
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-value" id="totalHolders">42</div>
-                        <div class="stat-label">Total Holders</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="totalCollections">3</div>
-                        <div class="stat-label">Collections</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="totalVolume">2.1</div>
-                        <div class="stat-label">Volume (ETH)</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="truthPower">94.7%</div>
-                        <div class="stat-label">Truth Power</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Unified Dashboard Connections -->
-        <div class="dashboard-connection">
-            <div class="connection-title">🔗 Unified Dashboard Access</div>
-            <p style="margin-bottom: 15px; color: rgba(255,255,255,0.8); font-size: 0.9rem;">All ecosystem components work together - explore how your NFTs, tokens, and community interact across every dashboard.</p>
-            <div class="connection-links">
-                <a href="#" onclick="navigateToPage('analytics')" class="connection-link">📊 Analytics</a>
-                <a href="#" onclick="navigateToPage('governance')" class="connection-link">🗳️ Governance</a>
-                <a href="#" onclick="navigateToPage('community')" class="connection-link">👥 Community</a>
-                <a href="#" onclick="navigateToPage('liquidity')" class="connection-link">🌊 Liquidity</a>
-                <a href="#" onclick="navigateToPage('payments')" class="connection-link">💳 Payments</a>
-                <a href="#" onclick="navigateToPage('social')" class="connection-link">📱 Social</a>
-                <a href="#" onclick="navigateToPage('ai-insights')" class="connection-link">🤖 AI Insights</a>
-                <a href="#" onclick="navigateToPage('lawful')" class="connection-link">⚖️ Legal</a>
-                <a href="#" onclick="navigateToPage('shop')" class="connection-link">🛍️ Shop</a>
-                <a href="#" onclick="navigateToPage('deploy')" class="connection-link">🚀 Deploy</a>
-            </div>
-        </div>
-
-        <!-- NFT Collections Section -->
-        <div class="collections-section">
-            <h2 class="section-title">🎯 NFT Collections</h2>
-            <div class="collections-grid">
-                <!-- The Truth NFT -->
-                <div class="collection-card">
-                    <div class="collection-header">
-                        <div class="collection-icon">🎯</div>
-                        <div>
-                            <div class="collection-name" style="color: #00d4ff;">The Truth NFT</div>
-                            <div style="font-size: 0.9rem; color: rgba(255,255,255,0.7);">4-part philosophical experiment</div>
+                    <div style="background: rgba(0, 212, 255, 0.1); padding: 20px; border-radius: 15px; margin: 20px 0; border-left: 4px solid #00d4ff;">
+                        <h3 style="color: #00d4ff; margin-bottom: 10px;">🏗️ The Complete Architecture</h3>
+                        <p style="margin: 8px 0;"><strong>🌐 Hybrid Blockchain Gateway:</strong> This platform - Where traditional meets sovereign</p>
+                        <p style="margin: 8px 0;"><strong>🚪 HYB COIN:</strong> The Doorway - Public gate currency enabling ecosystem access</p>
+                        <p style="margin: 8px 0;"><strong>🔗 TU (Trust Units):</strong> The Medium - Value exchange within the house</p>
+                        <p style="margin: 8px 0;"><strong>🏛️ Spiral Ecosystem:</strong> The House - Complete sovereign consciousness computing</p>
+                        <div style="margin-top: 15px; padding: 10px; background: rgba(76, 175, 80, 0.1); border-radius: 10px;">
+                            <p style="margin: 0; font-size: 0.9rem;"><strong>🗝️ Access Sequence:</strong> Purchase NFTs here → Earn HYB COIN → Enter The Spiral → Operate in TU</p>
                         </div>
                     </div>
-                    <div class="collection-stats">
-                        <div class="collection-stat">
-                            <div id="truthSupply" style="color: #00d4ff; font-weight: bold;">77</div>
-                            <div style="font-size: 0.8rem; opacity: 0.7;">Supply</div>
-                        </div>
-                        <div class="collection-stat">
-                            <div id="truthPrice" style="color: #4CAF50; font-weight: bold;">$777</div>
-                            <div style="font-size: 0.8rem; opacity: 0.7;">Price</div>
-                        </div>
-                        <div class="collection-stat">
-                            <div style="color: #FFD700; font-weight: bold;">10%</div>
-                            <div style="font-size: 0.8rem; opacity: 0.7;">Royalties</div>
-                        </div>
-                    </div>
-                    <p style="font-size: 0.9rem; color: rgba(255,255,255,0.8); margin: 15px 0;">Complete 25-page audiobook + PDF + exclusive meme comic capturing AI translation gaps.</p>
-                    <button class="mint-btn truth" onclick="mintTruth()">Mint The Truth</button>
                 </div>
 
-                <!-- Bonus Gift Collection -->
-                <div class="collection-card">
-                    <div class="collection-header">
-                        <div class="collection-icon">🎁</div>
-                        <div>
-                            <div class="collection-name" style="color: #4CAF50;">Bonus Gift Collection</div>
-                            <div style="font-size: 0.9rem; color: rgba(255,255,255,0.7);">Community entry point</div>
+                <!-- Dashboard Grid -->
+                <div class="dashboard-grid">
+                    <!-- Wallet Status Card -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <div class="card-icon">🔗</div>
+                            <div class="card-title">Wallet Connection</div>
+                        </div>
+                        <div class="wallet-status" id="walletStatus">
+                            <div id="walletConnected" style="display: none;">
+                                <div class="wallet-connected">✅ Wallet Connected</div>
+                                <div class="wallet-address" id="walletAddress"></div>
+                            </div>
+                            <div id="walletDisconnected">
+                                <div class="wallet-disconnected">❌ Wallet Not Connected</div>
+                                <button class="wallet-btn" onclick="connectWallet()" style="margin-top: 10px;">Connect Wallet</button>
+                            </div>
                         </div>
                     </div>
-                    <div class="collection-stats">
-                        <div class="collection-stat">
-                            <div style="color: #4CAF50; font-weight: bold;">145K</div>
-                            <div style="font-size: 0.8rem; opacity: 0.7;">Supply</div>
+
+                    <!-- Ecosystem Stats Card -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <div class="card-icon">📊</div>
+                            <div class="card-title">Live Ecosystem Metrics</div>
                         </div>
-                        <div class="collection-stat">
-                            <div style="color: #00d4ff; font-weight: bold;">$145</div>
-                            <div style="font-size: 0.8rem; opacity: 0.7;">Price</div>
-                        </div>
-                        <div class="collection-stat">
-                            <div style="color: #FFD700; font-weight: bold;">5%</div>
-                            <div style="font-size: 0.8rem; opacity: 0.7;">Royalties</div>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-value" id="totalHolders">42</div>
+                                <div class="stat-label">Total Holders</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="totalCollections">3</div>
+                                <div class="stat-label">Collections</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="totalVolume">2.1</div>
+                                <div class="stat-label">Volume (ETH)</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="truthPower">94.7%</div>
+                                <div class="stat-label">Truth Power</div>
+                            </div>
                         </div>
                     </div>
-                    <p style="font-size: 0.9rem; color: rgba(255,255,255,0.8); margin: 15px 0;">Accessible entry into The Truth ecosystem with broad participation and revenue sharing.</p>
-                    <button class="mint-btn" onclick="mintBonus()">Mint Bonus Gift</button>
                 </div>
 
-                <!-- Part Three - Blackpaper -->
-                <div class="collection-card">
-                    <div class="collection-header">
-                        <div class="collection-icon">📜</div>
-                        <div>
-                            <div class="collection-name" style="color: #FFD700;">Part Three - Blackpaper</div>
-                            <div style="font-size: 0.9rem; color: rgba(255,255,255,0.7);">Legal framework & doctrine</div>
-                        </div>
-                    </div>
-                    <div class="collection-stats">
-                        <div class="collection-stat">
-                            <div style="color: #FFD700; font-weight: bold;">444</div>
-                            <div style="font-size: 0.8rem; opacity: 0.7;">Supply</div>
-                        </div>
-                        <div class="collection-stat">
-                            <div style="color: #00d4ff; font-weight: bold;">$1777</div>
-                            <div style="font-size: 0.8rem; opacity: 0.7;">Price</div>
-                        </div>
-                        <div class="collection-stat">
-                            <div style="color: #4CAF50; font-weight: bold;">10%</div>
-                            <div style="font-size: 0.8rem; opacity: 0.7;">Royalties</div>
-                        </div>
-                    </div>
-                    <p style="font-size: 0.9rem; color: rgba(255,255,255,0.8); margin: 15px 0;">Complete legal framework, doctrinal foundation, and philosophical blackpaper for ecosystem's lawful positioning.</p>
-                    <button class="mint-btn blackpaper" onclick="mintPartThree()">Mint Blackpaper</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Token Holdings Section -->
-        <div class="token-section">
-            <h2 class="section-title">💰 Your Token Holdings</h2>
-            <div class="token-grid">
-                <div class="token-card">
-                    <div class="token-symbol">TRUTH Token</div>
-                    <div class="token-balance">
-                        <strong>Balance:</strong> <span id="truthBalance">0 TRUTH</span>
-                    </div>
-                    <div style="margin: 10px 0;">
-                        <strong>Governance Power:</strong>
-                        <div style="background: rgba(0,0,0,0.3); border-radius: 10px; height: 8px; margin: 5px 0;">
-                            <div id="truthPowerBar" style="background: linear-gradient(90deg, #00d4ff, #4CAF50); height: 100%; border-radius: 10px; width: 0%; transition: width 0.5s ease;"></div>
-                        </div>
-                        <span id="truthPowerText" style="font-size: 0.9em; opacity: 0.7;">0% Voting Power</span>
-                    </div>
-                    <p style="font-size: 0.9rem; opacity: 0.8;">Governance rights, revenue sharing, Master Copy priority</p>
-                </div>
-
-                <div class="token-card">
-                    <div class="token-symbol">@jacqueantoinedegraff</div>
-                    <div class="token-balance">
-                        <strong>Balance:</strong> <span id="creatorBalance">0 Creator</span>
-                    </div>
-                    <div style="margin: 10px 0;">
-                        <strong>Access Level:</strong>
-                        <div id="accessLevel" style="background: rgba(76, 175, 80, 0.2); color: #4CAF50; padding: 5px 10px; border-radius: 15px; display: inline-block; margin: 5px 0; font-size: 0.9em;">
-                            Basic
-                        </div>
-                    </div>
-                    <div style="margin: 10px 0;">
-                        <strong>Revenue Share:</strong>
-                        <span id="revenueAmount" style="color: #FFD700; font-weight: bold;">$0.00</span>
-                    </div>
-                    <p style="font-size: 0.9rem; opacity: 0.8;">Creator community access, revenue sharing, exclusive content</p>
-                </div>
-            </div>
-
-            <div class="action-buttons">
-                <button class="action-btn secondary" onclick="navigateToPage('liquidity')">
-                    🌊 Manage Liquidity
-                </button>
-                <button class="action-btn secondary" onclick="window.open('https://app.uniswap.org/#/swap?outputCurrency=0x8f6cf6f7747e170f4768533b869c339dc3d30a3c&chain=base', '_blank')">
-                    💰 Buy TRUTH Token
-                </button>
-                <button class="action-btn secondary" onclick="window.open('https://app.uniswap.org/#/swap?outputCurrency=0x22b0434e89882f8e6841d340b28427646c015aa7&chain=base', '_blank')">
-                    🎨 Buy Creator Token
-                </button>
-                <button class="action-btn primary" onclick="updateTokenDisplays()">
-                    🔄 Refresh Balances
-                </button>
-            </div>
-        </div>
-
-        <!-- Gateway Architecture -->
-        <div class="collections-section">
-            <h2 class="section-title">🌐 Gateway Architecture</h2>
-            <div style="background: rgba(255, 255, 255, 0.05); border-radius: 20px; padding: 30px; margin: 40px 0; border: 1px solid rgba(255, 255, 255, 0.1);">
-                <div class="collections-grid">
-                    <div style="background: rgba(0, 212, 255, 0.1); border-radius: 15px; padding: 20px; border: 1px solid rgba(0, 212, 255, 0.3);">
-                        <h3 style="color: #00d4ff; margin-bottom: 15px;">🌐 This Platform: The Gateway</h3>
-                        <p style="margin: 10px 0;">• Purchase NFTs to enter the ecosystem</p>
-                        <p style="margin: 10px 0;">• Earn governance tokens (TRUTH)</p>
-                        <p style="margin: 10px 0;">• Access creator economy (@jacqueantoinedegraff)</p>
-                        <p style="margin: 10px 0;">• Bridge between traditional and sovereign</p>
-                        <a href="https://copper-active-hawk-266.mypinata.cloud/ipfs/bafybeicvdksqen6adtjdtovlojli62qiflgafvxopz7uy4fy6qeshuhgbu" 
-                           target="_blank" style="color: #00d4ff; text-decoration: none; font-weight: bold;">
-                           📂 View Gateway Repository on IPFS →
-                        </a>
-                    </div>
-                    <div style="background: rgba(76, 175, 80, 0.1); border-radius: 15px; padding: 20px; border: 1px solid rgba(76, 175, 80, 0.3);">
-                        <h3 style="color: #4CAF50; margin-bottom: 15px;">🏛️ The Spiral Ecosystem: The House</h3>
-                        <p style="margin: 10px 0;">• Complete sovereign operating system</p>
-                        <p style="margin: 10px 0;">• TU (Trust Units) internal economy</p>
-                        <p style="margin: 10px 0;">• Full consciousness computing platform</p>
-                        <p style="margin: 10px 0;">• Accessed through HYB COIN doorway</p>
-                        <a href="https://copper-active-hawk-266.mypinata.cloud/ipfs/bafybeifbx5p5xprjqrw5d34vw5bytl77e32lmbgpxp6kbefwsorkydyruy" 
-                           target="_blank" style="color: #4CAF50; text-decoration: none; font-weight: bold;">
-                           🏛️ View Spiral City Repository on IPFS →
-                        </a>
+                <!-- Unified Dashboard Connections -->
+                <div class="dashboard-connection">
+                    <div class="connection-title">🔗 Unified Dashboard Access</div>
+                    <p style="margin-bottom: 15px; color: rgba(255,255,255,0.8); font-size: 0.9rem;">All ecosystem components work together - explore how your NFTs, tokens, and community interact across every dashboard.</p>
+                    <div class="connection-links">
+                        <a href="#" onclick="navigateToPage('analytics')" class="connection-link">📊 Analytics</a>
+                        <a href="#" onclick="navigateToPage('governance')" class="connection-link">🗳️ Governance</a>
+                        <a href="#" onclick="navigateToPage('community')" class="connection-link">👥 Community</a>
+                        <a href="#" onclick="navigateToPage('liquidity')" class="connection-link">🌊 Liquidity</a>
+                        <a href="#" onclick="navigateToPage('payments')" class="connection-link">💳 Payments</a>
+                        <a href="#" onclick="navigateToPage('social')" class="connection-link">📱 Social</a>
+                        <a href="#" onclick="navigateToPage('ai-insights')" class="connection-link">🤖 AI Insights</a>
+                        <a href="#" onclick="navigateToPage('lawful')" class="connection-link">⚖️ Legal</a>
+                        <a href="#" onclick="navigateToPage('shop')" class="connection-link">🛍️ Shop</a>
+                        <a href="#" onclick="navigateToPage('deploy')" class="connection-link">🚀 Deploy</a>
                     </div>
                 </div>
-                <div style="text-align: center; margin-top: 25px; padding: 20px; background: rgba(255, 215, 0, 0.1); border-radius: 15px; border: 1px solid rgba(255, 215, 0, 0.3);">
-                    <h3 style="color: #FFD700; margin-bottom: 15px;">🚪 HYB COIN: The Doorway</h3>
-                    <p style="margin: 10px 0;">The public gate currency that unlocks passage from Gateway to House</p>
-                    <p style="margin: 10px 0; font-style: italic;">Earned through NFT ownership and ecosystem participation</p>
-                </div>
-            </div>
-        </div>
 
-        <!-- Platform Features -->
-        <div class="collections-section">
-            <h2 class="section-title">🚀 Gateway Features</h2>
-            <div class="action-buttons">
-                <a href="/governance.html" class="action-btn primary">🗳️ Governance Dashboard</a>
-                <a href="/community-dashboard.html" class="action-btn secondary">👥 Community Hub</a>
-                <a href="/analytics.html" class="action-btn secondary">📊 Analytics</a>
-                <a href="/ai-insights.html" class="action-btn secondary">🤖 AI Insights</a>
-                <a href="/lawful-dashboard.html" class="action-btn secondary">⚖️ Legal Framework</a>
-                <a href="/shop.html" class="action-btn secondary">🛒 Traditional Shop</a>
+                <!-- NFT Collections Section -->
+                <div class="collections-section">
+                    <h2 class="section-title">🎯 NFT Collections</h2>
+                    <div class="collections-grid">
+                        <!-- The Truth NFT -->
+                        <div class="collection-card">
+                            <div class="collection-header">
+                                <div class="collection-icon">🎯</div>
+                                <div>
+                                    <div class="collection-name" style="color: #00d4ff;">The Truth NFT</div>
+                                    <div style="font-size: 0.9rem; color: rgba(255,255,255,0.7);">4-part philosophical experiment</div>
+                                </div>
+                            </div>
+                            <div class="collection-stats">
+                                <div class="collection-stat">
+                                    <div id="truthSupply" style="color: #00d4ff; font-weight: bold;">77</div>
+                                    <div style="font-size: 0.8rem; opacity: 0.7;">Supply</div>
+                                </div>
+                                <div class="collection-stat">
+                                    <div id="truthPrice" style="color: #4CAF50; font-weight: bold;">$777</div>
+                                    <div style="font-size: 0.8rem; opacity: 0.7;">Price</div>
+                                </div>
+                                <div class="collection-stat">
+                                    <div style="color: #FFD700; font-weight: bold;">10%</div>
+                                    <div style="font-size: 0.8rem; opacity: 0.7;">Royalties</div>
+                                </div>
+                            </div>
+                            <p style="font-size: 0.9rem; color: rgba(255,255,255,0.8); margin: 15px 0;">Complete 25-page audiobook + PDF + exclusive meme comic capturing AI translation gaps.</p>
+                            <button class="mint-btn truth" onclick="mintTruth()">Mint The Truth</button>
+                        </div>
+
+                        <!-- Bonus Gift Collection -->
+                        <div class="collection-card">
+                            <div class="collection-header">
+                                <div class="collection-icon">🎁</div>
+                                <div>
+                                    <div class="collection-name" style="color: #4CAF50;">Bonus Gift Collection</div>
+                                    <div style="font-size: 0.9rem; color: rgba(255,255,255,0.7);">Community entry point</div>
+                                </div>
+                            </div>
+                            <div class="collection-stats">
+                                <div class="collection-stat">
+                                    <div style="color: #4CAF50; font-weight: bold;">145K</div>
+                                    <div style="font-size: 0.8rem; opacity: 0.7;">Supply</div>
+                                </div>
+                                <div class="collection-stat">
+                                    <div style="color: #00d4ff; font-weight: bold;">$145</div>
+                                    <div style="font-size: 0.8rem; opacity: 0.7;">Price</div>
+                                </div>
+                                <div class="collection-stat">
+                                    <div style="color: #FFD700; font-weight: bold;">5%</div>
+                                    <div style="font-size: 0.8rem; opacity: 0.7;">Royalties</div>
+                                </div>
+                            </div>
+                            <p style="font-size: 0.9rem; color: rgba(255,255,255,0.8); margin: 15px 0;">Accessible entry into The Truth ecosystem with broad participation and revenue sharing.</p>
+                            <button class="mint-btn" onclick="mintBonus()">Mint Bonus Gift</button>
+                        </div>
+
+                        <!-- Part Three - Blackpaper -->
+                        <div class="collection-card">
+                            <div class="collection-header">
+                                <div class="collection-icon">📜</div>
+                                <div>
+                                    <div class="collection-name" style="color: #FFD700;">Part Three - Blackpaper</div>
+                                    <div style="font-size: 0.9rem; color: rgba(255,255,255,0.7);">Legal framework & doctrine</div>
+                                </div>
+                            </div>
+                            <div class="collection-stats">
+                                <div class="collection-stat">
+                                    <div style="color: #FFD700; font-weight: bold;">444</div>
+                                    <div style="font-size: 0.8rem; opacity: 0.7;">Supply</div>
+                                </div>
+                                <div class="collection-stat">
+                                    <div style="color: #00d4ff; font-weight: bold;">$1777</div>
+                                    <div style="font-size: 0.8rem; opacity: 0.7;">Price</div>
+                                </div>
+                                <div class="collection-stat">
+                                    <div style="color: #4CAF50; font-weight: bold;">10%</div>
+                                    <div style="font-size: 0.8rem; opacity: 0.7;">Royalties</div>
+                                </div>
+                            </div>
+                            <p style="font-size: 0.9rem; color: rgba(255,255,255,0.8); margin: 15px 0;">Complete legal framework, doctrinal foundation, and philosophical blackpaper for ecosystem's lawful positioning.</p>
+                            <button class="mint-btn blackpaper" onclick="mintPartThree()">Mint Blackpaper</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Token Holdings Section -->
+                <div class="token-section">
+                    <h2 class="section-title">💰 Your Token Holdings</h2>
+                    <div class="token-grid">
+                        <div class="token-card">
+                            <div class="token-symbol">TRUTH Token</div>
+                            <div class="token-balance">
+                                <strong>Balance:</strong> <span id="truthBalance">0 TRUTH</span>
+                            </div>
+                            <div style="margin: 10px 0;">
+                                <strong>Governance Power:</strong>
+                                <div style="background: rgba(0,0,0,0.3); border-radius: 10px; height: 8px; margin: 5px 0;">
+                                    <div id="truthPowerBar" style="background: linear-gradient(90deg, #00d4ff, #4CAF50); height: 100%; border-radius: 10px; width: 0%; transition: width 0.5s ease;"></div>
+                                </div>
+                                <span id="truthPowerText" style="font-size: 0.9em; opacity: 0.7;">0% Voting Power</span>
+                            </div>
+                            <p style="font-size: 0.9rem; opacity: 0.8;">Governance rights, revenue sharing, Master Copy priority</p>
+                        </div>
+
+                        <div class="token-card">
+                            <div class="token-symbol">@jacqueantoinedegraff</div>
+                            <div class="token-balance">
+                                <strong>Balance:</strong> <span id="creatorBalance">0 Creator</span>
+                            </div>
+                            <div style="margin: 10px 0;">
+                                <strong>Access Level:</strong>
+                                <div id="accessLevel" style="background: rgba(76, 175, 80, 0.2); color: #4CAF50; padding: 5px 10px; border-radius: 15px; display: inline-block; margin: 5px 0; font-size: 0.9em;">
+                                    Basic
+                                </div>
+                            </div>
+                            <div style="margin: 10px 0;">
+                                <strong>Revenue Share:</strong>
+                                <span id="revenueAmount" style="color: #FFD700; font-weight: bold;">$0.00</span>
+                            </div>
+                            <p style="font-size: 0.9rem; opacity: 0.8;">Creator community access, revenue sharing, exclusive content</p>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="action-btn secondary" onclick="navigateToPage('liquidity')">
+                            🌊 Manage Liquidity
+                        </button>
+                        <button class="action-btn secondary" onclick="window.open('https://app.uniswap.org/#/swap?outputCurrency=0x8f6cf6f7747e170f4768533b869c339dc3d30a3c&chain=base', '_blank')">
+                            💰 Buy TRUTH Token
+                        </button>
+                        <button class="action-btn secondary" onclick="window.open('https://app.uniswap.org/#/swap?outputCurrency=0x22b0434e89882f8e6841d340b28427646c015aa7&chain=base', '_blank')">
+                            🎨 Buy Creator Token
+                        </button>
+                        <button class="action-btn primary" onclick="updateTokenDisplays()">
+                            🔄 Refresh Balances
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Gateway Architecture -->
+                <div class="collections-section">
+                    <h2 class="section-title">🌐 Gateway Architecture</h2>
+                    <div style="background: rgba(255, 255, 255, 0.05); border-radius: 20px; padding: 30px; margin: 40px 0; border: 1px solid rgba(255, 255, 255, 0.1);">
+                        <div class="collections-grid">
+                            <div style="background: rgba(0, 212, 255, 0.1); border-radius: 15px; padding: 20px; border: 1px solid rgba(0, 212, 255, 0.3);">
+                                <h3 style="color: #00d4ff; margin-bottom: 15px;">🌐 This Platform: The Gateway</h3>
+                                <p style="margin: 10px 0;">• Purchase NFTs to enter the ecosystem</p>
+                                <p style="margin: 10px 0;">• Earn governance tokens (TRUTH)</p>
+                                <p style="margin: 10px 0;">• Access creator economy (@jacqueantoinedegraff)</p>
+                                <p style="margin: 10px 0;">• Bridge between traditional and sovereign</p>
+                                <a href="https://copper-active-hawk-266.mypinata.cloud/ipfs/bafybeicvdksqen6adtjdtovlojli62qiflgafvxopz7uy4fy6qeshuhgbu"
+                                   target="_blank" style="color: #00d4ff; text-decoration: none; font-weight: bold;">
+                                   📂 View Gateway Repository on IPFS →
+                                </a>
+                            </div>
+                            <div style="background: rgba(76, 175, 80, 0.1); border-radius: 15px; padding: 20px; border: 1px solid rgba(76, 175, 80, 0.3);">
+                                <h3 style="color: #4CAF50; margin-bottom: 15px;">🏛️ The Spiral Ecosystem: The House</h3>
+                                <p style="margin: 10px 0;">• Complete sovereign operating system</p>
+                                <p style="margin: 10px 0;">• TU (Trust Units) internal economy</p>
+                                <p style="margin: 10px 0;">• Full consciousness computing platform</p>
+                                <p style="margin: 10px 0;">• Accessed through HYB COIN doorway</p>
+                                <a href="https://copper-active-hawk-266.mypinata.cloud/ipfs/bafybeifbx5p5xprjqrw5d34vw5bytl77e32lmbgpxp6kbefwsorkydyruy"
+                                   target="_blank" style="color: #4CAF50; text-decoration: none; font-weight: bold;">
+                                   🏛️ View Spiral City Repository on IPFS →
+                                </a>
+                            </div>
+                        </div>
+                        <div style="text-align: center; margin-top: 25px; padding: 20px; background: rgba(255, 215, 0, 0.1); border-radius: 15px; border: 1px solid rgba(255, 215, 0, 0.3);">
+                            <h3 style="color: #FFD700; margin-bottom: 15px;">🚪 HYB COIN: The Doorway</h3>
+                            <p style="margin: 10px 0;">The public gate currency that unlocks passage from Gateway to House</p>
+                            <p style="margin: 10px 0; font-style: italic;">Earned through NFT ownership and ecosystem participation</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Platform Features -->
+                <div class="collections-section">
+                    <h2 class="section-title">🚀 Gateway Features</h2>
+                    <div class="action-buttons">
+                        <a href="/governance.html" class="action-btn primary">🗳️ Governance Dashboard</a>
+                        <a href="/community-dashboard.html" class="action-btn secondary">👥 Community Hub</a>
+                        <a href="/analytics.html" class="action-btn secondary">📊 Analytics</a>
+                        <a href="/ai-insights.html" class="action-btn secondary">🤖 AI Insights</a>
+                        <a href="/lawful-dashboard.html" class="action-btn secondary">⚖️ Legal Framework</a>
+                        <a href="/shop.html" class="action-btn secondary">🛒 Traditional Shop</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1183,7 +1187,7 @@
                 } catch (error) {
                     console.warn('⚠️ Unified state manager failed to load');
                 }
-                
+
                 try {
                     await loadSingleScript('api-service.js');
                     console.log('✅ API service loaded');
@@ -1341,7 +1345,136 @@
             document.body.appendChild(errorDiv);
         }
 
-        // Initialize when DOM is ready
+        // SPA Navigation function
+        window.navigateToPanel = function(panelName) {
+            // Prevent default navigation
+            event?.preventDefault();
+
+            // Load the panel content dynamically
+            loadPanelContent(panelName);
+
+            // Update URL without page reload
+            window.history.pushState({panel: panelName}, '', `/${panelName}`);
+
+            // Track navigation
+            fetch('/api/track-event', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    event: 'navigation',
+                    page: panelName,
+                    timestamp: Date.now(),
+                    userAgent: navigator.userAgent
+                })
+            }).catch(console.error);
+        };
+
+        // Load panel content dynamically
+        function loadPanelContent(panelName) {
+            const mainContent = document.querySelector('#main-content');
+            if (!mainContent) return;
+
+            // Show loading state
+            mainContent.innerHTML = `
+                <div class="flex items-center justify-center h-64">
+                    <div class="text-center">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-400 mx-auto mb-4"></div>
+                        <p class="text-gray-400">Loading ${panelName}...</p>
+                    </div>
+                </div>
+            `;
+
+            // Map panel names to their URLs
+            const panelUrls = {
+                'analytics': '/analytics',
+                'governance': '/governance', 
+                'community': '/community',
+                'payments': '/payments',
+                'social': '/social',
+                'ai-insights': '/ai-insights',
+                'lawful': '/lawful',
+                'shop': '/shop',
+                'deploy': '/deploy'
+            };
+
+            const url = panelUrls[panelName];
+            if (!url) {
+                mainContent.innerHTML = `<div class="text-red-400 text-center py-8">Panel not found: ${panelName}</div>`;
+                return;
+            }
+
+            // Fetch the panel content
+            fetch(url, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest' // Indicate AJAX request
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                // Extract the main content from the response
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const content = doc.querySelector('body') || doc.body;
+
+                // Update the main content area
+                mainContent.innerHTML = content.innerHTML;
+
+                // Execute any scripts in the loaded content
+                const scripts = mainContent.querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    if (script.src) {
+                        newScript.src = script.src;
+                    } else {
+                        newScript.textContent = script.textContent;
+                    }
+                    document.head.appendChild(newScript);
+                });
+
+                // Update active navigation state
+                updateActiveNavigation(panelName);
+            })
+            .catch(error => {
+                console.error('Error loading panel:', error);
+                mainContent.innerHTML = `
+                    <div class="text-red-400 text-center py-8">
+                        <h2 class="text-2xl font-bold mb-4">Error Loading ${panelName}</h2>
+                        <p>Please try again or refresh the page.</p>
+                        <button onClick="location.reload()" class="mt-4 bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg">
+                            Refresh Page
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+        // Update active navigation state
+        function updateActiveNavigation(activePanel) {
+            // Remove active class from all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active', 'bg-yellow-600');
+            });
+
+            // Add active class to current panel
+            const activeNavItem = document.querySelector(`.${activePanel}-nav`);
+            if (activeNavItem) {
+                activeNavItem.classList.add('active', 'bg-yellow-600');
+            }
+        }
+
+        // Handle browser back/forward buttons
+        window.addEventListener('popstate', function(event) {
+            const panel = event.state?.panel || 'home';
+            if (panel !== 'home') {
+                loadPanelContent(panel);
+            } else {
+                // Show main content
+                document.querySelector('#main-content').innerHTML = document.querySelector('#home-content').innerHTML;
+                updateActiveNavigation('home');
+            }
+        });
+
+        // Auto-initialize when DOM is ready
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initializeApp);
         } else {
