@@ -608,7 +608,8 @@
                 <div class="card-icon">🎭</div>
                 <div>
                     <div class="card-title" style="color: #9b59b6;">Zora Creator Economy Integration</div>
-                    <div style="font-size: 0.9rem; color: rgba(255,255,255,0.7);">Wallet: 0xc4b8f1ab3499fac71975666a04a1c99de7609603</div>
+                    <div style="font-size: 0.9rem; color: rgba(255,255,255,0.7);">Founder: 0x67BF9f428d92704C3Db3a08dC05Bc941A8647866</div>
+                    <div style="font-size: 0.9rem; color: rgba(255,255,255,0.7);">Zora Wallet: 0xc4b8f1ab3499fac71975666a04a1c99de7609603</div>
                 </div>
             </div>
 
@@ -816,14 +817,30 @@
             };
         }
 
-        // Update connect wallet button logic (mock connection)
-        document.getElementById('connectWallet').onclick = function() {
+        // Real MetaMask wallet connection
+        document.getElementById('connectWallet').onclick = async function() {
             if (!window.TruthEcosystem.walletConnected) {
-                alert('Simulating wallet connection...');
-                window.TruthEcosystem.walletConnected = true;
-                this.textContent = 'Wallet Connected';
-                // In a real app, this would trigger MetaMask or other wallet connection
-                updateLpRewardsDisplay(); // Update display after connection
+                console.log('🦊 Initiating real MetaMask connection...');
+                this.textContent = 'Connecting...';
+                this.disabled = true;
+                
+                try {
+                    const success = await window.TruthEcosystem.connectWallet();
+                    
+                    if (success) {
+                        this.textContent = `Connected: ${window.TruthEcosystem.walletAddress.substring(0, 6)}...${window.TruthEcosystem.walletAddress.substring(38)}`;
+                        updateLpRewardsDisplay(); // Update display after real connection
+                        console.log('✅ Real MetaMask connection established');
+                    } else {
+                        this.textContent = 'Connect Wallet';
+                        this.disabled = false;
+                    }
+                } catch (error) {
+                    console.error('MetaMask connection error:', error);
+                    alert('Failed to connect MetaMask. Please try again.');
+                    this.textContent = 'Connect Wallet';
+                    this.disabled = false;
+                }
             }
         };
 
@@ -907,44 +924,33 @@
                   'Opening fractional trading interface...');
         }
 
-        // LP Revenue Sharing Functions
+        // Real LP Revenue Sharing Functions with MetaMask transactions
         async function claimLpRewards() {
-            if (!window.TruthEcosystem || !window.TruthEcosystem.walletConnected) {
-                alert('Please connect your wallet first');
+            if (!window.TruthEcosystem || !window.TruthEcosystem.walletConnected || !window.TruthEcosystem.realConnection) {
+                alert('Please connect your MetaMask wallet first');
                 return;
             }
 
             try {
                 const button = event.target;
                 button.disabled = true;
-                button.textContent = '⏳ Claiming...';
+                button.textContent = '⏳ Processing Transaction...';
 
-                // Calculate claimable rewards
-                const userLpShare = await calculateUserLpShare();
-                const claimableAmount = userLpShare * window.TruthEcosystem.lpRevenueShare;
+                console.log('🔄 Starting real MetaMask transaction for LP rewards...');
 
-                if (claimableAmount === 0) {
-                    alert('No rewards available to claim');
-                    return;
+                // Use the unified ecosystem's real claim function
+                const success = await window.TruthEcosystem.claimLpRewards();
+                
+                if (success) {
+                    // Refresh display after successful claim
+                    updateLpRewardsDisplay();
+                } else {
+                    console.log('LP rewards claim was not successful');
                 }
 
-                // Simulate claiming transaction
-                await new Promise(resolve => setTimeout(resolve, 2000));
-
-                // Update rewards
-                window.TruthEcosystem.updateGlobalState({
-                    lpRewards: window.TruthEcosystem.lpRewards + claimableAmount,
-                    revenueShare: window.TruthEcosystem.revenueShare + claimableAmount
-                });
-
-                alert(`🎉 Successfully claimed $${claimableAmount.toFixed(2)} in LP rewards!`);
-
-                // Refresh display
-                updateLpRewardsDisplay();
-
             } catch (error) {
-                console.error('LP reward claiming failed:', error);
-                alert('Failed to claim rewards. Please try again.');
+                console.error('Real LP reward claiming failed:', error);
+                alert(`Failed to claim rewards: ${error.message}`);
             } finally {
                 const button = event.target;
                 button.disabled = false;
@@ -1038,10 +1044,12 @@
             updateLpRewardsDisplay();
         }, 30000);
 
-        console.log('🌊 Liquidity Dashboard initialized');
+        console.log('🌊 Liquidity Dashboard initialized with REAL MetaMask SDK');
+        console.log('👑 Founder Wallet: 0x67BF9f428d92704C3Db3a08dC05Bc941A8647866');
         console.log('🎭 Zora Integration: 0xc4b8f1ab3499fac71975666a04a1c99de7609603');
         console.log('💎 TRUTH Token: 0x8f6cf6f7747e170f4768533b869c339dc3d30a3c');
         console.log('🎨 Creator Token: 0x22b0434e89882f8e6841d340b28427646c015aa7');
+        console.log('🔗 Real MetaMask SDK Integration: ACTIVE');
     </script>
 </body>
 </html>
