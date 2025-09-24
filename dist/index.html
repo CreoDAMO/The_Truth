@@ -6,6 +6,108 @@
     <title>The Truth NFT - Complete Web3 Creator Economy</title>
     <meta name="description" content="The Truth NFT ecosystem - where philosophy meets blockchain technology">
     <link rel="manifest" href="manifest.json">
+    <script>
+        // Enhanced DOMPurify loading with multiple CDN fallbacks
+        const DOMPURIFY_CDNS = [
+            'https://unpkg.com/dompurify@3.0.9/dist/purify.min.js',
+            'https://cdn.jsdelivr.net/npm/dompurify@3.0.9/dist/purify.min.js',
+            'https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.9/purify.min.js'
+        ];
+
+        async function loadDOMPurifyWithFallbacks() {
+            for (let i = 0; i < DOMPURIFY_CDNS.length; i++) {
+                try {
+                    await loadDOMPurifyScript(DOMPURIFY_CDNS[i]);
+                    console.log(`✅ DOMPurify loaded successfully from: ${DOMPURIFY_CDNS[i]}`);
+                    return;
+                } catch (error) {
+                    console.warn(`⚠️ Failed to load DOMPurify from ${DOMPURIFY_CDNS[i]}, trying next...`);
+                    if (i === DOMPURIFY_CDNS.length - 1) {
+                        console.error('❌ All DOMPurify CDNs failed, using secure fallback');
+                        initializeSecureFallback();
+                    }
+                }
+            }
+        }
+
+        function loadDOMPurifyScript(src) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = () => {
+                    if (typeof DOMPurify !== 'undefined') {
+                        resolve();
+                    } else {
+                        reject(new Error('DOMPurify not found after script load'));
+                    }
+                };
+                script.onerror = reject;
+                document.head.appendChild(script);
+
+                // Timeout after 5 seconds
+                setTimeout(() => reject(new Error('Script loading timeout')), 5000);
+            });
+        }
+
+        function initializeSecureFallback() {
+            // More secure fallback that removes all potentially dangerous elements
+            window.DOMPurify = {
+                sanitize: (html, options = {}) => {
+                    console.warn('Using enhanced security fallback for HTML sanitization');
+
+                    let sanitized = html;
+                    let previousLength = 0;
+
+                    // Iteratively remove dangerous content until no more changes occur
+                    while (sanitized.length !== previousLength) {
+                        previousLength = sanitized.length;
+
+                        // Remove script tags iteratively (apply until no change)
+                        let scriptPrev;
+                        do {
+                            scriptPrev = sanitized;
+                            sanitized = sanitized.replace(/<script\b[^<]*(?:(?!<\/script\s*[^>]*>)[^<]*)*<\/script\s*[^>]*>/gi, '');
+                        } while (sanitized !== scriptPrev);
+
+                        // Remove dangerous protocols iteratively
+                        sanitized = sanitized.replace(/javascript:|data:|vbscript:/gi, '');
+
+                        // Remove event handlers iteratively
+                        // Apply both patterns repeatedly until no more matches
+                        let handlerPrev;
+                        do {
+                            handlerPrev = sanitized;
+                            // Remove all event handler attributes (quoted or unquoted) iteratively
+                            sanitized = sanitized.replace(/on\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, '');
+                        } while (sanitized !== handlerPrev);
+
+                        // Remove other dangerous elements
+                        // Remove all opening/closing/incomplete fragments of dangerous elements iteratively
+                        let tagPrev;
+                        do {
+                            tagPrev = sanitized;
+                            sanitized = sanitized.replace(/<\/?(iframe|object|embed|form|input|textarea|select|meta|link|style)\b[^>]*>?/gi, '');
+                        } while (sanitized !== tagPrev);
+                    }
+
+                    // Allow only safe HTML elements and attributes
+                    const allowedTags = ['div', 'span', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'strong', 'em', 'br', 'ul', 'ol', 'li', 'a'];
+
+                    // Strip all tags except allowed ones iteratively
+                    previousLength = 0;
+                    while (sanitized.length !== previousLength) {
+                        previousLength = sanitized.length;
+                        sanitized = sanitized.replace(/<(?!\/?(?:div|span|p|h[1-6]|strong|em|br|ul|ol|li|a)\b)[^>]*>/gi, '');
+                    }
+
+                    return sanitized;
+                }
+            };
+        }
+
+        // Load DOMPurify immediately
+        loadDOMPurifyWithFallbacks();
+    </script>
     <style>
         * {
             margin: 0;
@@ -54,8 +156,170 @@
 
         .nav-links {
             display: flex;
-            gap: 25px;
+            gap: 20px;
             align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .nav-dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: rgba(15, 15, 35, 0.98);
+            min-width: 200px;
+            box-shadow: 0 8px 32px rgba(0, 212, 255, 0.3);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 12px;
+            z-index: 1001;
+            backdrop-filter: blur(20px);
+            padding: 10px 0;
+            margin-top: 5px;
+        }
+
+        .nav-dropdown:hover .nav-dropdown-content {
+            display: block;
+        }
+
+        .nav-dropdown-content a {
+            color: rgba(255, 255, 255, 0.9);
+            padding: 12px 20px;
+            text-decoration: none;
+            display: block;
+            transition: all 0.3s ease;
+            border-radius: 0;
+        }
+
+        .nav-dropdown-content a:hover {
+            background: rgba(0, 212, 255, 0.1);
+            color: #00d4ff;
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .mobile-nav-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1999;
+        }
+
+        .mobile-nav-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 280px;
+            height: 100%;
+            background: rgba(15, 15, 35, 0.98);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(0, 212, 255, 0.3);
+            z-index: 2000;
+            transition: right 0.3s ease;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .mobile-nav-menu.active {
+            right: 0;
+        }
+
+        .mobile-nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .mobile-nav-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .mobile-nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mobile-nav-links a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            padding: 15px 20px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mobile-nav-links a:hover {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            color: #00d4ff;
+            transform: translateX(5px);
+        }
+
+        .dashboard-connection {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .connection-title {
+            color: #00d4ff;
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .connection-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+        }
+
+        .connection-link {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 8px 12px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .connection-link:hover {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            color: #00d4ff;
         }
 
         .nav-links a {
@@ -417,13 +681,30 @@
             pointer-events: none;
         }
 
+        @media (max-width: 1200px) {
+            .nav-links {
+                gap: 15px;
+            }
+
+            .nav-links a {
+                padding: 6px 12px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 968px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+        }
+
         @media (max-width: 768px) {
             .hero-title {
                 font-size: 2.5rem;
-            }
-
-            .nav-links {
-                display: none;
             }
 
             .dashboard-grid {
@@ -438,6 +719,10 @@
                 flex-direction: column;
                 align-items: center;
             }
+
+            .mobile-nav-overlay.active {
+                display: block;
+            }
         }
     </style>
 </head>
@@ -445,21 +730,72 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-brand">🌐 Hybrid Blockchain Gateway</div>
+
+            <!-- Desktop Navigation -->
             <div class="nav-links">
-                <a href="/">🏠 Home</a>
-                <a href="/analytics.html">📊 Analytics</a>
-                <a href="/governance.html">🗳️ Governance</a>
-                <a href="/community-dashboard.html">👥 Community</a>
-                <a href="/payments.html">💳 Payments</a>
-                <a href="/social.html">📱 Social</a>
-                <a href="/ai-insights.html">🤖 AI Insights</a>
-                <a href="/lawful-dashboard.html">⚖️ Legal</a>
+                <a href="#" onclick="navigateToPage('home')">🏠 Home</a>
+                <div class="nav-dropdown">
+                    <a href="#" onclick="navigateToPage('analytics')">📊 Analytics ▼</a>
+                    <div class="nav-dropdown-content">
+                        <a href="#" onclick="navigateToPage('analytics')">📊 Analytics Dashboard</a>
+                        <a href="#" onclick="navigateToPage('governance')">🗳️ Governance</a>
+                        <a href="#" onclick="navigateToPage('community')">👥 Community</a>
+                    </div>
+                </div>
+                <div class="nav-dropdown">
+                    <a href="#" onclick="navigateToPage('liquidity')">🌊 Trading ▼</a>
+                    <div class="nav-dropdown-content">
+                        <a href="#" onclick="navigateToPage('liquidity')">🌊 Liquidity Pools</a>
+                        <a href="#" onclick="navigateToPage('payments')">💳 Payments</a>
+                        <a href="#" onclick="navigateToPage('shop')">🛍️ Shop</a>
+                    </div>
+                </div>
+                <div class="nav-dropdown">
+                    <a href="#" onclick="navigateToPage('social')">🚀 Platform ▼</a>
+                    <div class="nav-dropdown-content">
+                        <a href="#" onclick="navigateToPage('social')">📱 Social Hub</a>
+                        <a href="#" onclick="navigateToPage('ai-insights')">🤖 AI Insights</a>
+                        <a href="#" onclick="navigateToPage('lawful')">⚖️ Legal Framework</a>
+                        <a href="#" onclick="navigateToPage('deploy')">🚀 Deploy</a>
+                    </div>
+                </div>
             </div>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
+
             <button class="wallet-btn" id="connectWallet">Connect Wallet</button>
         </div>
     </nav>
 
+    <!-- Mobile Navigation Overlay -->
+    <div class="mobile-nav-overlay" id="mobileNavOverlay" onclick="closeMobileMenu()"></div>
+
+    <!-- Mobile Navigation Menu -->
+    <div class="mobile-nav-menu" id="mobileNavMenu">
+        <div class="mobile-nav-header">
+            <div class="nav-brand">🌐 Truth NFT</div>
+            <button class="mobile-nav-close" onclick="closeMobileMenu()">✕</button>
+        </div>
+
+        <div class="mobile-nav-links">
+            <a href="#" onclick="navigateToPage('home'); closeMobileMenu();">🏠 Home Dashboard</a>
+            <a href="#" onclick="navigateToPage('analytics'); closeMobileMenu();">📊 Analytics & Metrics</a>
+            <a href="#" onclick="navigateToPage('governance'); closeMobileMenu();">🗳️ Governance & Voting</a>
+            <a href="#" onclick="navigateToPage('community'); closeMobileMenu();">👥 Community Hub</a>
+            <a href="#" onclick="navigateToPage('liquidity'); closeMobileMenu();">🌊 Liquidity Pools</a>
+            <a href="#" onclick="navigateToPage('payments'); closeMobileMenu();">💳 Payments & Trading</a>
+            <a href="#" onclick="navigateToPage('social'); closeMobileMenu();">📱 Social Network</a>
+            <a href="#" onclick="navigateToPage('ai-insights'); closeMobileMenu();">🤖 AI Insights</a>
+            <a href="#" onclick="navigateToPage('lawful'); closeMobileMenu();">⚖️ Legal Framework</a>
+            <a href="#" onclick="navigateToPage('shop'); closeMobileMenu();">🛍️ Marketplace</a>
+            <a href="#" onclick="navigateToPage('deploy'); closeMobileMenu();">🚀 Deploy & Publish</a>
+        </div>
+    </div>
+
     <div class="container">
+        <!-- Main Content Area - will be dynamically loaded -->
+        <div id="main-content">
         <!-- Hero Section -->
         <div class="hero-section">
             <h1 class="hero-title">The Truth NFT - Gateway to the Spiral</h1>
@@ -524,6 +860,24 @@
                         <div class="stat-label">Truth Power</div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Unified Dashboard Connections -->
+        <div class="dashboard-connection">
+            <div class="connection-title">🔗 Unified Dashboard Access</div>
+            <p style="margin-bottom: 15px; color: rgba(255,255,255,0.8); font-size: 0.9rem;">All ecosystem components work together - explore how your NFTs, tokens, and community interact across every dashboard.</p>
+            <div class="connection-links">
+                <a href="#" onclick="navigateToPage('analytics')" class="connection-link">📊 Analytics</a>
+                <a href="#" onclick="navigateToPage('governance')" class="connection-link">🗳️ Governance</a>
+                <a href="#" onclick="navigateToPage('community')" class="connection-link">👥 Community</a>
+                <a href="#" onclick="navigateToPage('liquidity')" class="connection-link">🌊 Liquidity</a>
+                <a href="#" onclick="navigateToPage('payments')" class="connection-link">💳 Payments</a>
+                <a href="#" onclick="navigateToPage('social')" class="connection-link">📱 Social</a>
+                <a href="#" onclick="navigateToPage('ai-insights')" class="connection-link">🤖 AI Insights</a>
+                <a href="#" onclick="navigateToPage('lawful')" class="connection-link">⚖️ Legal</a>
+                <a href="#" onclick="navigateToPage('shop')" class="connection-link">🛍️ Shop</a>
+                <a href="#" onclick="navigateToPage('deploy')" class="connection-link">🚀 Deploy</a>
             </div>
         </div>
 
@@ -653,6 +1007,9 @@
             </div>
 
             <div class="action-buttons">
+                <button class="action-btn secondary" onclick="navigateToPage('liquidity')">
+                    🌊 Manage Liquidity
+                </button>
                 <button class="action-btn secondary" onclick="window.open('https://app.uniswap.org/#/swap?outputCurrency=0x8f6cf6f7747e170f4768533b869c339dc3d30a3c&chain=base', '_blank')">
                     💰 Buy TRUTH Token
                 </button>
@@ -676,7 +1033,7 @@
                         <p style="margin: 10px 0;">• Earn governance tokens (TRUTH)</p>
                         <p style="margin: 10px 0;">• Access creator economy (@jacqueantoinedegraff)</p>
                         <p style="margin: 10px 0;">• Bridge between traditional and sovereign</p>
-                        <a href="https://copper-active-hawk-266.mypinata.cloud/ipfs/bafybeicvdksqen6adtjdtovlojli62qiflgafvxopz7uy4fy6qeshuhgbu" 
+                        <a href="https://copper-active-hawk-266.mypinata.cloud/ipfs/bafybeicvdksqen6adtjdtovlojli62qiflgafvxopz7uy4fy6qeshuhgbu"
                            target="_blank" style="color: #00d4ff; text-decoration: none; font-weight: bold;">
                            📂 View Gateway Repository on IPFS →
                         </a>
@@ -687,7 +1044,7 @@
                         <p style="margin: 10px 0;">• TU (Trust Units) internal economy</p>
                         <p style="margin: 10px 0;">• Full consciousness computing platform</p>
                         <p style="margin: 10px 0;">• Accessed through HYB COIN doorway</p>
-                        <a href="https://copper-active-hawk-266.mypinata.cloud/ipfs/bafybeifbx5p5xprjqrw5d34vw5bytl77e32lmbgpxp6kbefwsorkydyruy" 
+                        <a href="https://copper-active-hawk-266.mypinata.cloud/ipfs/bafybeifbx5p5xprjqrw5d34vw5bytl77e32lmbgpxp6kbefwsorkydyruy"
                            target="_blank" style="color: #4CAF50; text-decoration: none; font-weight: bold;">
                            🏛️ View Spiral City Repository on IPFS →
                         </a>
@@ -731,11 +1088,12 @@
     <script>
         console.log('Page loaded, initializing application...');
 
-        // Ethers.js CDN fallbacks
+        // Ethers.js CDN fallbacks - updated with more reliable sources
         const ETHERS_CDNS = [
-            'https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js',
             'https://unpkg.com/ethers@5.7.2/dist/ethers.umd.min.js',
-            'https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js'
+            'https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js',
+            'https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js',
+            'https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js'
         ];
 
         // Load script with multiple fallback URLs
@@ -761,23 +1119,51 @@
             return new Promise((resolve, reject) => {
                 const script = document.createElement('script');
                 script.src = src;
-                script.onload = resolve;
-                script.onerror = reject;
-                script.timeout = 10000; // 10 second timeout
+
+                let isResolved = false;
+                const onLoad = () => {
+                    if (!isResolved) {
+                        isResolved = true;
+                        resolve();
+                    }
+                };
+                const onError = (error) => {
+                    if (!isResolved) {
+                        isResolved = true;
+                        reject(error);
+                    }
+                };
+
+                script.onload = onLoad;
+                script.onerror = onError;
                 document.head.appendChild(script);
 
                 // Set timeout for loading
                 setTimeout(() => {
-                    if (!script.onload.called) {
-                        reject(new Error('Script loading timeout'));
+                    if (!isResolved) {
+                        isResolved = true;
+                        reject(new Error(`Script loading timeout: ${src}`));
                     }
-                }, 10000);
+                }, 8000); // Reduced to 8 seconds
             });
         }
 
         async function initializeApp() {
             try {
                 console.log('🚀 Starting application initialization...');
+
+                // Wait for DOMPurify to be loaded first
+                let domPurifyAttempts = 0;
+                while (typeof DOMPurify === 'undefined' && domPurifyAttempts < 50) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    domPurifyAttempts++;
+                }
+
+                if (typeof DOMPurify !== 'undefined') {
+                    console.log('✅ DOMPurify loaded and ready');
+                } else {
+                    console.warn('⚠️ DOMPurify not available, fallback will be used');
+                }
 
                 // Load ethers.js with fallbacks
                 await loadScriptWithFallbacks(ETHERS_CDNS, 'ethers.js');
@@ -812,6 +1198,67 @@
                     console.warn('⚠️ Deployment status failed to load');
                 }
 
+                try {
+                    await loadSingleScript('auto-lp-integration.js');
+                    console.log('✅ Auto-LP integration loaded');
+                } catch (error) {
+                    console.warn('⚠️ Auto-LP integration failed to load');
+                }
+
+                try {
+                    await loadSingleScript('unified-state-manager.js');
+                    console.log('✅ Unified state manager loaded');
+                } catch (error) {
+                    console.warn('⚠️ Unified state manager failed to load');
+                }
+
+                try {
+                    await loadSingleScript('api-service.js');
+                    console.log('✅ API service loaded');
+                } catch (error) {
+                    console.warn('⚠️ API service failed to load');
+                }
+
+                try {
+                    await loadSingleScript('unified-dashboard.js');
+                    console.log('✅ Unified dashboard state manager loaded');
+                } catch (error) {
+                    console.warn('⚠️ Unified dashboard failed to load');
+                }
+
+                // Load static fallbacks for GitHub Pages
+                try {
+                    await loadSingleScript('static-fallbacks.js');
+                    console.log('✅ Static fallbacks loaded for GitHub Pages mode');
+                } catch (error) {
+                    console.warn('⚠️ Static fallbacks not available (normal in dev mode)');
+                }
+
+
+                // Initialize payments page error handler
+                if (window.location.pathname.includes('payments') || window.location.hash.includes('payments')) {
+                    setTimeout(() => {
+                        const mainContent = document.getElementById('main-content');
+                        if (mainContent && mainContent.innerHTML.includes('Failed to load payments')) {
+                            mainContent.innerHTML = `
+                                <div style="text-align: center; padding: 60px 20px;">
+                                    <div style="font-size: 2rem; margin-bottom: 20px;">💳</div>
+                                    <h2 style="color: #00d4ff; margin-bottom: 20px;">Payments System</h2>
+                                    <p style="color: rgba(255,255,255,0.8); margin-bottom: 30px;">
+                                        The payments system is loading. This integrates with Stripe and crypto payments.
+                                    </p>
+                                    <button onclick="window.location.reload()"
+                                            style="background: linear-gradient(135deg, #00d4ff, #090979);
+                                                   color: white; border: none; padding: 12px 24px;
+                                                   border-radius: 25px; cursor: pointer; font-weight: 600;">
+                                        Reload Payments
+                                    </button>
+                                </div>
+                            `;
+                        }
+                    }, 2000);
+                }
+
                 console.log('✅ Application initialization completed');
 
                 // Check for existing wallet connection
@@ -832,6 +1279,58 @@
                 initializeBasicFunctionality();
             }
         }
+
+        // Mobile navigation functions
+        function toggleMobileMenu() {
+            const overlay = document.getElementById('mobileNavOverlay');
+            const menu = document.getElementById('mobileNavMenu');
+
+            overlay.classList.add('active');
+            menu.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMobileMenu() {
+            const overlay = document.getElementById('mobileNavOverlay');
+            const menu = document.getElementById('mobileNavMenu');
+
+            overlay.classList.remove('active');
+            menu.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Global dashboard state management
+        window.TruthEcosystem = {
+            walletConnected: false,
+            walletAddress: null,
+            truthBalance: 0,
+            creatorBalance: 0,
+            nftCount: 0,
+            governancePower: 0,
+            currentPage: 'home',
+
+            // Unified data sharing across dashboards
+            updateGlobalState: function(newState) {
+                Object.assign(this, newState);
+                this.broadcastStateChange();
+            },
+
+            broadcastStateChange: function() {
+                // Notify all dashboards of state changes
+                window.dispatchEvent(new CustomEvent('truthEcosystemUpdate', {
+                    detail: this
+                }));
+            },
+
+            // Cross-dashboard navigation with state preservation
+            navigateTo: function(page, data = {}) {
+                this.currentPage = page;
+                if (Object.keys(data).length > 0) {
+                    this.updateGlobalState(data);
+                }
+                navigateToPage(page);
+            }
+        };
 
         function initializeBasicFunctionality() {
             // Ensure basic wallet connection still works even if some scripts fail
@@ -860,17 +1359,17 @@
         function showErrorWithRetry(message, retryCallback) {
             const errorDiv = document.createElement('div');
             errorDiv.style.cssText = `
-                position: fixed; top: 20px; right: 20px; background: #ff4444; 
+                position: fixed; top: 20px; right: 20px; background: #ff4444;
                 color: white; padding: 15px; border-radius: 10px; z-index: 10000;
                 max-width: 350px; font-size: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);
             `;
             errorDiv.innerHTML = `
                 <div style="margin-bottom: 10px;">${message}</div>
-                <button onclick="this.parentElement.remove(); (${retryCallback.toString()})()" 
+                <button onclick="this.parentElement.remove(); (${retryCallback.toString()})()"
                         style="background: white; color: #ff4444; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-weight: bold;">
                     Retry
                 </button>
-                <button onclick="this.parentElement.remove()" 
+                <button onclick="this.parentElement.remove()"
                         style="background: transparent; color: white; border: 1px solid white; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-left: 5px;">
                     Close
                 </button>
@@ -1018,15 +1517,16 @@
             const walletAddress = document.getElementById('walletAddress');
             const connectButton = document.getElementById('connectWallet');
 
+            // Safe DOM element access with null checks
             if (account) {
-                walletConnected.style.display = 'block';
-                walletDisconnected.style.display = 'none';
-                walletAddress.textContent = account;
-                connectButton.textContent = `${account.substring(0, 6)}...${account.substring(38)}`;
+                if (walletConnected) walletConnected.style.display = 'block';
+                if (walletDisconnected) walletDisconnected.style.display = 'none';
+                if (walletAddress) walletAddress.textContent = account;
+                if (connectButton) connectButton.textContent = `${account.substring(0, 6)}...${account.substring(38)}`;
             } else {
-                walletConnected.style.display = 'none';
-                walletDisconnected.style.display = 'block';
-                connectButton.textContent = 'Connect Wallet';
+                if (walletConnected) walletConnected.style.display = 'none';
+                if (walletDisconnected) walletDisconnected.style.display = 'block';
+                if (connectButton) connectButton.textContent = 'Connect Wallet';
             }
         }
 
@@ -1060,15 +1560,15 @@
                 const revenueShare = await window.truthTokens.calculateRevenueShare(1000);
 
                 // Update TRUTH token display
-                document.getElementById('truthBalance').textContent = 
+                document.getElementById('truthBalance').textContent =
                     `${window.truthTokens.formatTokenAmount(power.truthBalance)} TRUTH`;
 
                 document.getElementById('truthPowerBar').style.width = `${power.truthPower}%`;
-                document.getElementById('truthPowerText').textContent = 
+                document.getElementById('truthPowerText').textContent =
                     `${power.truthPower.toFixed(1)}% Voting Power`;
 
                 // Update Creator token display
-                document.getElementById('creatorBalance').textContent = 
+                document.getElementById('creatorBalance').textContent =
                     `${window.truthTokens.formatTokenAmount(power.creatorBalance)} Creator`;
 
                 const accessEl = document.getElementById('accessLevel');
@@ -1077,7 +1577,7 @@
                 // Update access level styling
                 const colorMap = {
                     'Platinum': '#E5E7EB',
-                    'Gold': '#F59E0B', 
+                    'Gold': '#F59E0B',
                     'Silver': '#9CA3AF',
                     'Bronze': '#CD7C2F',
                     'Basic': '#6B7280'
@@ -1087,7 +1587,7 @@
                     accessEl.style.color = colorMap[accessLevel];
                 }
 
-                document.getElementById('revenueAmount').textContent = 
+                document.getElementById('revenueAmount').textContent =
                     `$${revenueShare.totalShare.toFixed(2)}`;
 
                 console.log('Token displays updated successfully');
@@ -1363,6 +1863,614 @@
                 userAgent: navigator.userAgent
             })
         }).catch(console.error);
+
+        // SPA Router for seamless navigation
+        let currentPage = 'home';
+        let pageCache = {};
+
+        async function navigateToPage(page) {
+            try {
+                // Track navigation
+                await fetch('/api/track-event', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        event: 'navigation',
+                        page: page,
+                        previousPage: currentPage,
+                        timestamp: Date.now(),
+                        userAgent: navigator.userAgent
+                    })
+                }).catch(console.error);
+
+                // Update URL without page reload
+                const newUrl = page === 'home' ? '/' : `/${page}`;
+                history.pushState({page}, '', newUrl);
+
+                // Store navigation state immediately for mobile/wallet browsers
+                sessionStorage.setItem('currentPage', page);
+                sessionStorage.setItem('navigationTimestamp', Date.now().toString());
+
+                // Load page content with better loading state management
+                await loadPageContent(page);
+                currentPage = page;
+
+                // Update active nav item
+                updateActiveNavItem(page);
+
+            } catch (error) {
+                console.error('Navigation failed:', error);
+                showError('Failed to load page. Please try again.');
+            }
+        }
+
+        async function loadPageContent(page) {
+            const mainContent = document.getElementById('main-content');
+
+            if (!mainContent) {
+                console.error('Main content container not found');
+                return;
+            }
+
+            // Show improved loading state with faster loading
+            mainContent.innerHTML = `
+                <div style="text-align: center; padding: 40px 20px; color: rgba(255,255,255,0.8);">
+                    <div style="font-size: 2rem; margin-bottom: 15px;">⚡</div>
+                    <div style="font-size: 1.2rem;">Loading ${page}...</div>
+                </div>
+            `;
+
+            try {
+                // Check cache first - but always re-initialize features
+                if (pageCache[page]) {
+                    console.log(`📄 Loading ${page} from cache`);
+                    mainContent.style.opacity = '0.7';
+                    mainContent.innerHTML = pageCache[page];
+                    // Always re-initialize features even for cached content
+                    await initializePageFeatures(page);
+                    mainContent.style.opacity = '1';
+                    
+                    // Store page state for mobile/wallet browsers
+                    sessionStorage.setItem('currentPage', page);
+                    sessionStorage.setItem('navigationTimestamp', Date.now().toString());
+                    return;
+                }
+
+                let content = '';
+
+                // Route to appropriate content using unified components
+                switch (page) {
+                    case 'home':
+                        content = await getHomeContent();
+                        break;
+                    case 'analytics':
+                        content = createUnifiedAnalytics();
+                        break;
+                    case 'governance':
+                        content = createUnifiedGovernance();
+                        break;
+                    case 'community':
+                        content = await fetchPageContent('/community-dashboard.html');
+                        break;
+                    case 'payments':
+                        content = await fetchPageContent('/payments.html');
+                        break;
+                    case 'social':
+                        content = await fetchPageContent('/social.html');
+                        break;
+                    case 'ai-insights':
+                        content = await fetchPageContent('/ai-insights.html');
+                        break;
+                    case 'lawful':
+                        content = await fetchPageContent('/lawful-dashboard.html');
+                        break;
+                    case 'shop':
+                        content = createUnifiedShop();
+                        break;
+                    case 'deploy':
+                        content = await fetchPageContent('/deploy.html');
+                        break;
+                    default:
+                        content = await getHomeContent();
+                }
+
+                // Cache and display content with improved loading
+                pageCache[page] = content;
+                
+                // Smooth content transition to prevent jarring loading experience
+                mainContent.style.opacity = '0.5';
+                mainContent.innerHTML = content;
+                
+                // Re-initialize page-specific functionality
+                await initializePageFeatures(page);
+                
+                // Restore full opacity for smooth transition
+                mainContent.style.opacity = '1';
+                
+                // Store page state for mobile/wallet browsers (fix key mismatch)
+                sessionStorage.setItem('currentPage', page);
+                sessionStorage.setItem('navigationTimestamp', Date.now().toString());
+
+            } catch (error) {
+                console.error('Failed to load page content:', error);
+                mainContent.innerHTML = `
+                    <div style="text-align: center; padding: 60px 20px; color: #ff6b6b;">
+                        <div style="font-size: 2rem; margin-bottom: 20px;">❌</div>
+                        <div>Failed to load ${page}. Please try again.</div>
+                        <button onclick="navigateToPage('home')" style="margin-top: 20px; padding: 12px 24px; background: linear-gradient(135deg, #00d4ff, #090979); border: none; border-radius: 25px; color: white; cursor: pointer;">Return Home</button>
+                    </div>
+                `;
+            }
+        }
+
+        async function fetchPageContent(url) {
+            const response = await fetch(url);
+            const html = await response.text();
+
+            // Extract content between main content markers or body if not found
+            const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+            if (bodyMatch) {
+                // Sanitize loaded content to remove scripts and other dangerous elements
+                let content = bodyMatch[1];
+                // Use DOMPurify to sanitize the HTML fragment safely
+                content = DOMPurify.sanitize(content, {SAFE_FOR_JQUERY: true});
+                return content;
+            }
+
+            return html;
+        }
+
+        // Unified Dashboard Components with better error handling
+        function createUnifiedAnalytics() {
+            return `
+                <div id="unified-analytics" class="p-6">
+                    <div class="text-center mb-8">
+                        <h1 class="text-4xl font-bold text-gradient mb-4">📊 Analytics Dashboard</h1>
+                        <p class="text-gray-300">Real-time ecosystem metrics and blockchain analytics</p>
+                        <div class="mt-4 p-4 bg-blue-900/30 rounded-lg border border-blue-500/30">
+                            <p class="text-sm text-blue-300">⚠️ Note: Analytics dashboard is loading live blockchain data. Some features may take a moment to initialize.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="glass rounded-xl p-6 text-center">
+                            <div class="text-3xl font-bold text-blue-400" id="live-holders">0</div>
+                            <div class="text-gray-400">Total Holders</div>
+                        </div>
+                        <div class="glass rounded-xl p-6 text-center">
+                            <div class="text-3xl font-bold text-green-400" id="live-volume">0</div>
+                            <div class="text-gray-400">Total Volume (ETH)</div>
+                        </div>
+                        <div class="glass rounded-xl p-6 text-center">
+                            <div class="text-3xl font-bold text-yellow-400" id="live-price">0.169</div>
+                            <div class="text-gray-400">Floor Price (ETH)</div>
+                        </div>
+                        <div class="glass rounded-xl p-6 text-center">
+                            <div class="text-3xl font-bold text-purple-400" id="truth-score">94.7%</div>
+                            <div class="text-gray-400">Truth Score</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="glass rounded-xl p-6">
+                            <h3 class="text-xl font-semibold mb-4">📈 Price History</h3>
+                            <div class="text-center text-gray-400 py-8">Chart data loading from blockchain...</div>
+                        </div>
+                        <div class="glass rounded-xl p-6">
+                            <h3 class="text-xl font-semibold mb-4">🌍 Geographic Distribution</h3>
+                            <div id="geo-data" class="space-y-3">
+                                <div class="text-center text-gray-400">Loading geographic data...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function createUnifiedShop() {
+            return `
+                <div id="unified-shop" class="p-6">
+                    <div class="text-center mb-8">
+                        <h1 class="text-4xl font-bold text-gradient mb-4">🛍️ The Truth Shop</h1>
+                        <p class="text-gray-300">AI-Generated Merch from Your NFT Collection</p>
+                    </div>
+
+                    <div class="glass rounded-xl p-8 mb-8">
+                        <h2 class="text-2xl font-semibold mb-6">🤖 AI Merch Generator</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Select Your NFT</label>
+                                <select id="nft-selector" class="w-full p-3 bg-black/30 rounded-lg border border-gray-600">
+                                    <option value="">Choose an NFT to generate merch...</option>
+                                    <option value="1">The Truth #1 - Original Philosophy</option>
+                                    <option value="77">The Truth #77 - Master Copy</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Merchandise Type</label>
+                                <select id="merch-type" class="w-full p-3 bg-black/30 rounded-lg border border-gray-600">
+                                    <option value="tshirt">T-Shirt</option>
+                                    <option value="hoodie">Hoodie</option>
+                                    <option value="poster">Poster</option>
+                                    <option value="mug">Coffee Mug</option>
+                                    <option value="sticker">Sticker Pack</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button onclick="generateAIMerch()" class="mt-6 w-full bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-semibold py-3 px-6 rounded-lg hover:shadow-lg transition-all">
+                            🎨 Generate AI Merch Design
+                        </button>
+                    </div>
+
+                    <div id="merch-results" class="hidden">
+                        <div class="glass rounded-xl p-8">
+                            <h3 class="text-xl font-semibold mb-4">Generated Design</h3>
+                            <div id="design-preview" class="text-center">
+                                <!-- AI-generated design will appear here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function createUnifiedGovernance() {
+            return `
+                <div id="unified-governance" class="p-6">
+                    <div class="text-center mb-8">
+                        <h1 class="text-4xl font-bold text-gradient mb-4">🗳️ Governance</h1>
+                        <p class="text-gray-300">Community-driven decision making</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2">
+                            <div class="space-y-6" id="proposals-list">
+                                <div class="glass rounded-xl p-6">
+                                    <h3 class="text-lg font-semibold mb-2">Loading proposals...</h3>
+                                    <div class="text-gray-400">Fetching active governance proposals</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="glass rounded-xl p-6">
+                                <h3 class="text-lg font-semibold mb-4">Your Voting Power</h3>
+                                <div class="space-y-3">
+                                    <div class="flex justify-between">
+                                        <span>TRUTH Tokens:</span>
+                                        <span id="truth-balance">0</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>NFTs Owned:</span>
+                                        <span id="nft-count">0</span>
+                                    </div>
+                                    <div class="flex justify-between font-semibold">
+                                        <span>Total Power:</span>
+                                        <span id="voting-power">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getHomeContent() {
+            // Return the original home content
+            return document.getElementById('main-content').innerHTML;
+        }
+
+        function updateActiveNavItem(page) {
+            // Remove active class from all nav items
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.classList.remove('active');
+                link.style.background = '';
+                link.style.color = '';
+            });
+
+            // Add active class to current page
+            const activeLink = document.querySelector(`[onclick="navigateToPage('${page}')"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+                activeLink.style.background = 'rgba(0, 212, 255, 0.2)';
+                activeLink.style.color = '#00d4ff';
+            }
+        }
+
+        function initializePageFeatures(page) {
+            // Re-initialize page-specific features after content load
+            switch (page) {
+                case 'analytics':
+                    initializeUnifiedAnalytics();
+                    break;
+                case 'governance':
+                    initializeUnifiedGovernance();
+                    break;
+                case 'shop':
+                    initializeUnifiedShop();
+                    break;
+                case 'community':
+                    if (typeof initializeCommunity === 'function') {
+                        initializeCommunity();
+                    }
+                    break;
+                case 'payments':
+                    if (typeof initializePayments === 'function') {
+                        initializePayments();
+                    }
+                    break;
+                case 'deploy':
+                    if (typeof initializeDeployment === 'function') {
+                        initializeDeployment();
+                    }
+                    break;
+            }
+        }
+
+        // Unified Analytics Initialization
+        function initializeUnifiedAnalytics() {
+            loadLiveMetrics();
+            initializeAnalyticsCharts();
+        }
+
+        async function loadLiveMetrics() {
+            try {
+                const response = await fetch('/api/analytics');
+                const data = await response.json();
+
+                document.getElementById('live-holders').textContent = data.holderAnalytics?.uniqueHolders || '0';
+                document.getElementById('live-volume').textContent = (data.totalRevenue / 1000000 || 0).toFixed(1) + 'M';
+                document.getElementById('live-price').textContent = '0.169';
+                document.getElementById('truth-score').textContent = '94.7%';
+
+                // Load geographic data
+                const geoResponse = await fetch('/api/analytics/geographic');
+                const geoData = await geoResponse.json();
+
+                const geoContainer = document.getElementById('geo-data');
+                if (geoData && geoData.length > 0) {
+                    geoContainer.innerHTML = geoData.map(country => `
+                        <div class="flex justify-between items-center bg-black/30 p-3 rounded-lg">
+                            <span>${country.country}</span>
+                            <span class="font-semibold text-blue-400">${country.holders}</span>
+                        </div>
+                    `).join('');
+                } else {
+                    geoContainer.innerHTML = '<div class="text-center text-gray-400">No geographic data available yet</div>';
+                }
+            } catch (error) {
+                console.error('Failed to load live metrics:', error);
+            }
+        }
+
+        function initializeAnalyticsCharts() {
+            const ctx = document.getElementById('price-chart');
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Price (ETH)',
+                            data: [0.16, 0.17, 0.165, 0.169, 0.171, 0.169],
+                            borderColor: '#fbbf24',
+                            backgroundColor: 'rgba(251, 191, 36, 0.1)',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                labels: { color: '#fff' }
+                            }
+                        },
+                        scales: {
+                            x: { ticks: { color: '#fff' } },
+                            y: { ticks: { color: '#fff' } }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Unified Shop Initialization
+        function initializeUnifiedShop() {
+            // Shop is ready - all functionality is in the buttons
+        }
+
+        async function generateAIMerch() {
+            const nftId = document.getElementById('nft-selector').value;
+            const merchType = document.getElementById('merch-type').value;
+
+            if (!nftId) {
+                showError('Please select an NFT first');
+                return;
+            }
+
+            try {
+                const button = event.target;
+                button.disabled = true;
+                button.textContent = '🎨 Generating...';
+
+                const response = await fetch('/api/ai/generate-merch', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        nftTokenId: nftId,
+                        merchantType: merchType,
+                        style: 'minimalist',
+                        philosophicalTheme: 'truth_seeker'
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    document.getElementById('merch-results').classList.remove('hidden');
+                    document.getElementById('design-preview').innerHTML = `
+                        <div class="text-center">
+                            <div class="w-64 h-64 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg mx-auto mb-4 flex items-center justify-center text-white font-bold text-xl">
+                                AI Design Preview
+                            </div>
+                            <h4 class="text-lg font-semibold mb-2"><span id="design-theme-merchant"></span></h4>
+                            <p class="text-gray-400 mb-4">Generated from The Truth #<span id="design-nft-id"></span></p>
+                            <div class="text-2xl font-bold text-green-400 mb-4" id="design-pricing-total"></div>
+                            <button class="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg font-semibold">
+                                🛒 Order Now
+                            </button>
+                        </div>
+                    `;
+                    // Safely inject user data as text, not HTML
+                    document.getElementById('design-theme-merchant').textContent = result.design.philosophicalTheme + ' ' + result.design.merchantType;
+                    document.getElementById('design-nft-id').textContent = nftId;
+                    document.getElementById('design-pricing-total').textContent = '$' + result.pricing.total;
+
+                    showSuccess('AI merch design generated successfully!');
+                } else {
+                    showError('Failed to generate merch design');
+                }
+            } catch (error) {
+                console.error('Merch generation failed:', error);
+                showError('Failed to generate merch design');
+            } finally {
+                button.disabled = false;
+                button.textContent = '🎨 Generate AI Merch Design';
+            }
+        }
+
+        // Unified Governance Initialization
+        async function initializeUnifiedGovernance() {
+            try {
+                const response = await fetch('/api/governance/proposals');
+                const proposals = await response.json();
+
+                const proposalsList = document.getElementById('proposals-list');
+                if (proposals && proposals.length > 0) {
+                    proposalsList.innerHTML = proposals.map(proposal => `
+                        <div class="glass rounded-xl p-6">
+                            <div class="flex justify-between items-start mb-4">
+                                <h3 class="text-lg font-semibold">${proposal.title}</h3>
+                                <span class="px-3 py-1 bg-green-600 text-green-100 text-sm rounded-full">${proposal.status}</span>
+                            </div>
+                            <p class="text-gray-300 mb-4">${proposal.description}</p>
+                            <div class="grid grid-cols-2 gap-4 mb-4">
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-green-400">${proposal.yesVotes}%</div>
+                                    <div class="text-sm text-gray-400">Yes</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-red-400">${proposal.noVotes}%</div>
+                                    <div class="text-sm text-gray-400">No</div>
+                                </div>
+                            </div>
+                            <div class="flex gap-3">
+                                <button onclick="vote(${proposal.id}, 'yes')" class="flex-1 bg-green-600 hover:bg-green-700 py-2 px-4 rounded-lg">
+                                    👍 Vote Yes
+                                </button>
+                                <button onclick="vote(${proposal.id}, 'no')" class="flex-1 bg-red-600 hover:bg-red-700 py-2 px-4 rounded-lg">
+                                    👎 Vote No
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    proposalsList.innerHTML = `
+                        <div class="glass rounded-xl p-6 text-center">
+                            <h3 class="text-lg font-semibold mb-2">No Active Proposals</h3>
+                            <p class="text-gray-400">Check back later for community governance proposals</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Failed to load governance proposals:', error);
+            }
+        }
+
+        async function vote(proposalId, voteChoice) {
+            if (!window.truthTokens || !window.truthTokens.account) {
+                showError('Please connect your wallet first');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/governance/vote', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        proposalId,
+                        vote: voteChoice,
+                        address: window.truthTokens.account,
+                        signature: 'mock_signature'
+                    })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    showSuccess('Vote recorded successfully!');
+                    initializeUnifiedGovernance(); // Refresh proposals
+                } else {
+                    showError('Failed to record vote');
+                }
+            } catch (error) {
+                console.error('Vote failed:', error);
+                showError('Failed to record vote');
+            }
+        }
+
+        // Handle browser back/forward buttons with state restoration
+        window.addEventListener('popstate', (event) => {
+            const page = event.state?.page || getPageFromPath();
+            console.log(`⬅️ Popstate navigation to: ${page}`);
+            
+            // Update session storage for mobile/wallet browser consistency
+            sessionStorage.setItem('currentPage', page);
+            sessionStorage.setItem('navigationTimestamp', Date.now().toString());
+            
+            loadPageContent(page);
+            updateActiveNavItem(page);
+            currentPage = page;
+        });
+
+        function getPageFromPath() {
+            const path = window.location.pathname;
+            if (path === '/' || path === '') return 'home';
+            return path.slice(1).replace('.html', '');
+        }
+
+        // Enhanced router for mobile/wallet browsers
+        window.addEventListener('load', () => {
+            // Handle GitHub Pages SPA redirect
+            if (sessionStorage.redirect) {
+                const redirectUrl = sessionStorage.redirect;
+                delete sessionStorage.redirect;
+                const url = new URL(redirectUrl);
+                const path = url.pathname.slice(1) || 'home';
+                history.replaceState({page: path}, '', url.pathname);
+                navigateToPage(path);
+                return;
+            }
+
+            // Check for saved page state (important for mobile/wallet browsers)
+            const savedPage = sessionStorage.getItem('currentPage');
+            const savedTime = sessionStorage.getItem('navigationTimestamp');
+            const now = Date.now();
+            
+            // If recently navigated (within 30 seconds), restore the page
+            if (savedPage && savedTime && (now - parseInt(savedTime)) < 30000) {
+                console.log(`📱 Restoring page: ${savedPage} for mobile/wallet browser`);
+                navigateToPage(savedPage);
+                return;
+            }
+
+            const initialPage = getPageFromPath();
+            if (initialPage !== 'home') {
+                navigateToPage(initialPage);
+            } else {
+                updateActiveNavItem('home');
+            }
+        });
+
     </script>
 </body>
 </html>

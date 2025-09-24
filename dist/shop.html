@@ -371,6 +371,7 @@
                     type: 'apparel',
                     category: 'merch',
                     collection: 'Truth Merch',
+                    image: '/images/ai-merch/tshirt_truth.png',
                     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
                     colors: ['Black', 'White', 'Navy'],
                     material: '100% Cotton',
@@ -384,6 +385,7 @@
                     type: 'apparel',
                     category: 'merch',
                     collection: 'Truth Merch',
+                    image: '/images/ai-merch/hoodie_recursive.png',
                     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
                     colors: ['Charcoal', 'Forest Green', 'Burgundy'],
                     material: '80% Cotton, 20% Polyester',
@@ -397,6 +399,7 @@
                     type: 'accessories',
                     category: 'merch',
                     collection: 'Truth Merch',
+                    image: '/images/ai-merch/mug_philosophy.png',
                     sizes: ['11oz'],
                     colors: ['Matte Black', 'White'],
                     material: 'Ceramic',
@@ -410,6 +413,7 @@
                     type: 'accessories',
                     category: 'merch',
                     collection: 'Truth Merch',
+                    image: '/images/ai-merch/stickers_pack.png',
                     sizes: ['Pack of 5'],
                     colors: ['Full Color'],
                     material: 'Waterproof Vinyl',
@@ -423,6 +427,7 @@
                     type: 'art',
                     category: 'merch',
                     collection: 'Truth Merch',
+                    image: '/images/ai-merch/poster_demonstration.png',
                     sizes: ['18"x24"'],
                     colors: ['Full Color'],
                     material: 'Museum-quality Paper',
@@ -436,6 +441,7 @@
                     type: 'accessories',
                     category: 'merch',
                     collection: 'Truth Merch',
+                    image: '/images/ai-merch/notebook_manifesto.png',
                     sizes: ['A5 (5.8"x8.3")'],
                     colors: ['Black', 'Brown Leather'],
                     material: 'Hardcover with 192 pages',
@@ -568,7 +574,7 @@
             const ProductCard = ({ product }) => {
                 const isInCart = cart.some(item => item.id === product.id);
                 const variants = selectedVariants[product.id] || {};
-                
+
                 const handleVariantChange = (type, value) => {
                     setSelectedVariants(prev => ({
                         ...prev,
@@ -597,8 +603,32 @@
                                     {product.category === 'digital' ? '📱 Digital' : '📦 Physical'}
                                 </span>
                             </div>
+                            <div className="w-full h-48 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-lg mb-4 flex items-center justify-center relative overflow-hidden">
+                                {product.image ? (
+                                    <img 
+                                        src={product.image} 
+                                        alt={product.name} 
+                                        className="w-full h-full object-cover"
+                                        onError={(e) => {
+                                            e.target.style.display = 'none';
+                                            e.target.nextSibling.style.display = 'flex';
+                                        }}
+                                    />
+                                ) : null}
+                                <div className="w-full h-full flex flex-col items-center justify-center text-center p-4" style={{display: product.image ? 'none' : 'flex'}}>
+                                    <div className="text-4xl mb-2">
+                                        {product.type === 'audiobook' ? '🎧' : 
+                                         product.type === 'pdf' ? '📄' : 
+                                         product.type === 'apparel' ? '👕' : 
+                                         product.type === 'accessories' ? '☕' : 
+                                         product.type === 'art' ? '🖼️' : '📦'}
+                                    </div>
+                                    <div className="text-sm font-semibold text-yellow-400">{product.category === 'digital' ? 'Digital Content' : 'Physical Product'}</div>
+                                    <div className="text-xs opacity-60 mt-1">{product.collection}</div>
+                                </div>
+                            </div>
                             <p className="text-sm opacity-80 mb-3">{product.description}</p>
-                            
+
                             {/* Product Details */}
                             <div className="grid grid-cols-2 gap-2 text-xs opacity-60 mb-4">
                                 <span>📁 {product.collection}</span>
@@ -638,7 +668,7 @@
                                             </div>
                                         </div>
                                     )}
-                                    
+
                                     {product.colors && product.colors.length > 1 && (
                                         <div>
                                             <label className="text-sm font-semibold mb-2 block">Color:</label>
@@ -662,7 +692,7 @@
                                 </div>
                             )}
                         </div>
-                        
+
                         <div className="flex justify-between items-center">
                             <div>
                                 <span className="text-2xl font-bold text-green-400">${product.price}</span>
@@ -862,7 +892,7 @@
                                         <ProductCard key={product.id} product={product} />
                                     ))}
                                 </div>
-                                
+
                                 {/* Merch Info Banner */}
                                 <div className="glass rounded-xl p-6 mt-8">
                                     <div className="text-center">
