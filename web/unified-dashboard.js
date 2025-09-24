@@ -237,8 +237,7 @@ window.TruthEcosystem = window.TruthEcosystem || {
             console.log('🦊 Attempting wallet connection...');
 
             if (typeof window.ethereum === 'undefined') {
-                alert('MetaMask not found! Please install MetaMask.');
-                return false;
+                throw new Error('MetaMask not detected. Please install MetaMask or open in MetaMask browser.');
             }
 
             // Request account access
@@ -247,7 +246,7 @@ window.TruthEcosystem = window.TruthEcosystem || {
             });
 
             if (accounts.length === 0) {
-                throw new Error('No accounts returned');
+                throw new Error('No accounts returned from MetaMask');
             }
 
             const account = accounts[0];
@@ -262,10 +261,12 @@ window.TruthEcosystem = window.TruthEcosystem || {
                 this.signer = this.web3.getSigner();
             }
 
-            // Update global state
+            // Update global state with real connection flag
             this.updateGlobalState({
                 walletConnected: true,
-                walletAddress: account
+                walletAddress: account,
+                realConnection: true,
+                connectionTimestamp: new Date().toISOString()
             });
 
             // Update all wallet displays
@@ -280,7 +281,14 @@ window.TruthEcosystem = window.TruthEcosystem || {
 
         } catch (error) {
             console.error('Wallet connection failed:', error);
-            alert('Failed to connect wallet. Please try again.');
+            
+            // Provide specific error messages
+            if (error.code === 4001) {
+                console.log('User rejected the connection request');
+            } else if (error.message.includes('MetaMask not detected')) {
+                console.log('MetaMask not available');
+            }
+            
             return false;
         }
     },

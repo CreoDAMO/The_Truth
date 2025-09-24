@@ -825,21 +825,46 @@
                 this.disabled = true;
                 
                 try {
-                    const success = await window.TruthEcosystem.connectWallet();
-                    
-                    if (success) {
-                        this.textContent = `Connected: ${window.TruthEcosystem.walletAddress.substring(0, 6)}...${window.TruthEcosystem.walletAddress.substring(38)}`;
-                        updateLpRewardsDisplay(); // Update display after real connection
-                        console.log('✅ Real MetaMask connection established');
-                    } else {
-                        this.textContent = 'Connect Wallet';
-                        this.disabled = false;
+                    // Check if MetaMask is available
+                    if (typeof window.ethereum === 'undefined') {
+                        throw new Error('MetaMask not detected. Please install MetaMask or open in MetaMask browser.');
                     }
+
+                    // Request account access
+                    const accounts = await window.ethereum.request({
+                        method: 'eth_requestAccounts'
+                    });
+
+                    if (accounts.length === 0) {
+                        throw new Error('No accounts found');
+                    }
+
+                    const account = accounts[0];
+                    
+                    // Update TruthEcosystem state
+                    window.TruthEcosystem.updateGlobalState({
+                        walletConnected: true,
+                        walletAddress: account,
+                        realConnection: true
+                    });
+
+                    this.textContent = `Connected: ${account.substring(0, 6)}...${account.substring(38)}`;
+                    updateLpRewardsDisplay();
+                    console.log('✅ Real MetaMask connection established:', account);
+                    
                 } catch (error) {
                     console.error('MetaMask connection error:', error);
-                    alert('Failed to connect MetaMask. Please try again.');
                     this.textContent = 'Connect Wallet';
                     this.disabled = false;
+                    
+                    // Show user-friendly error
+                    if (error.message.includes('User rejected')) {
+                        alert('Connection cancelled. Please try again and approve the connection.');
+                    } else if (error.message.includes('MetaMask not detected')) {
+                        alert('MetaMask not detected. Please install MetaMask or open this page in the MetaMask browser.');
+                    } else {
+                        alert(`Connection failed: ${error.message}`);
+                    }
                 }
             }
         };
