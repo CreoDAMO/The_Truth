@@ -204,9 +204,9 @@ contract EnhancedTheTruth is ERC721, ERC721Enumerable, ERC721Pausable, ERC2981, 
         // perhaps an array or mapping that stores addresses and their discounts.
         // For this example, we'll simulate checking a few potential partner addresses.
         address[] memory potentialPartners = new address[](3); // Example: check up to 3 partner contracts
-        potentialPartners[0] = address(0x1234567890123456789012345678901234567890); // Replace with actual partner contract addresses
-        potentialPartners[1] = address(0xabcdef1234567890123456789012345678901234);
-        potentialPartners[2] = address(0x0987654321098765432109876543210987654321);
+        potentialPartners[0] = address(0xabc123); // Replace with actual partner contract addresses
+        potentialPartners[1] = address(0xdef456);
+        potentialPartners[2] = address(0xghi789);
 
 
         for (uint256 i = 0; i < potentialPartners.length; i++) {

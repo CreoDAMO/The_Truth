@@ -19,37 +19,11 @@
             background-size: 400% 400%;
             animation: gradientShift 15s ease infinite;
             min-height: 100vh;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
         }
         @keyframes gradientShift {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
-        }
-        
-        /* Fix for any scrolling artifacts or black lines */
-        * {
-            box-sizing: border-box;
-        }
-        
-        html {
-            scroll-behavior: smooth;
-            overflow-x: hidden;
-        }
-        
-        body::before,
-        body::after {
-            display: none;
-        }
-        
-        /* Ensure no pseudo-elements create visual artifacts */
-        .max-w-7xl::before,
-        .max-w-7xl::after,
-        .container::before,
-        .container::after {
-            display: none;
         }
         .pulse-glow {
             animation: pulseGlow 2s ease-in-out infinite;
@@ -115,7 +89,6 @@
             margin-bottom: 20px;
             min-height: 200px;
             position: relative;
-            z-index: 1;
         }
         .contract-option {
             background: rgba(255, 255, 255, 0.05);
@@ -635,5 +608,6 @@
             }
         }
     </script>
+    <script src="static-fallbacks.js"></script>
 </body>
 </html>
