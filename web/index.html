@@ -77,10 +77,8 @@
                         let handlerPrev;
                         do {
                             handlerPrev = sanitized;
-                            // Remove quoted event handlers iteratively
-                            sanitized = sanitized.replace(/on\w+\s*=\s*["'][^"']*["']/gi, '');
-                            // Remove unquoted event handlers iteratively
-                            sanitized = sanitized.replace(/on\w+\s*=\s*[^>\s]+/gi, '');
+                            // Remove all event handler attributes (quoted or unquoted) iteratively
+                            sanitized = sanitized.replace(/on\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, '');
                         } while (sanitized !== handlerPrev);
 
                         // Remove other dangerous elements
