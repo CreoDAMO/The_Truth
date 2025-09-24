@@ -1,0 +1,68 @@
+Skip to content
+Navigation Menu
+CreoDAMO
+The_Truth
+
+Code
+Issues
+Pull requests
+Discussions
+Actions
+Projects
+Wiki
+Security
+Insights
+Deploy to GitHub Pages
+Assistant checkpoint: Fix GitHub workflow and add local prep script #45
+Jobs
+Run details
+Annotations
+1 error
+deploy-github-pages
+failed 2 minutes ago in 17s
+Search logs
+1s
+1s
+4s
+6s
+1s
+2s
+Run npm run compile
+  npm run compile
+  npm run compile-browser
+  npm run update-artifacts
+  shell: /usr/bin/bash -e {0}
+
+> the-truth-nft@1.0.0 compile
+> hardhat compile
+
+Downloading compiler 0.8.27
+ParserError: Hexadecimal digit missing or invalid.
+   --> contracts/EnhancedTheTruth.sol:209:40:
+    |
+209 |         potentialPartners[2] = address(0xghi789);
+    |                                        ^^
+
+
+Error HH600: Compilation failed
+
+HardhatError: HH600: Compilation failed
+    at SimpleTaskDefinition.action (/home/runner/work/The_Truth/The_Truth/node_modules/hardhat/src/builtin-tasks/compile.ts:504:15)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at Environment._runTaskDefinition (/home/runner/work/The_Truth/The_Truth/node_modules/hardhat/src/internal/core/runtime-environment.ts:351:14)
+    at OverriddenTaskDefinition._action (/home/runner/work/The_Truth/The_Truth/node_modules/@typechain/hardhat/src/index.ts:28:30)
+    at Environment._runTaskDefinition (/home/runner/work/The_Truth/The_Truth/node_modules/hardhat/src/internal/core/runtime-environment.ts:351:14)
+    at Environment.run (/home/runner/work/The_Truth/The_Truth/node_modules/hardhat/src/internal/core/runtime-environment.ts:184:14)
+    at SimpleTaskDefinition.action (/home/runner/work/The_Truth/The_Truth/node_modules/hardhat/src/builtin-tasks/compile.ts:1433:63)
+    at Environment._runTaskDefinition (/home/runner/work/The_Truth/The_Truth/node_modules/hardhat/src/internal/core/runtime-environment.ts:351:14)
+    at Environment.run (/home/runner/work/The_Truth/The_Truth/node_modules/hardhat/src/internal/core/runtime-environment.ts:184:14)
+    at SimpleTaskDefinition.action (/home/runner/work/The_Truth/The_Truth/node_modules/hardhat/src/builtin-tasks/compile.ts:1513:7)
+Error: Process completed with exit code 1.
+0s
+0s
+0s
+0s
+0s
+0s
+0s
+0s
