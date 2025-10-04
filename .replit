@@ -5,7 +5,9 @@ run = "npm run dev"
 channel = "stable-25_05"
 
 [deployment]
-run = ["sh", "-c", "npm run dev"]
+run = ["node", "--experimental-modules", "web/server.js"]
+deploymentTarget = "autoscale"
+build = ["npm", "run", "compile"]
 
 [workflows]
 runButton = "Project"

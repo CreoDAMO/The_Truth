@@ -8,6 +8,33 @@ The Truth NFT is a comprehensive Web3 creator economy built on the Base blockcha
 
 Preferred communication style: Simple, everyday language
 
+## Recent Changes (October 4, 2025)
+
+### Smart Contract Upgrades
+- **OpenZeppelin v5 Migration**: All smart contracts (TheTruth.sol, TruthBonusGift.sol, TruthPartThree.sol, PaymentSplitter) have been updated to be compatible with OpenZeppelin v5.4.0.
+  - Updated import paths (ReentrancyGuard moved from `security/` to `utils/`)
+  - Updated constructor syntax for Ownable (now requires initialOwner parameter)
+  - Replaced deprecated `_exists()` with `_ownerOf() != address(0)`
+  - Updated hook system from `_beforeTokenTransfer` to `_update` and `_increaseBalance`
+- **PaymentSplitter**: Imported from OpenZeppelin v4 as a standalone contract since it was removed in v5.
+- **All Contracts Compiled**: Successfully compiled 32 Solidity files with Hardhat.
+
+### Coinbase SDK Enhancements
+- **Updated to v4.3.7**: The latest stable version with advanced Smart Wallet features.
+- **New Features Integrated**:
+  - **Wallet Capabilities Detection**: Query and display wallet capabilities (paymaster, atomic transactions, etc.)
+  - **Spend Permissions**: Enable subscription-like recurring payments without repeated approval
+  - **Batch Transactions**: Support for atomic multi-call transactions
+  - **Gasless Transactions**: Paymaster-sponsored transactions for better UX
+  - **Basename Registration**: Onchain identity management
+  - **Smart Wallet Preference**: Configured to prefer Smart Wallet connections
+- **Service Architecture**: Enhanced coinbaseService.js with all v4.3+ features
+
+### Frontend Improvements
+- **Blackpaper Fix**: Copied BLACKPAPER.md to LAW directory for proper display in Lawful dashboard
+- **Vite Configuration**: Added `allowedHosts: true` to support Replit's proxy architecture
+- **Build Optimization**: React app successfully built with code splitting and vendor chunks
+
 ## System Architecture
 
 ### Frontend Architecture
@@ -56,10 +83,11 @@ Preferred communication style: Simple, everyday language
 
 ### Payment Processing
 - **Stripe 14.25**: Integrated for traditional payment processing.
-- **MetaMask**: The primary wallet connection method for cryptocurrency transactions.
+- **Coinbase Wallet SDK 4.3.7**: Primary wallet connection with Smart Wallet support, spend permissions, and gasless transactions.
+- **MetaMask**: Fallback wallet connection method for cryptocurrency transactions.
 
 ### Development Tools
 - **PostCSS 8.5**: Tool for transforming CSS with JavaScript plugins.
 - **Autoprefixer 10.4**: Adds vendor prefixes to CSS rules.
 - **Hardhat Toolbox 5.0**: A collection of Hardhat plugins.
-- **OpenZeppelin 5.2**: Provides secure and audited smart contract libraries.
+- **OpenZeppelin 5.4.0**: Provides secure and audited smart contract libraries (upgraded from v4.9).
