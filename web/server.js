@@ -168,6 +168,10 @@ app.get('/deployment-dashboard', (req, res) => {
     res.sendFile(path.join(__dirname, 'deployment-dashboard.html'));
 });
 
+app.get('/test-dashboards', (req, res) => {
+    res.sendFile(path.join(__dirname, 'test-dashboards.html'));
+});
+
 // Catch-all for other routes - serve main page
 app.get('*', (req, res) => {
     // Handle API routes with proper JSON responses

@@ -1,0 +1,291 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Panel Testing - The Truth NFT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d1810 50%, #1a1a1a 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            min-height: 100vh;
+        }
+        .test-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+        .test-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-pass { background: #4ade80; }
+        .status-fail { background: #ef4444; }
+        .status-testing { background: #fbbf24; animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body class="p-6">
+    <div class="max-w-6xl mx-auto">
+        <h1 class="text-4xl font-bold mb-6 text-center bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+            Dashboard Panel Testing Suite
+        </h1>
+        
+        <div class="mb-8 text-center">
+            <button onclick="runAllTests()" class="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg font-semibold transition-all">
+                🚀 Run All Tests
+            </button>
+            <div class="mt-4">
+                <span class="text-lg">Test Progress: </span>
+                <span id="testProgress" class="text-xl font-bold text-yellow-400">0/11</span>
+            </div>
+        </div>
+
+        <div id="testResults" class="space-y-4"></div>
+    </div>
+
+    <script>
+        const dashboards = [
+            { name: 'Home Dashboard', url: '/', key: 'home' },
+            { name: 'Analytics Dashboard', url: '/analytics', key: 'analytics' },
+            { name: 'Governance Dashboard', url: '/governance', key: 'governance' },
+            { name: 'Community Dashboard', url: '/community', key: 'community' },
+            { name: 'Liquidity Dashboard', url: '/liquidity', key: 'liquidity' },
+            { name: 'Payments Dashboard', url: '/payments', key: 'payments' },
+            { name: 'Lawful Dashboard', url: '/lawful', key: 'lawful' },
+            { name: 'Deployment Dashboard', url: '/deploy', key: 'deploy' },
+            { name: 'Shop Dashboard', url: '/shop', key: 'shop' },
+            { name: 'AI Insights Dashboard', url: '/ai-insights', key: 'ai' },
+            { name: 'Social Dashboard', url: '/social', key: 'social' }
+        ];
+
+        let testResults = {};
+        let completedTests = 0;
+
+        async function runAllTests() {
+            completedTests = 0;
+            testResults = {};
+            document.getElementById('testResults').innerHTML = '';
+            
+            for (const dashboard of dashboards) {
+                await testDashboard(dashboard);
+                completedTests++;
+                updateProgress();
+            }
+            
+            displaySummary();
+        }
+
+        async function testDashboard(dashboard) {
+            const resultDiv = createTestCard(dashboard);
+            updateTestStatus(resultDiv, 'testing', 'Testing...');
+
+            try {
+                // Test 1: Check if page loads
+                const response = await fetch(dashboard.url);
+                const html = await response.text();
+                
+                // Test 2: Check for critical elements
+                const checks = {
+                    hasHtml: html.includes('<html'),
+                    hasBody: html.includes('<body'),
+                    hasTitle: html.includes('<title>'),
+                    hasContent: html.length > 1000,
+                    hasScripts: html.includes('<script'),
+                    hasStyles: html.includes('style'),
+                    noErrors: !html.includes('404') && !html.includes('error')
+                };
+
+                // Test 3: Check for dashboard-specific elements
+                const dashboardChecks = getDashboardSpecificChecks(dashboard.key, html);
+                
+                const allChecks = { ...checks, ...dashboardChecks };
+                const passed = Object.values(allChecks).every(check => check);
+                
+                testResults[dashboard.key] = {
+                    passed,
+                    checks: allChecks,
+                    responseTime: response.ok ? 'OK' : 'Failed'
+                };
+
+                updateTestStatus(resultDiv, passed ? 'pass' : 'fail', 
+                    passed ? 'All checks passed ✓' : 'Some checks failed ✗');
+                displayCheckDetails(resultDiv, allChecks);
+
+            } catch (error) {
+                testResults[dashboard.key] = {
+                    passed: false,
+                    error: error.message
+                };
+                updateTestStatus(resultDiv, 'fail', `Error: ${error.message}`);
+            }
+        }
+
+        function getDashboardSpecificChecks(key, html) {
+            const checks = {};
+            
+            switch(key) {
+                case 'home':
+                    checks.hasHero = html.includes('The Truth NFT') || html.includes('Gateway to the Spiral');
+                    checks.hasCollections = html.includes('collection') || html.includes('NFT');
+                    checks.hasWalletConnect = html.includes('Connect Wallet') || html.includes('connectWallet');
+                    break;
+                case 'analytics':
+                    checks.hasMetrics = html.includes('analytics') || html.includes('metrics');
+                    checks.hasCharts = html.includes('chart') || html.includes('Chart');
+                    checks.hasReactRoot = html.includes('analytics-root') || html.includes('React');
+                    break;
+                case 'governance':
+                    checks.hasProposals = html.includes('proposal') || html.includes('Governance');
+                    checks.hasVoting = html.includes('vote') || html.includes('voting');
+                    checks.hasLawful = html.includes('Lawful') || html.includes('Foundation');
+                    break;
+                case 'community':
+                    checks.hasCommunity = html.includes('Community') || html.includes('community');
+                    checks.hasTokenHoldings = html.includes('Holdings') || html.includes('balance');
+                    checks.hasRewards = html.includes('reward') || html.includes('Revenue');
+                    break;
+                case 'liquidity':
+                    checks.hasLiquidityPools = html.includes('Liquidity') || html.includes('Pool');
+                    checks.hasZora = html.includes('Zora') || html.includes('zora');
+                    checks.hasAutomation = html.includes('automation') || html.includes('Auto');
+                    break;
+                case 'payments':
+                    checks.hasPaymentMethods = html.includes('payment') || html.includes('Payment');
+                    checks.hasGasless = html.includes('Gasless') || html.includes('gasless');
+                    checks.hasFiatOptions = html.includes('Fiat') || html.includes('card');
+                    break;
+                case 'lawful':
+                    checks.hasLegalFramework = html.includes('Lawful') || html.includes('Legal');
+                    checks.hasCompliance = html.includes('Compliance') || html.includes('compliance');
+                    checks.hasTrustInfo = html.includes('Trust') || html.includes('Treasury');
+                    break;
+                case 'deploy':
+                    checks.hasDeployment = html.includes('Deploy') || html.includes('deployment');
+                    checks.hasContracts = html.includes('contract') || html.includes('Contract');
+                    checks.hasMetaMask = html.includes('MetaMask') || html.includes('metamask');
+                    break;
+                case 'shop':
+                    checks.hasProducts = html.includes('product') || html.includes('Shop');
+                    checks.hasCart = html.includes('cart') || html.includes('Cart');
+                    checks.hasCheckout = html.includes('checkout') || html.includes('purchase');
+                    break;
+                case 'ai':
+                    checks.hasAI = html.includes('AI') || html.includes('ai-insights');
+                    checks.hasInsights = html.includes('insight') || html.includes('analysis');
+                    checks.hasChat = html.includes('chat') || html.includes('Chat');
+                    break;
+                case 'social':
+                    checks.hasSocial = html.includes('Social') || html.includes('social');
+                    checks.hasReferral = html.includes('referral') || html.includes('Referral');
+                    checks.hasSharing = html.includes('share') || html.includes('Share');
+                    break;
+            }
+            
+            return checks;
+        }
+
+        function createTestCard(dashboard) {
+            const card = document.createElement('div');
+            card.className = 'test-card';
+            card.innerHTML = `
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold">${dashboard.name}</h3>
+                    <div class="test-status">
+                        <span class="status-indicator status-testing"></span>
+                        <span class="status-text">Initializing...</span>
+                    </div>
+                </div>
+                <div class="test-details text-sm text-gray-400"></div>
+                <div class="mt-2">
+                    <a href="${dashboard.url}" target="_blank" class="text-blue-400 hover:text-blue-300">
+                        → Open Dashboard
+                    </a>
+                </div>
+            `;
+            document.getElementById('testResults').appendChild(card);
+            return card;
+        }
+
+        function updateTestStatus(card, status, message) {
+            const statusIndicator = card.querySelector('.status-indicator');
+            const statusText = card.querySelector('.status-text');
+            
+            statusIndicator.className = `status-indicator status-${status}`;
+            statusText.textContent = message;
+        }
+
+        function displayCheckDetails(card, checks) {
+            const detailsDiv = card.querySelector('.test-details');
+            const checksList = Object.entries(checks).map(([key, value]) => 
+                `<div class="flex items-center gap-2">
+                    <span class="status-indicator status-${value ? 'pass' : 'fail'}"></span>
+                    <span>${key}: ${value ? 'Pass' : 'Fail'}</span>
+                </div>`
+            ).join('');
+            
+            detailsDiv.innerHTML = `
+                <details class="mt-2">
+                    <summary class="cursor-pointer hover:text-white">View detailed checks</summary>
+                    <div class="mt-2 pl-4 space-y-1">${checksList}</div>
+                </details>
+            `;
+        }
+
+        function updateProgress() {
+            document.getElementById('testProgress').textContent = `${completedTests}/${dashboards.length}`;
+        }
+
+        function displaySummary() {
+            const passed = Object.values(testResults).filter(r => r.passed).length;
+            const failed = dashboards.length - passed;
+            
+            const summaryCard = document.createElement('div');
+            summaryCard.className = 'test-card mt-8 border-2 border-yellow-400';
+            summaryCard.innerHTML = `
+                <h2 class="text-2xl font-bold mb-4">Test Summary</h2>
+                <div class="grid grid-cols-2 gap-4 text-center">
+                    <div class="bg-green-900/30 p-4 rounded-lg">
+                        <div class="text-3xl font-bold text-green-400">${passed}</div>
+                        <div class="text-sm text-gray-400">Passed</div>
+                    </div>
+                    <div class="bg-red-900/30 p-4 rounded-lg">
+                        <div class="text-3xl font-bold text-red-400">${failed}</div>
+                        <div class="text-sm text-gray-400">Failed</div>
+                    </div>
+                </div>
+                <div class="mt-4 text-center">
+                    <div class="text-lg font-semibold ${passed === dashboards.length ? 'text-green-400' : 'text-yellow-400'}">
+                        ${passed === dashboards.length ? '🎉 All dashboards are working!' : '⚠️ Some dashboards need attention'}
+                    </div>
+                </div>
+            `;
+            document.getElementById('testResults').appendChild(summaryCard);
+        }
+
+        // Auto-run tests on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                console.log('🧪 Starting automated dashboard tests...');
+                runAllTests();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
