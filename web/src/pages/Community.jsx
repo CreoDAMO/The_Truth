@@ -1,7 +1,48 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useTruth } from '../context/TruthContext';
 
 const Community = () => {
+  const { walletConnected, truthBalance, creatorBalance } = useTruth();
+  const [communityPower, setCommunityPower] = useState(0);
+
+  useEffect(() => {
+    // Calculate community power based on token holdings
+    if (truthBalance || creatorBalance) {
+      const power = Math.min(((parseFloat(truthBalance || 0) + parseFloat(creatorBalance || 0) * 0.1) / 1000) * 100, 100);
+      setCommunityPower(power);
+    }
+  }, [truthBalance, creatorBalance]);
+
+  const handleClaimRewards = () => {
+    if (!walletConnected) {
+      alert('Please connect your wallet first');
+      return;
+    }
+    alert('Claiming rewards functionality will be available after contract deployment!');
+  };
+
+  const handleStake = () => {
+    if (!walletConnected) {
+      alert('Please connect your wallet first');
+      return;
+    }
+    const amount = document.getElementById('stakeInput')?.value;
+    if (!amount || amount <= 0) {
+      alert('Please enter a valid amount to stake');
+      return;
+    }
+    alert(`Staking ${amount} TRUTH tokens! This feature will be available after contract deployment.`);
+  };
+
+  const handleUnstake = () => {
+    if (!walletConnected) {
+      alert('Please connect your wallet first');
+      return;
+    }
+    alert('Unstaking functionality will be available after contract deployment!');
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="text-center mb-12">
@@ -23,11 +64,15 @@ const Community = () => {
           
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div className="text-center bg-black/30 p-4 rounded-lg">
-              <div className="text-3xl font-bold text-yellow-400">0</div>
+              <div className="text-3xl font-bold text-yellow-400">
+                {walletConnected ? (truthBalance || '0') : '0'}
+              </div>
               <div className="text-sm text-gray-400">TRUTH Tokens</div>
             </div>
             <div className="text-center bg-black/30 p-4 rounded-lg">
-              <div className="text-3xl font-bold text-green-400">0</div>
+              <div className="text-3xl font-bold text-green-400">
+                {walletConnected ? (creatorBalance || '0') : '0'}
+              </div>
               <div className="text-sm text-gray-400">Creator Coins</div>
             </div>
           </div>
@@ -35,10 +80,10 @@ const Community = () => {
           <div className="bg-gradient-to-r from-purple-900/30 to-pink-900/30 rounded-lg p-4">
             <div className="flex justify-between items-center mb-2">
               <span className="text-lg font-semibold">Community Power</span>
-              <span className="text-2xl font-bold text-blue-400">0%</span>
+              <span className="text-2xl font-bold text-blue-400">{communityPower.toFixed(1)}%</span>
             </div>
             <div className="w-full bg-gray-700 rounded-full h-2">
-              <div className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full" style={{width: '0%'}}></div>
+              <div className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-500" style={{width: `${communityPower}%`}}></div>
             </div>
             <p className="text-xs text-gray-400 mt-2">Based on total token holdings</p>
           </div>
@@ -73,7 +118,10 @@ const Community = () => {
             </div>
           </div>
           
-          <button className="w-full bg-green-600 hover:bg-green-700 px-4 py-3 rounded-lg font-semibold mt-4 transition-all">
+          <button 
+            onClick={handleClaimRewards}
+            className="w-full bg-green-600 hover:bg-green-700 px-4 py-3 rounded-lg font-semibold mt-4 transition-all"
+          >
             Claim Rewards
           </button>
         </div>
@@ -127,14 +175,22 @@ const Community = () => {
           
           <div className="space-y-3">
             <input 
+              id="stakeInput"
               type="number" 
               className="w-full bg-black/40 border border-pink-400/40 rounded-lg px-4 py-3 text-white placeholder-gray-400"
               placeholder="Amount to stake"
+              min="0"
             />
-            <button className="w-full bg-pink-600 hover:bg-pink-700 py-3 rounded-lg font-semibold transition-all">
+            <button 
+              onClick={handleStake}
+              className="w-full bg-pink-600 hover:bg-pink-700 py-3 rounded-lg font-semibold transition-all"
+            >
               Stake TRUTH
             </button>
-            <button className="w-full bg-red-600/80 hover:bg-red-600 py-3 rounded-lg font-semibold transition-all">
+            <button 
+              onClick={handleUnstake}
+              className="w-full bg-red-600/80 hover:bg-red-600 py-3 rounded-lg font-semibold transition-all"
+            >
               Unstake
             </button>
           </div>
