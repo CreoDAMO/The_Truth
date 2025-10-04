@@ -5,9 +5,7 @@ run = "npm run dev"
 channel = "stable-25_05"
 
 [deployment]
-run = ["node", "--experimental-modules", "web/server.js"]
-deploymentTarget = "autoscale"
-build = ["npx", "vite", "build"]
+run = ["sh", "-c", "npm run dev"]
 
 [workflows]
 runButton = "Project"
@@ -178,7 +176,7 @@ localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 46521
+localPort = 32887
 externalPort = 3000
 
 [agent]
