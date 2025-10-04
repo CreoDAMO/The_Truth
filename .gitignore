@@ -47,3 +47,6 @@ Thumbs.db
 # Replit
 .replit.nix
 replit.nix
+.upm/
+.config/
+.breakpoints
