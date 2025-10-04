@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useTruth } from '../context/TruthContext';
+import SmartWalletConnect from '../components/SmartWalletConnect';
+import coinbaseService from '../services/coinbaseService';
 
 const Payments = () => {
   const { walletConnected, walletAddress, truthBalance, creatorBalance, buyWithOnramp } = useTruth();
   const [showOnramp, setShowOnramp] = useState(false);
+  const [batchMinting, setBatchMinting] = useState(false);
+  const [selectedNFTs, setSelectedNFTs] = useState([]);
 
   useEffect(() => {
     // Load Coinbase Pay SDK
@@ -17,6 +21,7 @@ const Payments = () => {
 
   const [activeTab, setActiveTab] = useState('nft-mint');
   const [account, setAccount] = useState(null);
+  const [smartWalletConnected, setSmartWalletConnected] = useState(false);
 
   const connectWallet = async () => {
     if (typeof window.ethereum !== 'undefined') {
@@ -31,6 +36,47 @@ const Payments = () => {
     }
   };
 
+  const handleSmartWalletConnect = (info) => {
+    setAccount(info.address);
+    setSmartWalletConnected(true);
+  };
+
+  const handleBatchMint = async () => {
+    if (selectedNFTs.length === 0) {
+      alert('Please select NFTs to mint');
+      return;
+    }
+
+    try {
+      setBatchMinting(true);
+      
+      // Prepare batch transaction calls
+      const calls = selectedNFTs.map(nft => ({
+        to: nft.contractAddress,
+        value: nft.price,
+        data: '0x' // Mint function call data would go here
+      }));
+
+      const result = await coinbaseService.sendBatchTransaction(calls);
+      alert(`Successfully minted ${selectedNFTs.length} NFTs in one transaction!`);
+      setSelectedNFTs([]);
+    } catch (error) {
+      console.error('Batch minting failed:', error);
+      alert('Batch minting failed. Please try again.');
+    } finally {
+      setBatchMinting(false);
+    }
+  };
+
+  const handleBuyWithOnramp = async (amount) => {
+    try {
+      await coinbaseService.onrampBuy({ amount, currency: 'ETH', network: 'base' });
+      alert('Purchase completed! ETH will arrive shortly.');
+    } catch (error) {
+      console.error('Onramp purchase failed:', error);
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="text-center mb-12">
@@ -39,19 +85,44 @@ const Payments = () => {
         </h1>
         <p className="text-xl text-gray-300">Multiple payment methods for maximum accessibility</p>
 
-        {!account ? (
-          <button
-            onClick={connectWallet}
-            className="mt-4 bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-semibold transition-all"
-          >
-            Connect Wallet
-          </button>
-        ) : (
-          <div className="mt-4 text-green-400">
-            Connected: {account.slice(0, 6)}...{account.slice(-4)}
-          </div>
-        )}
+        <div className="mt-6 flex flex-col items-center gap-4">
+          <SmartWalletConnect 
+            onConnect={handleSmartWalletConnect}
+            onDisconnect={() => {
+              setAccount(null);
+              setSmartWalletConnected(false);
+            }}
+          />
+          
+          {!account && (
+            <button
+              onClick={connectWallet}
+              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 px-6 py-3 rounded-lg font-semibold transition-all"
+            >
+              <span className="mr-2">🦊</span>
+              Connect MetaMask (Fallback)
+            </button>
+          )}
+        </div>
       </div>
+
+      {/* Quick Onramp Purchase */}
+      {smartWalletConnected && (
+        <div className="bg-gradient-to-r from-blue-900/30 to-purple-900/30 p-6 rounded-lg border border-blue-500/30 mb-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-xl font-bold mb-2">💰 Need ETH?</h3>
+              <p className="text-gray-300 text-sm">Buy ETH directly with your card</p>
+            </div>
+            <button
+              onClick={() => handleBuyWithOnramp('0.1')}
+              className="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-semibold transition-all"
+            >
+              Buy ETH with Card
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Tab Navigation */}
       <div className="flex flex-wrap gap-2 bg-black/50 p-2 rounded-lg mb-8">
