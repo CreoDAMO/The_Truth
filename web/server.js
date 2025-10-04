@@ -47,7 +47,10 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Serve the React build from dist directory
+// Serve static assets from web directory (legacy files)
+app.use('/web', express.static(path.join(__dirname)));
+
+// Serve the React build from dist directory (primary)
 app.use(express.static(path.join(__dirname, '..', 'dist')));
 
 // Explicit routes for LAW directory files
