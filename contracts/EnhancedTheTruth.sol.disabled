@@ -83,12 +83,15 @@ contract EnhancedTheTruth is ERC721, ERC721Enumerable, ERC721Pausable, ERC2981, 
         address initialOwner,
         string memory baseURI,
         address initialTreasury
-    ) ERC721("The Truth Enhanced", "TRUTHX") Ownable(initialOwner) ERC721Pausable() ERC2981(_setRoyalty) {
+    ) ERC721("The Truth Enhanced", "TRUTHX") Ownable(initialOwner) {
         _transferOwnership(initialOwner);
         _baseTokenURI = baseURI;
         _grantRole(DEFAULT_ADMIN_ROLE, initialOwner);
         _grantRole(PAUSER_ROLE, initialOwner);
         treasury = initialTreasury;
+
+        // Set default royalty to 10% (1000 basis points)
+        _setDefaultRoyalty(initialTreasury, 1000);
 
         // Mint master copy #77 to owner
         _safeMint(initialOwner, MASTER_COPY_ID);
@@ -204,9 +207,9 @@ contract EnhancedTheTruth is ERC721, ERC721Enumerable, ERC721Pausable, ERC2981, 
         // perhaps an array or mapping that stores addresses and their discounts.
         // For this example, we'll simulate checking a few potential partner addresses.
         address[] memory potentialPartners = new address[](3); // Example: check up to 3 partner contracts
-        potentialPartners[0] = address(0xabc123); // Replace with actual partner contract addresses
-        potentialPartners[1] = address(0xdef456);
-        potentialPartners[2] = address(0xghi789);
+        potentialPartners[0] = address(0xabc123000000000000000000000000000000000); // Replace with actual partner contract addresses
+        potentialPartners[1] = address(0xdef456000000000000000000000000000000000);
+        potentialPartners[2] = address(0x123789000000000000000000000000000000000);
 
 
         for (uint256 i = 0; i < potentialPartners.length; i++) {
@@ -387,18 +390,15 @@ contract EnhancedTheTruth is ERC721, ERC721Enumerable, ERC721Pausable, ERC2981, 
     function supportsInterface(bytes4 interfaceId)
         public
         view
-        override(ERC721, ERC721Enumerable, ERC721Pausable, ERC2981, AccessControl)
+        override(ERC721, ERC721Enumerable, ERC2981, AccessControl)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
     }
 
-    // Royalty function override for ERC2981
-    function _setRoyalty(uint256 tokenId, address receiver, uint96 feeNumerator)
-        internal
-        override(ERC2981)
-    {
+    // Set default royalty for the collection
+    function setDefaultRoyalty(address receiver, uint96 feeNumerator) external onlyRole(DEFAULT_ADMIN_ROLE) {
         require(feeNumerator <= 1000, "Royalty fee too high"); // Max 10%
-        super._setRoyalty(tokenId, receiver, feeNumerator);
+        _setDefaultRoyalty(receiver, feeNumerator);
     }
 }

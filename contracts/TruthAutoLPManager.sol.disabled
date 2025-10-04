@@ -15,9 +15,9 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 contract TruthAutoLPManager is Ownable, ReentrancyGuard, Pausable {
     
     // Token addresses
-    address public constant TRUTH_TOKEN = 0x8f6cf6f7747e170f4768533b869c339dc3d30a3c;
-    address public constant CREATOR_TOKEN = 0x22b0434e89882f8e6841d340b28427646c015aa7;
-    address public constant ZORA_WALLET = 0xc4b8f1ab3499fac71975666a04a1c99de7609603;
+    address public constant TRUTH_TOKEN = 0x8f6cF6f7747E170f4768533b869c339dc3D30A3c;
+    address public constant CREATOR_TOKEN = 0x22B0434E89882F8E6841d340b28427646c015Aa7;
+    address public constant ZORA_WALLET = 0xC4B8f1aB3499fAc71975666A04A1c99de7609603;
     
     // Base network tokens
     address public constant WETH = 0x4200000000000000000000000000000000000006;
