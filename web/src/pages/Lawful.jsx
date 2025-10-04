@@ -31,6 +31,28 @@ const Lawful = () => {
         </div>
 
         <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10">
+          <h3 className="text-2xl font-bold mb-4 text-yellow-400">👑 Master Copy Legal Framework</h3>
+          <div className="space-y-4 mb-6">
+            <div className="bg-black/30 p-4 rounded-lg">
+              <h4 className="font-semibold mb-2 text-yellow-300">Auto-Minting on Deployment</h4>
+              <p className="text-sm text-gray-300">Each contract automatically mints the Master Copy to the founder wallet (0x67BF9f428d92704C3Db3a08dC05Bc941A8647866) during deployment. This is hardcoded in the constructor and cannot be changed.</p>
+            </div>
+            <div className="bg-black/30 p-4 rounded-lg">
+              <h4 className="font-semibold mb-2 text-yellow-300">Master Copy IDs</h4>
+              <ul className="text-sm text-gray-300 space-y-1">
+                <li>• The Truth: Token ID #77</li>
+                <li>• Bonus Gift: Token ID #145000</li>
+                <li>• Part Three: Token ID #444</li>
+              </ul>
+            </div>
+            <div className="bg-black/30 p-4 rounded-lg">
+              <h4 className="font-semibold mb-2 text-yellow-300">Legal Status</h4>
+              <p className="text-sm text-gray-300">Master copies are held in irrevocable trust as documented in TRUST_DEED_PROVENANCE.md. These tokens are priceless and never for sale, serving as the canonical reference for all public editions.</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10">
           <h3 className="text-2xl font-bold mb-4 text-green-400">✅ Compliance Status</h3>
           <div className="space-y-4">
             <div className="flex justify-between items-center">
