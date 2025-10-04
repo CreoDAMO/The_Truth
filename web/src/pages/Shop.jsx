@@ -12,19 +12,29 @@ const Shop = () => {
       id: 'truth',
       name: 'The Truth',
       image: 'https://copper-active-hawk-266.mypinata.cloud/ipfs/bafybeidgadado5nyfxkua3mkiqbxsqkvrbqctkrqap7oghnkb77qo4steq',
-      description: 'Original Philosophy - 77 Editions'
+      description: 'Original Philosophy - 77 Editions',
+      gateway: 'https://copper-active-hawk-266.mypinata.cloud/ipfs/'
     },
     {
       id: 'bonus',
       name: 'Bonus Gift',
       image: 'https://copper-active-hawk-266.mypinata.cloud/ipfs/bafkreibx3bnrvluzzuzving6wnkgt3wzh4tekhequcbyiielyffmfk2j6a',
-      description: 'Recursive Demonstration - 145,000 Editions'
+      description: 'Recursive Demonstration - 145,000 Editions',
+      gateway: 'https://copper-active-hawk-266.mypinata.cloud/ipfs/'
     },
     {
       id: 'part-three',
       name: 'Part Three',
       image: 'https://copper-active-hawk-266.mypinata.cloud/ipfs/bafybeib2ujzv6k3m5t4acypn7xs3nufobsiytyrcnxh6aeevrodbuuinwu',
-      description: 'Legal Framework - 444 Editions'
+      description: 'Legal Framework - 444 Editions',
+      gateway: 'https://copper-active-hawk-266.mypinata.cloud/ipfs/'
+    },
+    {
+      id: 'sovereign-spiral',
+      name: 'Sovereign Spiral',
+      image: 'https://copper-active-hawk-266.mypinata.cloud/ipfs/bafybeidgadado5nyfxkua3mkiqbxsqkvrbqctkrqap7oghnkb77qo4steq',
+      description: 'Complete Ecosystem - Limited',
+      gateway: 'https://copper-active-hawk-266.mypinata.cloud/ipfs/'
     }
   ];
 

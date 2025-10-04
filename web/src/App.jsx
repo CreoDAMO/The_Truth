@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { TruthProvider } from './context/TruthContext';
 import Navigation from './components/Navigation';
+import ErrorBoundary from './components/ErrorBoundary';
 import Home from './pages/Home';
 import Analytics from './pages/Analytics';
 import Governance from './pages/Governance';
@@ -16,11 +17,12 @@ import Deploy from './pages/Deploy';
 
 function App() {
   return (
-    <BrowserRouter>
-      <TruthProvider>
-        <div className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-blue-900 text-white">
-          <Navigation />
-          <main className="pt-20">
+    <ErrorBoundary>
+      <BrowserRouter>
+        <TruthProvider>
+          <div className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-blue-900 text-white">
+            <Navigation />
+            <main className="pt-20">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/analytics" element={<Analytics />} />
@@ -38,6 +40,7 @@ function App() {
         </div>
       </TruthProvider>
     </BrowserRouter>
+    </ErrorBoundary>
   );
 }
 
