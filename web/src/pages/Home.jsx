@@ -67,3 +67,89 @@ const Home = () => {
 };
 
 export default Home;
+import React from 'react';
+import { useTruth } from '../context/TruthContext';
+
+const Home = () => {
+  const { walletConnected, connectWallet } = useTruth();
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="text-center mb-12">
+        <h1 className="text-6xl font-black mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
+          The Truth NFT
+        </h1>
+        <p className="text-2xl text-gray-300 mb-8">
+          A philosophical experiment preserved on-chain
+        </p>
+        {!walletConnected && (
+          <button
+            onClick={connectWallet}
+            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 px-8 py-4 rounded-lg text-xl font-bold shadow-lg transition-all"
+          >
+            Connect Wallet
+          </button>
+        )}
+      </div>
+
+      <div className="grid md:grid-cols-3 gap-6 mb-12">
+        <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10">
+          <div className="text-4xl mb-4">🎯</div>
+          <h3 className="text-xl font-bold mb-2 text-purple-400">The Truth Original</h3>
+          <p className="text-gray-300 mb-4">77 unique philosophical NFTs</p>
+          <div className="text-2xl font-bold text-green-400">0.169 ETH</div>
+        </div>
+
+        <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10">
+          <div className="text-4xl mb-4">🎁</div>
+          <h3 className="text-xl font-bold mb-2 text-green-400">Bonus Gift</h3>
+          <p className="text-gray-300 mb-4">145,000 community access NFTs</p>
+          <div className="text-2xl font-bold text-green-400">0.039 ETH</div>
+        </div>
+
+        <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10">
+          <div className="text-4xl mb-4">📜</div>
+          <h3 className="text-xl font-bold mb-2 text-yellow-400">Part Three</h3>
+          <p className="text-gray-300 mb-4">444 Blackpaper NFTs</p>
+          <div className="text-2xl font-bold text-green-400">TBD</div>
+        </div>
+      </div>
+
+      <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10">
+        <h2 className="text-3xl font-bold mb-6 text-center">About The Truth</h2>
+        <div className="prose prose-invert max-w-none">
+          <p className="text-gray-300 text-lg mb-4">
+            The Truth is a philosophical experiment that explores the gap between institutional reality 
+            and actual truth through blockchain technology and NFT art.
+          </p>
+          <p className="text-gray-300 text-lg mb-4">
+            Each NFT represents a piece of this philosophical journey, preserved immutably on-chain 
+            with full legal and economic frameworks.
+          </p>
+          <div className="grid md:grid-cols-2 gap-6 mt-8">
+            <div>
+              <h3 className="text-xl font-bold mb-3 text-blue-400">🔗 Token Integration</h3>
+              <ul className="space-y-2 text-gray-300">
+                <li>• TRUTH governance token on Base</li>
+                <li>• Creator token economy</li>
+                <li>• Automated liquidity pools</li>
+                <li>• Revenue sharing mechanisms</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-xl font-bold mb-3 text-purple-400">⚖️ Legal Framework</h3>
+              <ul className="space-y-2 text-gray-300">
+                <li>• Irrevocable trust structure</li>
+                <li>• Florida tax compliance</li>
+                <li>• Treasury resolutions</li>
+                <li>• Token terms & provenance</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Home;

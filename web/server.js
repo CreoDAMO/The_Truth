@@ -47,10 +47,8 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Serve static files from the web directory first (highest priority)
-app.use(express.static(__dirname));
-// Then serve from parent directory
-app.use(express.static(path.join(__dirname, '..')));
+// Serve the React build from dist directory
+app.use(express.static(path.join(__dirname, '..', 'dist')));
 
 // Explicit routes for LAW directory files
 app.use('/LAW', express.static(path.join(__dirname, '..', 'LAW')));
@@ -115,64 +113,9 @@ app.get('/api/community', (req, res) => {
     });
 });
 
-// Serve specific HTML files for dashboard routes
-app.get('/analytics', (req, res) => {
-    res.sendFile(path.join(__dirname, 'analytics.html'));
-});
+// All dashboard routes now handled by React Router
 
-app.get('/governance', (req, res) => {
-    res.sendFile(path.join(__dirname, 'governance.html'));
-});
-
-app.get('/community', (req, res) => {
-    res.sendFile(path.join(__dirname, 'community-dashboard.html'));
-});
-
-app.get('/payments', (req, res) => {
-    res.sendFile(path.join(__dirname, 'payments.html'));
-});
-
-app.get('/liquidity', (req, res) => {
-    res.sendFile(path.join(__dirname, 'liquidity.html'));
-});
-
-app.get('/social', (req, res) => {
-    res.sendFile(path.join(__dirname, 'social.html'));
-});
-
-app.get('/ai-insights', (req, res) => {
-    res.redirect('/analytics');
-});
-
-app.get('/ai', (req, res) => {
-    res.redirect('/analytics');
-});
-
-app.get('/lawful', (req, res) => {
-    res.sendFile(path.join(__dirname, 'lawful-dashboard.html'));
-});
-
-app.get('/legal', (req, res) => {
-    res.sendFile(path.join(__dirname, 'lawful-dashboard.html'));
-});
-
-app.get('/shop', (req, res) => {
-    res.sendFile(path.join(__dirname, 'shop.html'));
-});
-
-app.get('/deploy', (req, res) => {
-    res.sendFile(path.join(__dirname, 'deploy.html'));
-});
-
-app.get('/deployment-dashboard', (req, res) => {
-    res.sendFile(path.join(__dirname, 'deployment-dashboard.html'));
-});
-
-app.get('/test-dashboards', (req, res) => {
-    res.sendFile(path.join(__dirname, 'test-dashboards.html'));
-});
-
-// Catch-all for other routes - serve main page
+// SPA catch-all - serve React app for all non-API, non-static routes
 app.get('*', (req, res) => {
     // Handle API routes with proper JSON responses
     if (req.path.startsWith('/api/')) {
@@ -197,12 +140,8 @@ app.get('*', (req, res) => {
         return res.status(404).send('Not found');
     }
     
-    // Default to main page
-    if (req.path === '/') {
-        res.sendFile(path.join(__dirname, 'index.html'));
-    } else {
-        res.status(404).sendFile(path.join(__dirname, '404.html'));
-    }
+    // Serve React app
+    res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
 });
 
 // Serve PWA manifest with correct MIME type
@@ -214,10 +153,7 @@ app.get('/manifest.json', (req, res) => {
 // Serve contract artifacts specifically
 app.use('/contract-artifacts.js', express.static(path.join(__dirname, '..', 'contract-artifacts.js')));
 
-// Serve main SPA page for root route
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
+
 
 // Event tracking endpoint
 app.post('/api/track-event', (req, res) => {
@@ -923,18 +859,7 @@ app.get('/api/analytics/contract-data', async (req, res) => {
     }
 });
 
-// SPA Catch-all route - must be last route
-// This ensures all non-API routes serve the main index.html for SPA routing
-app.get('*', (req, res) => {
-    // Only serve index.html for non-API, non-static file requests
-    if (!req.path.startsWith('/api/') && 
-        !req.path.includes('.') && 
-        !req.path.startsWith('/LAW/')) {
-        res.sendFile(path.join(__dirname, 'index.html'));
-    } else {
-        res.status(404).json({ error: 'Not found' });
-    }
-});
+
 
 app.get('/api/analytics/recent-activity', async (req, res) => {
     try {
@@ -1331,10 +1256,7 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: 'Something went wrong!' });
 });
 
-// Catch-all for serving the main HTML file for client-side routing
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
-});
+
 
 // Start server with error handling
 const server = app.listen(PORT, '0.0.0.0', () => {
