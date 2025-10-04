@@ -1,0 +1,79 @@
+I'll search for the most recent updates to the Coinbase SDK for full-stack React dApps.
+
+Searched for “Coinbase SDK React dApp updates 2025”
+
+Let me search for more specific and recent information about Coinbase SDK updates.
+
+Searched for “Coinbase Wallet SDK latest version 2024 2025”
+
+Let me fetch the GitHub releases page and the official documentation to get the most recent updates:
+
+Fetched: Releases · coinbase/coinbase-wallet-sdk
+
+Fetched: Welcome - Coinbase Developer Documentation
+
+Based on my research, here are the most recent updates for the Coinbase SDK for full-stack React dApps:
+
+## Latest Stable Release: v4.3.4
+
+The most recent stable version is v4.3.4, with v4.3.0 being a significant feature release [GitHub](https://github.com/coinbase/coinbase-wallet-sdk/releases) . There's also an active canary/pre-release version (v4.4.0-canary.20250625163917) with cutting-edge features.
+
+## Key Recent Updates
+
+### Version 4.3.0 Major Features:
+The SDK now supports dynamic configuration parameters, improved connection handling, and better spend permissions management [GitHub](https://github.com/coinbase/coinbase-wallet-sdk/releases) . Notable improvements include:
+
+- **Dynamic chainId updates** for send call requests
+- **SDK configuration system** - allows passing custom config parameters
+- **Improved favicon fetching** for better dApp identification
+- **Enhanced playground for testing** - merged config demos into the main page
+- **Cross-Origin-Opener-Policy (COOP) warnings** for better security awareness
+
+### Canary Build (Latest Pre-release):
+The canary build introduces anonymous functional telemetry, linked account support with sub-account management, spend permissions features, and ERC-7846 wallet_connect support [GitHub](https://github.com/coinbase/coinbase-wallet-sdk/releases) . New capabilities include:
+
+- **Linked Accounts & Sub-Accounts** - Create and manage sub-account signers
+- **Spend Permissions** - Just-in-time spend limits and permission management
+- **Wallet capabilities** - `wallet_getCapabilities` v2 support
+- **Blocked popup detection** with retry UI
+- **Migration to Yarn 4** and improved developer experience
+
+## Integration Recommendations
+
+For web applications, there are three integration methods: the injected provider from the browser extension, the Coinbase Wallet SDK for direct integration, or third-party libraries like wagmi (the most recommended approach for multi-wallet support) [Coinbase](https://docs.cdp.coinbase.com/wallet-sdk/docs/web3-react) .
+
+## For React Developers
+
+The SDK works seamlessly with:
+- **React** (via hooks and standard integration)
+- **wagmi** (recommended for multi-wallet support)
+- **Web3-React** (documented integration available)
+
+## Installation
+
+```bash
+npm i @coinbase/coinbase-wallet-sdk
+```
+
+Would you like me to provide specific code examples for integrating the latest SDK features into your React dApp?
+
+Citations:
+- [Releases · coinbase/coinbase-wallet-sdk](https://github.com/coinbase/coinbase-wallet-sdk/releases)
+- [Integrating with Web3-React | Coinbase Developer Platform](https://docs.cdp.coinbase.com/wallet-sdk/docs/web3-react)
+
+More sources:
+- [Wallet SDK - Coinbase Developer Platform](https://www.coinbase.com/developer-platform/products/wallet-sdk)
+- [Use dapps on any desktop browser with Coinbase Wallet SDK* | by Siddharth Coelho-Prabhu | The Coinbase Blog | Medium](https://medium.com/the-coinbase-blog/use-dapps-on-any-desktop-browser-with-coinbase-wallets-walletlink-6ca7d392ffe6)
+- [GitHub - coinbase/coinbase-wallet-sdk: An open protocol that lets users connect their mobile wallets to your DApp](https://github.com/coinbase/coinbase-wallet-sdk)
+- [Coinbase · GitHub](https://github.com/coinbase)
+- [Optimizing React Native](https://www.coinbase.com/blog/optimizing-react-native)
+- [Launches & Updates - Coinbase Developer Platform (CDP)](https://www.coinbase.com/developer-platform/discover/launches)
+- [Announcing Coinbase’s successful transition to React Native](https://www.coinbase.com/blog/announcing-coinbases-successful-transition-to-react-native)
+- [blockchain - Issue in integrating coinbase wallet in react native mobile dapp - Stack Overflow](https://stackoverflow.com/questions/77315353/issue-in-integrating-coinbase-wallet-in-react-native-mobile-dapp)
+- [2025: Coinbase successful transition from React Native to Native apps. Seriously... | Hacker News](https://news.ycombinator.com/item?id=27162507)
+- [A Coinbase Wallet SDK primer | Coinbase](https://www.coinbase.com/developer-platform/discover/dev-foundations/a-coinbase-wallet-sdk-primer)
+- [@coinbase/coinbase-sdk - npm](https://www.npmjs.com/package/@coinbase/coinbase-sdk)
+- [Coinbase Wallet: The Ultimate 2025 Review](https://www.cointribune.com/en/coinbase-wallet-the-ultimate-2024-review/)
+- [Coinbase Adds 'Smart Wallet' Feature, So Lengthy Seed Phrases Aren't Needed](https://www.coindesk.com/tech/2024/02/29/coinbase-adds-smart-wallet-feature-so-lengthy-seed-phrases-arent-needed)
+- [Coinbase Wallet SDK](https://www.quicknode.com/builders-guide/tools/coinbase-wallet-sdk-by-coinbase)
+- [Welcome | Coinbase Developer Platform](https://docs.cloud.coinbase.com/wallet-sdk/docs/welcome)

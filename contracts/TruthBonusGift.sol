@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/common/ERC2981.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract TruthBonusGift is ERC721, ERC721Enumerable, ERC2981, Ownable, ReentrancyGuard {
@@ -43,8 +43,7 @@ contract TruthBonusGift is ERC721, ERC721Enumerable, ERC2981, Ownable, Reentranc
         address initialOwner,
         string memory baseURI,
         address initialTreasury
-    ) ERC721("The Truth - Bonus Gift", "BONUS") Ownable() {
-        _transferOwnership(initialOwner);
+    ) ERC721("The Truth - Bonus Gift", "BONUS") Ownable(initialOwner) {
         _baseTokenURI = baseURI;
         _setDefaultRoyalty(initialOwner, 1000); // 10%
         treasury = initialTreasury;
@@ -127,16 +126,24 @@ contract TruthBonusGift is ERC721, ERC721Enumerable, ERC2981, Ownable, Reentranc
     }
     
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
-        require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
+        require(_ownerOf(tokenId) != address(0), "ERC721Metadata: URI query for nonexistent token");
         return string(abi.encodePacked(_baseTokenURI, Strings.toString(tokenId), ".json"));
     }
     
-    // Required overrides
-    function _beforeTokenTransfer(address from, address to, uint256 firstTokenId, uint256 batchSize)
+    // Required overrides for OpenZeppelin v5
+    function _update(address to, uint256 tokenId, address auth)
+        internal
+        override(ERC721, ERC721Enumerable)
+        returns (address)
+    {
+        return super._update(to, tokenId, auth);
+    }
+    
+    function _increaseBalance(address account, uint128 value)
         internal
         override(ERC721, ERC721Enumerable)
     {
-        super._beforeTokenTransfer(from, to, firstTokenId, batchSize);
+        super._increaseBalance(account, value);
     }
     
     function supportsInterface(bytes4 interfaceId)
