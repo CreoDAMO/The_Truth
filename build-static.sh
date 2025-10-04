@@ -1,6 +1,10 @@
 #!/bin/bash
 
-echo "🚀 Building static site for GitHub Pages..."
+echo "🔨 Building static distribution for GitHub Pages..."
+
+# Run vite build
+echo "📦 Running vite build..."
+npx vite build
 
 # Install missing dependencies if needed
 if [ ! -d "node_modules/@openzeppelin" ]; then

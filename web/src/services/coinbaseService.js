@@ -215,6 +215,87 @@ class CoinbaseService {
     return signature;
   }
 
+  // Coinbase Commerce integration
+  async createCommerceCharge({ name, description, pricing_type, local_price }) {
+    const response = await fetch('https://api.commerce.coinbase.com/charges', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CC-Api-Key': import.meta.env.VITE_COINBASE_COMMERCE_KEY || 'demo_key',
+        'X-CC-Version': '2018-03-22'
+      },
+      body: JSON.stringify({
+        name,
+        description,
+        pricing_type,
+        local_price,
+        redirect_url: window.location.origin + '/payments?success=true',
+        cancel_url: window.location.origin + '/payments?cancel=true'
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Commerce charge creation failed');
+    }
+
+    return await response.json();
+  }
+
+  // Enhanced onramp with callbacks
+  async onrampBuy({ amount, currency = 'ETH', network = 'base', onSuccess, onExit }) {
+    const destinationAddress = await this.connectWallet();
+    
+    const options = {
+      appId: import.meta.env.VITE_COINBASE_APP_ID || 'YOUR_APP_ID',
+      widgetParameters: {
+        destinationWallets: [{
+          address: destinationAddress,
+          blockchains: [network],
+          assets: [currency]
+        }],
+        defaultExperience: 'buy',
+        presetCryptoAmount: amount,
+        partnerUserId: destinationAddress
+      },
+      experienceLoggedIn: 'embedded',
+      experienceLoggedOut: 'popup',
+      closeOnExit: true,
+      closeOnSuccess: true
+    };
+
+    const instance = await window.CBPay?.createWidget(options);
+    if (instance) {
+      instance.open();
+      
+      instance.on('success', (event) => {
+        if (onSuccess) onSuccess(event);
+      });
+      
+      instance.on('exit', () => {
+        if (onExit) onExit();
+      });
+      
+      instance.on('error', (error) => {
+        console.error('Onramp error:', error);
+      });
+    }
+  }
+
+  // Wallet creation for non-crypto users
+  async createWallet() {
+    try {
+      const wallet = await this.sdk.createWallet();
+      return {
+        address: wallet.address,
+        mnemonic: wallet.mnemonic,
+        message: 'Save your mnemonic phrase securely!'
+      };
+    } catch (error) {
+      console.error('Wallet creation failed:', error);
+      throw error;
+    }
+  }
+
   disconnect() {
     if (this.provider) {
       this.provider.disconnect();

@@ -171,6 +171,19 @@ waitForPort = 5000
 [workflows.workflow.metadata]
 outputType = "webview"
 
+[[workflows.workflow]]
+name = "Build & Run"
+author = 48311955
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx vite build"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node web/server.js"
+
 [[ports]]
 localPort = 5000
 externalPort = 80

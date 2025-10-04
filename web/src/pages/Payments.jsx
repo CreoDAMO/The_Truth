@@ -70,10 +70,37 @@ const Payments = () => {
 
   const handleBuyWithOnramp = async (amount) => {
     try {
-      await coinbaseService.onrampBuy({ amount, currency: 'ETH', network: 'base' });
-      alert('Purchase completed! ETH will arrive shortly.');
+      await coinbaseService.onrampBuy({ 
+        amount, 
+        currency: 'ETH', 
+        network: 'base',
+        onSuccess: () => {
+          alert('Purchase completed! ETH will arrive shortly.');
+        },
+        onExit: () => {
+          console.log('User closed onramp widget');
+        }
+      });
     } catch (error) {
       console.error('Onramp purchase failed:', error);
+      alert('Onramp purchase failed. Please try again.');
+    }
+  };
+
+  const handleCommerceCheckout = async (nftType, price) => {
+    try {
+      const result = await coinbaseService.createCommerceCharge({
+        name: nftType,
+        description: `The Truth NFT - ${nftType}`,
+        pricing_type: 'fixed_price',
+        local_price: {
+          amount: price,
+          currency: 'USD'
+        }
+      });
+      window.open(result.hosted_url, '_blank');
+    } catch (error) {
+      console.error('Commerce checkout failed:', error);
     }
   };
 
