@@ -173,12 +173,54 @@ The platform showcases how institutions "translate" truth into more palatable fo
 
 ## 🚀 Getting Started
 
+### Why We Migrated to React-Vite
+
+After weeks of troubleshooting rendering issues with our hybrid HTML/JavaScript approach, we made the strategic decision to migrate to a full React-Vite stack. This solved persistent problems with:
+
+- **Dashboard Refresh Issues**: Eliminated the need to manually refresh pages when navigating between dashboards
+- **State Management**: Unified state management across all components using React Context
+- **Performance**: Vite's hot module replacement (HMR) provides instant updates during development
+- **Scalability**: React's component architecture makes it easier to maintain and extend the ecosystem
+- **Modern Development**: Better tooling, debugging, and developer experience
+
+The migration maintains all functionality while providing a smoother, more reliable user experience.
+
 ### Prerequisites
 - Node.js v18+
 - MetaMask or Web3 wallet
 - Access to Base network (for tokens)
 
-### Quick Start
+### Deploying on Replit (Recommended)
+
+1. **Import to Replit**:
+   - Go to https://replit.com/new
+   - Click "Import from GitHub"
+   - Enter: `https://github.com/CreoDAMO/The_Truth`
+
+2. **Configure the Repl**:
+   - The project will auto-detect as a Node.js project
+   - Dependencies will install automatically
+   - The workflow "The Truth NFT Server" is pre-configured
+
+3. **Run the Application**:
+   - Click the "Run" button at the top
+   - The server will start on port 5000
+   - Access your app at the Replit webview URL
+
+4. **Deploy to Production** (Replit Deployments):
+   - Click "Deploy" in the top-right corner
+   - Select your preferred tier (Shared or Dedicated)
+   - Configure:
+     - Build command: `npm run build`
+     - Run command: `npm run dev`
+   - Click "Deploy your project"
+   - Your app will be live at `https://your-repl.replit.app`
+
+### Deploying Outside Replit
+
+The application can be deployed to any Node.js hosting platform:
+
+**Quick Start Anywhere**:
 ```bash
 # Clone the repository
 git clone https://github.com/CreoDAMO/The_Truth.git
@@ -190,10 +232,19 @@ npm install
 # Start the development server
 npm run dev
 
-# Visit http://localhost:5000
+# Server runs on http://0.0.0.0:5000
 ```
 
-### Deployment Options
+**Production Build**:
+```bash
+# Build for production
+npm run build
+
+# Start production server
+npm start
+```
+
+### Alternative Deployment Options
 ```bash
 # Deploy to Vercel
 npm run deploy:vercel
@@ -209,6 +260,16 @@ npm run deploy:gcp
 
 # Universal deployment (all platforms)
 npm run deploy:all
+```
+
+### Environment Variables
+
+Create a `.env` file based on `.env.example`:
+```env
+VITE_INFURA_ID=your_infura_project_id
+VITE_BASE_RPC_URL=https://mainnet.base.org
+VITE_TRUTH_TOKEN_ADDRESS=0x8f6cf6f7747e170f4768533b869c339dc3d30a3c
+VITE_CREATOR_TOKEN_ADDRESS=0x22b0434e89882f8e6841d340b28427646c015aa7
 ```
 
 ## 🔗 Live Links

@@ -93,25 +93,43 @@ const Home = () => {
       </div>
 
       <div className="grid md:grid-cols-3 gap-6 mb-12">
-        <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10">
-          <div className="text-4xl mb-4">🎯</div>
-          <h3 className="text-xl font-bold mb-2 text-purple-400">The Truth Original</h3>
-          <p className="text-gray-300 mb-4">77 unique philosophical NFTs</p>
-          <div className="text-2xl font-bold text-green-400">0.169 ETH</div>
+        <div className="bg-white/5 backdrop-blur-xl rounded-2xl overflow-hidden border border-white/10">
+          <img 
+            src="https://bronze-worried-bat-61.mypinata.cloud/ipfs/QmYvPMxLWZBFdaaTotx1CTNYQYtQKRPte2wZ44L5DnF9hp" 
+            alt="The Truth Original NFT"
+            className="w-full h-48 object-cover"
+          />
+          <div className="p-6">
+            <h3 className="text-xl font-bold mb-2 text-purple-400">The Truth Original</h3>
+            <p className="text-gray-300 mb-4">77 unique philosophical NFTs</p>
+            <div className="text-2xl font-bold text-green-400">0.169 ETH</div>
+          </div>
         </div>
 
-        <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10">
-          <div className="text-4xl mb-4">🎁</div>
-          <h3 className="text-xl font-bold mb-2 text-green-400">Bonus Gift</h3>
-          <p className="text-gray-300 mb-4">145,000 community access NFTs</p>
-          <div className="text-2xl font-bold text-green-400">0.039 ETH</div>
+        <div className="bg-white/5 backdrop-blur-xl rounded-2xl overflow-hidden border border-white/10">
+          <img 
+            src="https://bronze-worried-bat-61.mypinata.cloud/ipfs/QmR4oUm1XwdB1Ho1BxYxyLvB7yPbBJ9WLe5YYBkeZALY5p" 
+            alt="Bonus Gift NFT"
+            className="w-full h-48 object-cover"
+          />
+          <div className="p-6">
+            <h3 className="text-xl font-bold mb-2 text-green-400">Bonus Gift</h3>
+            <p className="text-gray-300 mb-4">145,000 community access NFTs</p>
+            <div className="text-2xl font-bold text-green-400">0.039 ETH</div>
+          </div>
         </div>
 
-        <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10">
-          <div className="text-4xl mb-4">📜</div>
-          <h3 className="text-xl font-bold mb-2 text-yellow-400">Part Three</h3>
-          <p className="text-gray-300 mb-4">444 Blackpaper NFTs</p>
-          <div className="text-2xl font-bold text-green-400">TBD</div>
+        <div className="bg-white/5 backdrop-blur-xl rounded-2xl overflow-hidden border border-white/10">
+          <img 
+            src="https://bronze-worried-bat-61.mypinata.cloud/ipfs/QmPSj2VJLCahU6vrE9qN5DwEBPxC1YKyoTdx1PzXS4iqRj" 
+            alt="Part Three Blackpaper NFT"
+            className="w-full h-48 object-cover"
+          />
+          <div className="p-6">
+            <h3 className="text-xl font-bold mb-2 text-yellow-400">Part Three</h3>
+            <p className="text-gray-300 mb-4">444 Blackpaper NFTs</p>
+            <div className="text-2xl font-bold text-green-400">TBD</div>
+          </div>
         </div>
       </div>
 

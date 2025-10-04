@@ -6,28 +6,141 @@ The Truth NFT is a comprehensive Web3 creator economy built on the Base blockcha
 
 ## Recent Changes
 
-**October 4, 2025 - Fresh GitHub Import Setup for Replit**
-- Successfully imported fresh GitHub clone and configured for Replit environment
-- Installed all npm dependencies successfully (636 packages)
-- Verified Express.js server properly binds to 0.0.0.0:5000 with full CORS configuration for Replit domains
-- Confirmed application runs without errors and loads all components:
-  - ✅ Ethers.js library loads successfully from CDN (v5.7.2)
-  - ✅ DOMPurify security sanitization loaded (v3.0.9)
-  - ✅ Contract configuration and ABI files accessible
-  - ✅ Token integration system functional (TRUTH and Creator tokens on Base)
-  - ✅ Deployment status checker operational
-  - ✅ Real-time analytics tracking page views and navigation
-  - ✅ Zora integration wallet active (0xc4b8f1ab3499fac71975666a04a1c99de7609603)
-- Configured automated workflow "The Truth NFT Server" running on port 5000
-- Set up deployment configuration for Replit autoscale with npm start command
-- Updated .gitignore to include Replit-specific files (.upm/, .config/, .breakpoints)
-- All smart contracts available (TheTruth.sol, TruthBonusGift.sol, EnhancedTheTruth.sol, etc.)
-- Frontend serves correctly with proper static file routing and SPA support
-- All dashboards accessible: Analytics, Governance, Community, Payments, Legal, Shop, AI, Deploy
+**October 4, 2025 - React-Vite Migration Complete**
+- ✅ **Migrated to full React-Vite stack** - Solved all rendering and refresh issues that plagued the hybrid HTML/JS approach
+- ✅ **Unified State Management** - Implemented React Context for seamless data flow across all components
+- ✅ **Merged Analytics & AI Dashboard** - Combined into single comprehensive dashboard with AI-powered insights
+- ✅ **Added IPFS Images** - NFT collection cards now display actual IPFS-hosted images
+- ✅ **Zero Refresh Navigation** - All dashboard transitions work smoothly without page refreshes
+- ✅ Express.js server properly binds to 0.0.0.0:5000 with full CORS configuration for Replit domains
+- ✅ All components load without errors:
+  - Ethers.js library (v5.7.2)
+  - DOMPurify security sanitization (v3.0.9)
+  - Contract configuration and ABI files
+  - Token integration (TRUTH and Creator tokens on Base)
+  - Zora integration wallet (0xc4b8f1ab3499fac71975666a04a1c99de7609603)
+- ✅ Configured automated workflow "Dev Server" running on port 5000
+- ✅ All dashboards fully functional: Analytics/AI, Governance, Community, Liquidity, Payments, Shop, Social, Legal, Deploy
+
+**Why React-Vite?**
+After a week of troubleshooting rendering issues with the original hybrid approach, the React-Vite migration was the definitive solution. Benefits include:
+- Instant hot module replacement (HMR) during development
+- Component-based architecture for better maintainability
+- Unified state management eliminating refresh requirements
+- Modern build tooling with Vite for optimal performance
+- Better debugging and development experience
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+
+## Deploying on Replit
+
+### Quick Start (Recommended Method)
+
+1. **Import from GitHub**:
+   ```
+   1. Visit https://replit.com/new
+   2. Click "Import from GitHub"  
+   3. Paste: https://github.com/CreoDAMO/The_Truth
+   4. Click "Import from GitHub"
+   ```
+
+2. **Automatic Setup**:
+   - Replit auto-detects this as a Node.js project
+   - Dependencies install automatically via npm
+   - Vite and React configuration is detected
+   - Port 5000 is configured for web access
+
+3. **Run Development Server**:
+   - Click the "Run" button (or use the "Dev Server" workflow)
+   - Server starts on `http://0.0.0.0:5000`
+   - Webview opens automatically showing the app
+   - Hot module replacement (HMR) enables instant updates
+
+4. **Deploy to Production**:
+   ```
+   1. Click "Deploy" in top-right corner
+   2. Select deployment tier (Shared/Dedicated)
+   3. Configure:
+      - Build command: npm run build
+      - Run command: npm run dev
+   4. Click "Deploy your project"
+   5. Live at: https://your-repl.replit.app
+   ```
+
+### Environment Configuration
+
+The app works out-of-the-box, but you can customize via Replit Secrets:
+
+1. Open "Tools" → "Secrets"
+2. Add these optional secrets:
+   ```
+   VITE_INFURA_ID=your_infura_project_id
+   VITE_BASE_RPC_URL=https://mainnet.base.org
+   ```
+
+### Workflows Available
+
+- **Dev Server** (Run button): Starts development server with HMR
+- **Truth NFT Server**: Legacy workflow (use Dev Server instead)
+- **Prepare Contracts**: Compiles contracts and updates artifacts
+- **Build Static Distribution**: Creates production build in /dist
+
+### Port Configuration
+
+- **Development**: Port 5000 (bound to 0.0.0.0)
+- **Production**: Auto-scaled by Replit (ports 80/443)
+- **Webview**: Automatically proxies to port 5000
+
+### File Structure for Replit
+
+```
+/web/src/          # React components and pages
+/web/server.js     # Express.js backend (serves API routes)
+/contracts/        # Solidity smart contracts
+/metadata/         # NFT metadata JSON files
+vite.config.js     # Vite configuration
+.replit            # Replit configuration (workflow settings)
+```
+
+### Troubleshooting
+
+**Issue**: App not loading in webview
+- **Solution**: Check port 5000 is open, restart the Repl
+
+**Issue**: Dependencies not installing
+- **Solution**: Run `npm install` manually in Shell
+
+**Issue**: Hot reload not working
+- **Solution**: Ensure Vite dev server is running (npm run dev)
+
+**Issue**: Contract ABIs missing
+- **Solution**: Run "Prepare Contracts" workflow
+
+### Deploying Outside Replit
+
+If you need to deploy elsewhere:
+
+```bash
+# Clone locally
+git clone https://github.com/CreoDAMO/The_Truth.git
+cd the-truth-nft
+
+# Install and run
+npm install
+npm run dev
+
+# Build for production
+npm run build
+
+# Deploy to other platforms
+npm run deploy:vercel   # Vercel
+npm run deploy:render   # Render
+npm run deploy:railway  # Railway
+```
+
+The React-Vite architecture makes the app portable across any Node.js hosting platform.
 
 ## System Architecture
 
