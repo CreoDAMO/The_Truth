@@ -49,6 +49,7 @@
     "cookie": "^0.7.0"
   },
   "dependencies": {
+    "@coinbase/wallet-sdk": "^4.3.7",
     "@tailwindcss/postcss": "^4.1.14",
     "@vitejs/plugin-react": "^5.0.4",
     "autoprefixer": "^10.4.21",

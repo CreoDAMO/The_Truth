@@ -5,9 +5,18 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   root: 'web',
+  base: process.env.NODE_ENV === 'production' ? '/The_Truth/' : '/',
   build: {
     outDir: '../dist',
-    emptyOutDir: true
+    emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'web3-vendor': ['ethers']
+        }
+      }
+    }
   },
   server: {
     host: '0.0.0.0',

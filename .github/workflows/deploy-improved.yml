@@ -1,3 +1,4 @@
+
 name: Deploy to GitHub Pages
 
 on:
@@ -38,13 +39,17 @@ jobs:
       run: npx vite build
       env:
         NODE_ENV: production
+        VITE_BASE_URL: https://creodamo.github.io/The_Truth/
 
     - name: Copy additional files to dist
       run: |
         cp -r LAW dist/ 2>/dev/null || true
         cp -r metadata dist/ 2>/dev/null || true
         cp -r docs dist/ 2>/dev/null || true
+        cp web/manifest.json dist/ 2>/dev/null || true
+        cp web/sw.js dist/ 2>/dev/null || true
         touch dist/.nojekyll
+        echo "creodamo.github.io" > dist/CNAME 2>/dev/null || true
 
     - name: Setup Pages
       uses: actions/configure-pages@v4

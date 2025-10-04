@@ -1,7 +1,20 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useTruth } from '../context/TruthContext';
 
 const Payments = () => {
+  const { walletConnected, walletAddress, truthBalance, creatorBalance, buyWithOnramp } = useTruth();
+  const [showOnramp, setShowOnramp] = useState(false);
+
+  useEffect(() => {
+    // Load Coinbase Pay SDK
+    const script = document.createElement('script');
+    script.src = 'https://pay.coinbase.com/pay.umd.min.js';
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => document.body.removeChild(script);
+  }, []);
+
   const [activeTab, setActiveTab] = useState('nft-mint');
   const [account, setAccount] = useState(null);
 
@@ -25,7 +38,7 @@ const Payments = () => {
           💳 Payments & Trading
         </h1>
         <p className="text-xl text-gray-300">Multiple payment methods for maximum accessibility</p>
-        
+
         {!account ? (
           <button
             onClick={connectWallet}
@@ -250,7 +263,7 @@ const Payments = () => {
               Subscribe Monthly
             </button>
           </div>
-          
+
           <div className="bg-gradient-to-br from-yellow-900/50 to-orange-800/30 p-8 rounded-2xl border border-yellow-500/30">
             <h3 className="text-2xl font-bold mb-4">Yearly Access</h3>
             <div className="text-4xl font-bold mb-4">$299.99<span className="text-lg font-normal">/year</span></div>
@@ -311,7 +324,17 @@ const Payments = () => {
                   token.featured
                     ? 'bg-gradient-to-r from-yellow-600 to-orange-600 hover:shadow-lg'
                     : 'bg-gradient-to-r from-blue-600 to-purple-600'
-                }`}>
+                }`}
+                onClick={() => {
+                  if (token.symbol === 'ETH' || token.symbol === 'WETH') {
+                    // Handle ETH/WETH payment - potentially direct call or link
+                    alert(`Initiate ETH/WETH payment for ${token.price} ${token.symbol}`);
+                  } else if (token.address) {
+                    // For other tokens, assume it's a custom payment flow
+                    alert(`Initiate ${token.symbol} payment for ${token.price} ${token.symbol}`);
+                  }
+                }}
+                >
                   Pay with {token.symbol}
                 </button>
               </div>

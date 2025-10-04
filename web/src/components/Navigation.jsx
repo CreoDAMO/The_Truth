@@ -1,12 +1,13 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTruth } from '../context/TruthContext';
+import { useTheme } from '../hooks/useTheme';
 
 const Navigation = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { walletConnected, walletAddress, connectWallet } = useTruth();
   const location = useLocation();
+  const { theme, toggleTheme } = useTheme();
 
   const navItems = [
     { path: '/', label: '🏠 Home', exact: true },
@@ -100,6 +101,13 @@ const Navigation = () => {
           </div>
         </div>
       )}
+       <button
+            onClick={toggleTheme}
+            className="p-2 rounded-lg hover:bg-white/10 transition-colors"
+            aria-label="Toggle theme"
+          >
+            {theme === 'dark' ? '☀️' : '🌙'}
+          </button>
     </nav>
   );
 };
