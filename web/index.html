@@ -735,9 +735,9 @@
             <div class="nav-links">
                 <a href="#" onclick="navigateToPage('home')">🏠 Home</a>
                 <div class="nav-dropdown">
-                    <a href="#" onclick="navigateToPage('analytics')">📊 Analytics ▼</a>
+                    <a href="#" onclick="navigateToPage('analytics')">📊 Analytics & AI ▼</a>
                     <div class="nav-dropdown-content">
-                        <a href="#" onclick="navigateToPage('analytics')">📊 Analytics Dashboard</a>
+                        <a href="#" onclick="navigateToPage('analytics')">📊 Analytics & AI Insights</a>
                         <a href="#" onclick="navigateToPage('governance')">🗳️ Governance</a>
                         <a href="#" onclick="navigateToPage('community')">👥 Community</a>
                     </div>
@@ -754,7 +754,6 @@
                     <a href="#" onclick="navigateToPage('social')">🚀 Platform ▼</a>
                     <div class="nav-dropdown-content">
                         <a href="#" onclick="navigateToPage('social')">📱 Social Hub</a>
-                        <a href="#" onclick="navigateToPage('ai-insights')">🤖 AI Insights</a>
                         <a href="#" onclick="navigateToPage('lawful')">⚖️ Legal Framework</a>
                         <a href="#" onclick="navigateToPage('deploy')">🚀 Deploy</a>
                     </div>
@@ -780,13 +779,12 @@
 
         <div class="mobile-nav-links">
             <a href="#" onclick="navigateToPage('home'); closeMobileMenu();">🏠 Home Dashboard</a>
-            <a href="#" onclick="navigateToPage('analytics'); closeMobileMenu();">📊 Analytics & Metrics</a>
+            <a href="#" onclick="navigateToPage('analytics'); closeMobileMenu();">📊 Analytics & AI Insights</a>
             <a href="#" onclick="navigateToPage('governance'); closeMobileMenu();">🗳️ Governance & Voting</a>
             <a href="#" onclick="navigateToPage('community'); closeMobileMenu();">👥 Community Hub</a>
             <a href="#" onclick="navigateToPage('liquidity'); closeMobileMenu();">🌊 Liquidity Pools</a>
             <a href="#" onclick="navigateToPage('payments'); closeMobileMenu();">💳 Payments & Trading</a>
             <a href="#" onclick="navigateToPage('social'); closeMobileMenu();">📱 Social Network</a>
-            <a href="#" onclick="navigateToPage('ai-insights'); closeMobileMenu();">🤖 AI Insights</a>
             <a href="#" onclick="navigateToPage('lawful'); closeMobileMenu();">⚖️ Legal Framework</a>
             <a href="#" onclick="navigateToPage('shop'); closeMobileMenu();">🛍️ Marketplace</a>
             <a href="#" onclick="navigateToPage('deploy'); closeMobileMenu();">🚀 Deploy & Publish</a>
@@ -863,19 +861,14 @@
             </div>
         </div>
 
-        <!-- Unified Dashboard Connections -->
+        <!-- Unified Dashboard Connections - Simplified -->
         <div class="dashboard-connection">
-            <div class="connection-title">🔗 Unified Dashboard Access</div>
-            <p style="margin-bottom: 15px; color: rgba(255,255,255,0.8); font-size: 0.9rem;">All ecosystem components work together - explore how your NFTs, tokens, and community interact across every dashboard.</p>
+            <div class="connection-title">🔗 Quick Access Dashboards</div>
+            <p style="margin-bottom: 15px; color: rgba(255,255,255,0.8); font-size: 0.9rem;">Core ecosystem tools - Use the top navigation for all features</p>
             <div class="connection-links">
-                <a href="#" onclick="navigateToPage('analytics')" class="connection-link">📊 Analytics</a>
+                <a href="#" onclick="navigateToPage('analytics')" class="connection-link">📊 Analytics & AI</a>
                 <a href="#" onclick="navigateToPage('governance')" class="connection-link">🗳️ Governance</a>
-                <a href="#" onclick="navigateToPage('community')" class="connection-link">👥 Community</a>
                 <a href="#" onclick="navigateToPage('liquidity')" class="connection-link">🌊 Liquidity</a>
-                <a href="#" onclick="navigateToPage('payments')" class="connection-link">💳 Payments</a>
-                <a href="#" onclick="navigateToPage('social')" class="connection-link">📱 Social</a>
-                <a href="#" onclick="navigateToPage('ai-insights')" class="connection-link">🤖 AI Insights</a>
-                <a href="#" onclick="navigateToPage('lawful')" class="connection-link">⚖️ Legal</a>
                 <a href="#" onclick="navigateToPage('shop')" class="connection-link">🛍️ Shop</a>
                 <a href="#" onclick="navigateToPage('deploy')" class="connection-link">🚀 Deploy</a>
             </div>
@@ -1058,18 +1051,7 @@
             </div>
         </div>
 
-        <!-- Platform Features -->
-        <div class="collections-section">
-            <h2 class="section-title">🚀 Gateway Features</h2>
-            <div class="action-buttons">
-                <a href="/governance.html" class="action-btn primary">🗳️ Governance Dashboard</a>
-                <a href="/community-dashboard.html" class="action-btn secondary">👥 Community Hub</a>
-                <a href="/analytics.html" class="action-btn secondary">📊 Analytics</a>
-                <a href="/ai-insights.html" class="action-btn secondary">🤖 AI Insights</a>
-                <a href="/lawful-dashboard.html" class="action-btn secondary">⚖️ Legal Framework</a>
-                <a href="/shop.html" class="action-btn secondary">🛒 Traditional Shop</a>
-            </div>
-        </div>
+        
     </div>
 
     <footer class="footer">
@@ -1959,7 +1941,10 @@
                         content = await fetchPageContent('/social.html');
                         break;
                     case 'ai-insights':
-                        content = await fetchPageContent('/ai-insights.html');
+                    case 'ai':
+                        // Redirect to merged Analytics & AI dashboard
+                        navigateToPage('analytics');
+                        return;
                         break;
                     case 'lawful':
                         content = await fetchPageContent('/lawful-dashboard.html');
@@ -2438,7 +2423,7 @@
             return path.slice(1).replace('.html', '');
         }
 
-        // Enhanced router for mobile/wallet browsers
+        // Enhanced router for mobile/wallet browsers with better state restoration
         window.addEventListener('load', () => {
             // Handle GitHub Pages SPA redirect
             if (sessionStorage.redirect) {
@@ -2456,10 +2441,14 @@
             const savedTime = sessionStorage.getItem('navigationTimestamp');
             const now = Date.now();
             
-            // If recently navigated (within 30 seconds), restore the page
-            if (savedPage && savedTime && (now - parseInt(savedTime)) < 30000) {
+            // If recently navigated (within 2 minutes), restore the page
+            if (savedPage && savedTime && (now - parseInt(savedTime)) < 120000) {
                 console.log(`📱 Restoring page: ${savedPage} for mobile/wallet browser`);
-                navigateToPage(savedPage);
+                // Force immediate content load without animation delay
+                loadPageContent(savedPage).then(() => {
+                    currentPage = savedPage;
+                    updateActiveNavItem(savedPage);
+                });
                 return;
             }
 
@@ -2468,6 +2457,15 @@
                 navigateToPage(initialPage);
             } else {
                 updateActiveNavItem('home');
+            }
+        });
+
+        // Handle page visibility changes to maintain state
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && currentPage) {
+                // Refresh current page content when tab becomes visible
+                console.log('🔄 Tab visible again, refreshing content');
+                loadPageContent(currentPage);
             }
         });
 

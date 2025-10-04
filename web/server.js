@@ -141,11 +141,11 @@ app.get('/social', (req, res) => {
 });
 
 app.get('/ai-insights', (req, res) => {
-    res.sendFile(path.join(__dirname, 'ai-insights.html'));
+    res.redirect('/analytics');
 });
 
 app.get('/ai', (req, res) => {
-    res.sendFile(path.join(__dirname, 'ai-insights.html'));
+    res.redirect('/analytics');
 });
 
 app.get('/lawful', (req, res) => {
