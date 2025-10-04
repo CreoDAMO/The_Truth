@@ -77,10 +77,12 @@
                         let handlerPrev;
                         do {
                             handlerPrev = sanitized;
-                            // Remove event handler attributes by matching each attribute one at a time
+                            // Remove event handler attributes by matching each attribute with quotes
                             sanitized = sanitized.replace(/\s*on\w+\s*=\s*(['"]).*?\1/gi, '');
-                            sanitized = sanitized.replace(/\s*on\w+\s*=\s*[^\s>]+/gi, '');
-                        } while (sanitized !== handlerPrev);
+                            // Remove event handler attributes by matching unquoted values
+                            sanitized = sanitized.replace(/\s*on\w+\s*=[^\s>]+/gi, '');
+                            // Remove any remnants of "on*" attributes, even if malformed, e.g. just "onmouseover" or "onload="
+                            sanitized = sanitized.replace(/\s*on\w+\b\s*(=\s*)?/gi, '');
 
                         // Remove other dangerous elements
                         // Remove all opening/closing/incomplete fragments of dangerous elements iteratively
