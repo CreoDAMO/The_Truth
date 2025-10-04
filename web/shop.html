@@ -320,6 +320,7 @@
                     category: 'digital',
                     collection: 'The Truth',
                     file: 'ipfs://bafybeibtcjku4uce7volglh6edjw2va63usahqixoqxwkv4quvptljonw4',
+                    ipfsImage: 'https://copper-active-hawk-266.mypinata.cloud/ipfs/bafybeidgadado5nyfxkua3mkiqbxsqkvrbqctkrqap7oghnkb77qo4steq',
                     duration: '45 minutes',
                     format: 'MP3'
                 },
@@ -331,7 +332,8 @@
                     type: 'pdf',
                     category: 'digital',
                     collection: 'The Truth',
-                    file: 'ipfs://bafybeid4w7qtpzjkjxpb5l7hw4qxh6wkzjgqgfgnqkclgzjbgbg5qw7bw4',
+                    file: 'ipfs://bafybeib2gcc7grc7umyqzdsaxpjmitexanwnwrdsygfc57wcsx6mnvtsbi',
+                    ipfsImage: 'https://copper-active-hawk-266.mypinata.cloud/ipfs/bafybeidgadado5nyfxkua3mkiqbxsqkvrbqctkrqap7oghnkb77qo4steq',
                     pages: '25 pages',
                     format: 'PDF'
                 }
@@ -604,7 +606,17 @@
                                 </span>
                             </div>
                             <div className="w-full h-48 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-lg mb-4 flex items-center justify-center relative overflow-hidden">
-                                {product.image ? (
+                                {product.ipfsImage ? (
+                                    <img 
+                                        src={product.ipfsImage} 
+                                        alt={product.name} 
+                                        className="w-full h-full object-cover"
+                                        onError={(e) => {
+                                            e.target.style.display = 'none';
+                                            e.target.nextSibling.style.display = 'flex';
+                                        }}
+                                    />
+                                ) : product.image ? (
                                     <img 
                                         src={product.image} 
                                         alt={product.name} 
@@ -615,7 +627,7 @@
                                         }}
                                     />
                                 ) : null}
-                                <div className="w-full h-full flex flex-col items-center justify-center text-center p-4" style={{display: product.image ? 'none' : 'flex'}}>
+                                <div className="w-full h-full flex flex-col items-center justify-center text-center p-4" style={{display: (product.image || product.ipfsImage) ? 'none' : 'flex'}}>
                                     <div className="text-4xl mb-2">
                                         {product.type === 'audiobook' ? '🎧' : 
                                          product.type === 'pdf' ? '📄' : 
