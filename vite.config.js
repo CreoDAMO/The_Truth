@@ -9,6 +9,7 @@ export default defineConfig({
   build: {
     outDir: '../dist',
     emptyOutDir: true,
+    sourcemap: true,
     rollupOptions: {
       output: {
         manualChunks: {
@@ -18,12 +19,16 @@ export default defineConfig({
       }
     }
   },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom']
+  },
   server: {
     host: '0.0.0.0',
     port: 5000,
     strictPort: false,
     hmr: {
-      clientPort: 443
+      clientPort: 443,
+      protocol: 'wss'
     },
     proxy: {
       '/api': {
