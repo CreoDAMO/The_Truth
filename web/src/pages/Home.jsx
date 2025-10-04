@@ -39,16 +39,16 @@ const Home = () => {
         </div>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
         {[
           { to: '/analytics', icon: '📊', title: 'Analytics & AI', desc: 'Real-time metrics and insights' },
           { to: '/governance', icon: '🗳️', title: 'Governance', desc: 'Community voting and proposals' },
           { to: '/community', icon: '👥', title: 'Community', desc: 'Connect with holders' },
           { to: '/liquidity', icon: '🌊', title: 'Liquidity', desc: 'Manage your pools' },
           { to: '/payments', icon: '💳', title: 'Payments', desc: 'Buy and trade NFTs' },
-          { to: '/shop', icon: '🛍️', title: 'Shop', desc: 'AI-generated merchandise' },
           { to: '/social', icon: '📱', title: 'Social', desc: 'Share and connect' },
           { to: '/lawful', icon: '⚖️', title: 'Legal', desc: 'Compliance dashboard' },
+          { to: '/shop', icon: '🛍️', title: 'Shop', desc: 'AI-generated merchandise' },
           { to: '/deploy', icon: '🚀', title: 'Deploy', desc: 'Contract deployment' }
         ].map((item) => (
           <Link

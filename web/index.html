@@ -1051,7 +1051,7 @@
             </div>
         </div>
 
-        
+
     </div>
 
     <footer class="footer">
@@ -1121,12 +1121,7 @@
                 document.head.appendChild(script);
 
                 // Set timeout for loading
-                setTimeout(() => {
-                    if (!isResolved) {
-                        isResolved = true;
-                        reject(new Error(`Script loading timeout: ${src}`));
-                    }
-                }, 8000); // Reduced to 8 seconds
+                setTimeout(() => reject(new Error(`Script loading timeout: ${src}`)), 8000); // Reduced to 8 seconds
             });
         }
 
@@ -1158,56 +1153,7 @@
                 }
                 console.log('✅ Ethers.js loaded successfully');
 
-                // Load application scripts (these are local, so should be more reliable)
-                try {
-                    await loadSingleScript('contract-config.js');
-                    console.log('✅ Contract config loaded');
-                } catch (error) {
-                    console.warn('⚠️ Contract config failed to load, using defaults');
-                }
-
-                try {
-                    await loadSingleScript('token-integration.js');
-                    console.log('✅ Token integration loaded');
-                } catch (error) {
-                    console.warn('⚠️ Token integration failed to load');
-                }
-
-                try {
-                    await loadSingleScript('deployment-status.js');
-                    console.log('✅ Deployment status loaded');
-                } catch (error) {
-                    console.warn('⚠️ Deployment status failed to load');
-                }
-
-                try {
-                    await loadSingleScript('auto-lp-integration.js');
-                    console.log('✅ Auto-LP integration loaded');
-                } catch (error) {
-                    console.warn('⚠️ Auto-LP integration failed to load');
-                }
-
-                try {
-                    await loadSingleScript('unified-state-manager.js');
-                    console.log('✅ Unified state manager loaded');
-                } catch (error) {
-                    console.warn('⚠️ Unified state manager failed to load');
-                }
-
-                try {
-                    await loadSingleScript('api-service.js');
-                    console.log('✅ API service loaded');
-                } catch (error) {
-                    console.warn('⚠️ API service failed to load');
-                }
-
-                try {
-                    await loadSingleScript('unified-dashboard.js');
-                    console.log('✅ Unified dashboard state manager loaded');
-                } catch (error) {
-                    console.warn('⚠️ Unified dashboard failed to load');
-                }
-
+                // React app handles all functionality
                 // Load static fallbacks for GitHub Pages
                 try {
                     await loadSingleScript('static-fallbacks.js');
@@ -1911,7 +1857,7 @@
                     // Always re-initialize features even for cached content
                     await initializePageFeatures(page);
                     mainContent.style.opacity = '1';
-                    
+
                     // Store page state for mobile/wallet browsers
                     sessionStorage.setItem('currentPage', page);
                     sessionStorage.setItem('navigationTimestamp', Date.now().toString());
@@ -1961,17 +1907,17 @@
 
                 // Cache and display content with improved loading
                 pageCache[page] = content;
-                
+
                 // Smooth content transition to prevent jarring loading experience
                 mainContent.style.opacity = '0.5';
                 mainContent.innerHTML = content;
-                
+
                 // Re-initialize page-specific functionality
                 await initializePageFeatures(page);
-                
+
                 // Restore full opacity for smooth transition
                 mainContent.style.opacity = '1';
-                
+
                 // Store page state for mobile/wallet browsers (fix key mismatch)
                 sessionStorage.setItem('currentPage', page);
                 sessionStorage.setItem('navigationTimestamp', Date.now().toString());
@@ -2407,11 +2353,11 @@
         window.addEventListener('popstate', (event) => {
             const page = event.state?.page || getPageFromPath();
             console.log(`⬅️ Popstate navigation to: ${page}`);
-            
+
             // Update session storage for mobile/wallet browser consistency
             sessionStorage.setItem('currentPage', page);
             sessionStorage.setItem('navigationTimestamp', Date.now().toString());
-            
+
             loadPageContent(page);
             updateActiveNavItem(page);
             currentPage = page;
@@ -2440,7 +2386,7 @@
             const savedPage = sessionStorage.getItem('currentPage');
             const savedTime = sessionStorage.getItem('navigationTimestamp');
             const now = Date.now();
-            
+
             // If recently navigated (within 2 minutes), restore the page
             if (savedPage && savedTime && (now - parseInt(savedTime)) < 120000) {
                 console.log(`📱 Restoring page: ${savedPage} for mobile/wallet browser`);
@@ -2470,18 +2416,6 @@
         });
 
     </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>The Truth NFT - Web3 Creator Economy</title>
-    <meta name="description" content="The Truth NFT ecosystem - where philosophy meets blockchain technology" />
-  </head>
-  <body>
-    <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
-  </body>
+</body>
 </html>

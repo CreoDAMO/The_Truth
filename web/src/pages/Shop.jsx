@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Shop = () => {
   const [selectedNFT, setSelectedNFT] = useState('');
@@ -15,6 +16,15 @@ const Shop = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <div className="mb-6">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg border border-white/10 transition-all"
+        >
+          <span>←</span>
+          <span>Back to Home</span>
+        </Link>
+      </div>
       <div className="text-center mb-12">
         <h1 className="text-5xl font-black mb-4 bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
           🛍️ The Truth Shop
