@@ -34,8 +34,8 @@ export const TruthProvider = ({ children }) => {
         method: 'eth_requestAccounts'
       });
 
-      const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
-      const web3Signer = web3Provider.getSigner();
+      const web3Provider = new ethers.BrowserProvider(window.ethereum);
+      const web3Signer = await web3Provider.getSigner();
       
       setProvider(web3Provider);
       setSigner(web3Signer);
@@ -72,8 +72,8 @@ export const TruthProvider = ({ children }) => {
         creatorContract.balanceOf(address)
       ]);
 
-      setTruthBalance(ethers.utils.formatEther(truthBal));
-      setCreatorBalance(ethers.utils.formatEther(creatorBal));
+      setTruthBalance(ethers.formatEther(truthBal));
+      setCreatorBalance(ethers.formatEther(creatorBal));
     } catch (error) {
       console.error('Failed to load balances:', error);
     }

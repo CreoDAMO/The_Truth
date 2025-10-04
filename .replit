@@ -5,10 +5,12 @@ run = "npm run dev"
 channel = "stable-25_05"
 
 [deployment]
-run = ["sh", "-c", "npm run dev"]
+run = ["node", "--experimental-modules", "web/server.js"]
+deploymentTarget = "autoscale"
+build = ["npx", "vite", "build"]
 
 [workflows]
-runButton = "Dev Server"
+runButton = "Project"
 
 [[workflows.workflow]]
 name = "Start Minting App"
@@ -156,32 +158,28 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "The Truth NFT Server"
+args = "Dev Server"
 
 [[workflows.workflow]]
-name = "The Truth NFT Server"
+name = "Dev Server"
 author = "agent"
-
-[workflows.workflow.metadata]
-outputType = "webview"
+mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm run dev"
 waitForPort = 5000
 
-[[workflows.workflow]]
-name = "Dev Server"
-author = 48308456
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm run dev"
+[workflows.workflow.metadata]
+outputType = "webview"
 
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[[ports]]
+localPort = 46521
+externalPort = 3000
 
 [agent]
 expertMode = true
