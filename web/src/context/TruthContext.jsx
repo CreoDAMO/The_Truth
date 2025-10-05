@@ -15,14 +15,13 @@ export const useTruth = () => {
 export const TruthProvider = ({ children }) => {
   const [walletConnected, setWalletConnected] = useState(false);
   const [walletAddress, setWalletAddress] = useState(null);
-  const [truthBalance, setTruthBalance] = useState('0');
-  const [creatorBalance, setCreatorBalance] = useState('0');
+  const [truthBalance, setTruthBalance] = useState(0);
+  const [creatorBalance, setCreatorBalance] = useState(0);
   const [nftCount, setNftCount] = useState(0);
   const [provider, setProvider] = useState(null);
   const [signer, setSigner] = useState(null);
   const [loading, setLoading] = useState(false);
   const [coinbaseProvider, setCoinbaseProvider] = useState(null);
-  const [notification, setNotification] = useState(null);
 
   const connectWallet = async () => {
     try {
@@ -36,16 +35,12 @@ export const TruthProvider = ({ children }) => {
 
       // Get balances
       const balance = await coinbaseService.getBalance(address);
-      const ethBalance = (balance / 1e18).toFixed(4);
-      setTruthBalance(ethBalance);
+      setTruthBalance(balance.toString());
 
-      // Load token balances from contracts
-      if (provider) {
-        await loadBalances(address, provider);
-      } else {
-        setCreatorBalance('0');
-        setNftCount(0);
-      }
+      // Placeholder for loading other balances or initial data if needed
+      // For now, we'll assume creatorBalance and nftCount are not directly from Coinbase wallet balance
+      setCreatorBalance(0); // Reset or fetch as needed
+      setNftCount(0); // Reset or fetch as needed
 
     } catch (error) {
       console.error('Error connecting wallet:', error);
@@ -95,20 +90,15 @@ export const TruthProvider = ({ children }) => {
     }
   };
 
-  const showNotification = (message, type = 'info') => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 3000);
-  };
-
   const disconnectWallet = () => {
     setWalletConnected(false);
     setWalletAddress(null);
-    setTruthBalance('0');
-    setCreatorBalance('0');
+    setTruthBalance(0);
+    setCreatorBalance(0);
     setNftCount(0);
     setProvider(null);
     setSigner(null);
-    setCoinbaseProvider(null);
+    setCoinbaseProvider(null); // Reset Coinbase provider
   };
 
   useEffect(() => {
@@ -148,16 +138,14 @@ export const TruthProvider = ({ children }) => {
     truthBalance,
     creatorBalance,
     nftCount,
-    provider,
-    signer,
+    provider, // Keep original provider for potential fallback/other uses
+    signer,   // Keep original signer for potential fallback/other uses
     loading,
-    coinbaseProvider,
+    coinbaseProvider, // Expose Coinbase provider
     connectWallet,
     disconnectWallet,
     setNftCount,
-    buyWithOnramp,
-    showNotification,
-    notification
+    buyWithOnramp // Add buyWithOnramp to context value
   };
 
   return <TruthContext.Provider value={value}>{children}</TruthContext.Provider>;
