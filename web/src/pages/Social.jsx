@@ -171,7 +171,7 @@ const Social = () => {
             <div className="space-y-4">
               <div className="bg-purple-900/30 p-4 rounded-lg border border-purple-500/30">
                 <h4 className="font-semibold mb-2">Truth Milestone: 1000 Holders</h4>
-                <p className="text-sm text-gray-400 mb-2">October 25, 2025 at 3:00 PM UTC</p>
+                <p className="text-sm text-gray-400 mb-2">April 25, 2025 at 3:00 PM UTC</p>
                 <div className="bg-black/50 rounded-full h-2 mb-1">
                   <div className="bg-purple-500 h-2 rounded-full" style={{width: '87%'}}></div>
                 </div>

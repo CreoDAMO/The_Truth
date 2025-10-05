@@ -11,12 +11,14 @@ const Community = () => {
   });
 
   useEffect(() => {
-    if (walletAddress) {
-      // Update holdings when wallet is connected
+    if (walletAddress && (truthBalance || creatorBalance)) {
+      // Update holdings when wallet is connected and balances are available
+      const truthVal = parseFloat(truthBalance) || 0;
+      const creatorVal = parseFloat(creatorBalance) || 0;
       setHoldings({
-        truthTokens: parseFloat(truthBalance) || 0,
-        creatorCoins: parseFloat(creatorBalance) || 0,
-        communityPower: calculateCommunityPower(truthBalance, creatorBalance)
+        truthTokens: truthVal,
+        creatorCoins: creatorVal,
+        communityPower: calculateCommunityPower(truthVal, creatorVal)
       });
     } else {
       setHoldings({
