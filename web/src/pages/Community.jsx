@@ -10,9 +10,14 @@ const Community = () => {
     communityPower: 0
   });
 
+  const calculateCommunityPower = (truth, creator) => {
+    const truthPower = Math.min((parseFloat(truth) / 1000) * 50, 50);
+    const creatorPower = Math.min((parseFloat(creator) / 10000) * 50, 50);
+    return (truthPower + creatorPower).toFixed(1);
+  };
+
   useEffect(() => {
     if (walletAddress && (truthBalance || creatorBalance)) {
-      // Update holdings when wallet is connected and balances are available
       const truthVal = parseFloat(truthBalance) || 0;
       const creatorVal = parseFloat(creatorBalance) || 0;
       setHoldings({
@@ -28,12 +33,6 @@ const Community = () => {
       });
     }
   }, [walletAddress, truthBalance, creatorBalance]);
-
-  const calculateCommunityPower = (truth, creator) => {
-    const truthPower = Math.min((parseFloat(truth) / 1000) * 50, 50);
-    const creatorPower = Math.min((parseFloat(creator) / 10000) * 50, 50);
-    return (truthPower + creatorPower).toFixed(1);
-  };
 
   return (
     <div className="container mx-auto px-4 py-8">

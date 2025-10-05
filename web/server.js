@@ -51,7 +51,9 @@ app.use(express.json());
 app.use('/web', express.static(path.join(__dirname)));
 
 // Serve the React build from dist directory (primary)
-app.use(express.static(path.join(__dirname, '..', 'dist')));
+const distPath = path.join(__dirname, '..', 'dist');
+app.use(express.static(distPath));
+console.log('Serving static files from:', distPath);
 
 // Explicit routes for LAW directory files
 app.use('/LAW', express.static(path.join(__dirname, '..', 'LAW')));
