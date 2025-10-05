@@ -557,7 +557,7 @@ app.post('/api/ai/update-metadata', async (req, res) => {
 });
 
 // Token information endpoints
-app.get('/api/tokens/info', (res) => {
+app.get('/api/tokens/info', (req, res) => {
     const tokenInfo = {
         truth: {
             address: '0x8f6cf6f7747e170f4768533b869c339dc3d30a3c',
@@ -1333,30 +1333,7 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: 'Something went wrong!' });
 });
 
-// API endpoint for deployment status
-app.get('/api/deployment/status', (req, res) => {
-  const fs = require('fs');
-  const artifactsPath = path.join(__dirname, '..', 'artifacts', 'contracts');
-  const metadataPath = path.join(__dirname, '..', 'metadata');
 
-  const status = {
-    ready: false,
-    contracts: fs.existsSync(artifactsPath),
-    metadata: fs.existsSync(metadataPath),
-    founderWallet: '0x67BF9f428d92704C3Db3a08dC05Bc941A8647866',
-    masterCopies: {
-      TheTruth: 77,
-      BonusGift: 145000,
-      PartThree: 444
-    }
-  };
-
-  status.ready = status.contracts && status.metadata;
-  res.json(status);
-});
-
-// Serve static files from web directory
-app.use(express.static(path.join(__dirname)));
 
 // Start server with error handling
 const server = app.listen(PORT, '0.0.0.0', () => {

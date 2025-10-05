@@ -1,40 +1,7 @@
 
-import React, { useState } from 'react';
-import { useTruth } from '../context/TruthContext';
+import React from 'react';
 
 const Social = () => {
-  const { walletConnected } = useTruth();
-  const [referralCode, setReferralCode] = useState('');
-  const [shareMessage, setShareMessage] = useState("Just discovered The Truth NFT - where philosophy meets blockchain!");
-
-  const generateReferralCode = () => {
-    if (!walletConnected) {
-      alert('Please connect your wallet first');
-      return;
-    }
-    const code = `TRUTH-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-    setReferralCode(code);
-    alert(`Your referral code: ${code}\nShare this with friends to earn rewards!`);
-  };
-
-  const shareToSocial = (platform) => {
-    const shareUrl = encodeURIComponent(window.location.origin);
-    const text = encodeURIComponent(shareMessage);
-    
-    const urls = {
-      twitter: `https://twitter.com/intent/tweet?text=${text}&url=${shareUrl}`,
-      facebook: `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`,
-      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`,
-      instagram: `https://www.instagram.com/` // Instagram doesn't support URL sharing
-    };
-
-    if (platform === 'instagram') {
-      alert('Instagram sharing works through the mobile app. Copy this message:\n\n' + shareMessage);
-    } else {
-      window.open(urls[platform], '_blank', 'width=600,height=400');
-    }
-  };
-
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="text-center mb-12">
@@ -85,18 +52,9 @@ const Social = () => {
             </div>
           </div>
 
-          <button 
-            onClick={generateReferralCode}
-            className="w-full bg-pink-600 hover:bg-pink-700 py-3 rounded-lg font-semibold transition-all"
-          >
-            {referralCode ? 'Generate New Code' : 'Generate Referral Code'}
+          <button className="w-full bg-pink-600 hover:bg-pink-700 py-3 rounded-lg font-semibold transition-all">
+            Generate Referral Code
           </button>
-          {referralCode && (
-            <div className="mt-3 bg-green-900/30 p-3 rounded-lg border border-green-500/30">
-              <p className="text-sm text-gray-400 mb-1">Your Referral Code:</p>
-              <p className="text-lg font-bold text-green-400">{referralCode}</p>
-            </div>
-          )}
         </div>
 
         {/* Social Sharing */}
@@ -109,31 +67,19 @@ const Social = () => {
           </p>
 
           <div className="space-y-3 mb-6">
-            <button 
-              onClick={() => shareToSocial('twitter')}
-              className="w-full bg-blue-600 hover:bg-blue-700 py-3 px-4 rounded-lg flex items-center gap-3 transition-all"
-            >
+            <button className="w-full bg-blue-600 hover:bg-blue-700 py-3 px-4 rounded-lg flex items-center gap-3 transition-all">
               <span>🐦</span>
               Share on Twitter
             </button>
-            <button 
-              onClick={() => shareToSocial('facebook')}
-              className="w-full bg-blue-700 hover:bg-blue-800 py-3 px-4 rounded-lg flex items-center gap-3 transition-all"
-            >
+            <button className="w-full bg-blue-700 hover:bg-blue-800 py-3 px-4 rounded-lg flex items-center gap-3 transition-all">
               <span>📘</span>
               Share on Facebook
             </button>
-            <button 
-              onClick={() => shareToSocial('linkedin')}
-              className="w-full bg-blue-800 hover:bg-blue-900 py-3 px-4 rounded-lg flex items-center gap-3 transition-all"
-            >
+            <button className="w-full bg-blue-800 hover:bg-blue-900 py-3 px-4 rounded-lg flex items-center gap-3 transition-all">
               <span>💼</span>
               Share on LinkedIn
             </button>
-            <button 
-              onClick={() => shareToSocial('instagram')}
-              className="w-full bg-pink-600 hover:bg-pink-700 py-3 px-4 rounded-lg flex items-center gap-3 transition-all"
-            >
+            <button className="w-full bg-pink-600 hover:bg-pink-700 py-3 px-4 rounded-lg flex items-center gap-3 transition-all">
               <span>📷</span>
               Share on Instagram
             </button>
@@ -145,8 +91,7 @@ const Social = () => {
               className="w-full bg-black/50 border border-purple-500/30 rounded-lg px-4 py-3 mb-3 text-white"
               rows={3}
               placeholder="Customize your share message..."
-              value={shareMessage}
-              onChange={(e) => setShareMessage(e.target.value)}
+              defaultValue="Just discovered The Truth NFT - where philosophy meets blockchain!"
             />
             <div className="text-xs text-gray-400">
               Preview: 🔮 The Truth NFT | Philosophy meets blockchain | Truth Score: 94.7%
@@ -164,17 +109,12 @@ const Social = () => {
             <h3 className="text-xl font-semibold mb-4">Upcoming Events</h3>
             <div className="space-y-4">
               <div className="bg-purple-900/30 p-4 rounded-lg border border-purple-500/30">
-                <h4 className="font-semibold mb-2">Truth Milestone: 2000 Holders</h4>
-                <p className="text-sm text-gray-400 mb-2">October 25, 2025 at 3:00 PM UTC</p>
+                <h4 className="font-semibold mb-2">Truth Milestone: 1000 Holders</h4>
+                <p className="text-sm text-gray-400 mb-2">January 25, 2024 at 3:00 PM UTC</p>
                 <div className="bg-black/50 rounded-full h-2 mb-1">
-                  <div className="bg-purple-500 h-2 rounded-full" style={{width: '62%'}}></div>
+                  <div className="bg-purple-500 h-2 rounded-full" style={{width: '87%'}}></div>
                 </div>
-                <div className="text-xs text-gray-400">1240/2000 holders</div>
-              </div>
-              <div className="bg-blue-900/30 p-4 rounded-lg border border-blue-500/30">
-                <h4 className="font-semibold mb-2">Philosophy Discussion Series</h4>
-                <p className="text-sm text-gray-400 mb-2">November 1, 2025 at 7:00 PM UTC</p>
-                <p className="text-sm">Monthly live discussion on Truth and institutional gaps</p>
+                <div className="text-xs text-gray-400">870/1000 holders</div>
               </div>
             </div>
           </div>
@@ -182,22 +122,18 @@ const Social = () => {
           <div>
             <h3 className="text-xl font-semibold mb-4">Event Notifications</h3>
             <div className="space-y-3">
-              <label className="flex items-center gap-3 cursor-pointer hover:text-pink-400 transition-colors">
+              <label className="flex items-center gap-3">
                 <input type="checkbox" className="rounded" defaultChecked />
                 <span>Email notifications</span>
               </label>
-              <label className="flex items-center gap-3 cursor-pointer hover:text-pink-400 transition-colors">
+              <label className="flex items-center gap-3">
                 <input type="checkbox" className="rounded" defaultChecked />
                 <span>Discord announcements</span>
               </label>
-              <label className="flex items-center gap-3 cursor-pointer hover:text-pink-400 transition-colors">
+              <label className="flex items-center gap-3">
                 <input type="checkbox" className="rounded" />
                 <span>SMS reminders</span>
               </label>
-            </div>
-            <div className="mt-4 bg-pink-900/30 p-4 rounded-lg">
-              <h4 className="font-semibold mb-2">Next Event in:</h4>
-              <div className="text-2xl font-bold text-pink-400">21d 14h 27m</div>
             </div>
           </div>
         </div>

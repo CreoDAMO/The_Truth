@@ -22,7 +22,6 @@
     "generate-metadata": "node scripts/generate_metadata.js",
     "start": "node --experimental-modules web/server.js",
     "dev": "node --experimental-modules web/server.js",
-    "verify-deployment": "node scripts/verify-deployment-readiness.js",
     "build": "npm run compile && npm run generate-metadata",
     "build:static": "./build-static.sh",
     "update-contract": "node deployment/update-contract.js",

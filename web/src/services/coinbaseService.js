@@ -1,3 +1,4 @@
+
 import { CoinbaseWalletSDK } from '@coinbase/wallet-sdk';
 
 class CoinbaseService {
@@ -6,18 +7,6 @@ class CoinbaseService {
     this.provider = null;
     this.signer = null;
     this.capabilities = null;
-
-    // Contract addresses for Base mainnet
-    this.contracts = {
-      TheTruth: '0x[TO_BE_DEPLOYED]',
-      TruthBonusGift: '0x[TO_BE_DEPLOYED]',
-      TruthPartThree: '0x[TO_BE_DEPLOYED]',
-      TRUTH: '0x8f6cf6f7747e170f4768533b869c339dc3d30a3c',
-      CreatorCoin: '0x22b0434e89882f8e6841d340b28427646c015aa7'
-    };
-
-    // Founder wallet address
-    this.founderWallet = '0x67BF9f428d92704C3Db3a08dC05Bc941A8647866';
   }
 
   async initialize() {
@@ -36,15 +25,15 @@ class CoinbaseService {
 
   async connectWallet() {
     if (!this.provider) await this.initialize();
-
+    
     const accounts = await this.provider.request({
       method: 'eth_requestAccounts'
     });
-
+    
     if (accounts[0]) {
       await this.loadWalletCapabilities(accounts[0]);
     }
-
+    
     return accounts[0];
   }
 
@@ -54,7 +43,7 @@ class CoinbaseService {
         method: 'wallet_getCapabilities',
         params: [address]
       });
-
+      
       console.log('Wallet Capabilities:', this.capabilities);
       return this.capabilities;
     } catch (error) {
@@ -75,7 +64,7 @@ class CoinbaseService {
   async createSpendPermission({ token, allowance, period, durationSeconds }) {
     const account = await this.getConnectedAddress();
     const now = Math.floor(Date.now() / 1000);
-
+    
     const permission = {
       account,
       spender: account,
@@ -179,7 +168,7 @@ class CoinbaseService {
 
     const onrampInstance = window.CBPay.createWidget(options);
     onrampInstance.open();
-
+    
     return new Promise((resolve) => {
       onrampInstance.on('success', (event) => resolve(event));
     });
@@ -187,7 +176,7 @@ class CoinbaseService {
 
   async sendTransaction({ to, value, data }) {
     if (!this.provider) throw new Error('Provider not initialized');
-
+    
     const txHash = await this.provider.request({
       method: 'eth_sendTransaction',
       params: [{
@@ -197,18 +186,18 @@ class CoinbaseService {
         data: data || '0x'
       }]
     });
-
+    
     return txHash;
   }
 
   async getBalance(address) {
     if (!this.provider) await this.initialize();
-
+    
     const balance = await this.provider.request({
       method: 'eth_getBalance',
       params: [address, 'latest']
     });
-
+    
     return parseInt(balance, 16);
   }
 
@@ -216,11 +205,11 @@ class CoinbaseService {
     const accounts = await this.provider.request({
       method: 'eth_accounts'
     });
-
+    
     if (!accounts || accounts.length === 0) {
       throw new Error('No connected wallet');
     }
-
+    
     return accounts[0];
   }
 
@@ -280,7 +269,7 @@ class CoinbaseService {
 
   async personalSign(message) {
     const account = await this.getConnectedAddress();
-
+    
     return await this.provider.request({
       method: 'personal_sign',
       params: [message, account]

@@ -3,23 +3,6 @@ import React, { useState } from 'react';
 
 const Deploy = () => {
   const [selectedContract, setSelectedContract] = useState(null);
-  const [deploymentReady, setDeploymentReady] = useState(false);
-
-  // Check deployment readiness on mount
-  React.useEffect(() => {
-    checkDeploymentReadiness();
-  }, []);
-
-  const checkDeploymentReadiness = async () => {
-    // Check if contracts are compiled
-    try {
-      const response = await fetch('/api/deployment/status');
-      const data = await response.json();
-      setDeploymentReady(data.ready);
-    } catch (error) {
-      console.log('Deployment status check:', error);
-    }
-  };
 
   const contracts = {
     TheTruth: {
@@ -208,37 +191,6 @@ const Deploy = () => {
           </div>
         </div>
       )}
-
-      {/* Master Copy Information */}
-      <div className="bg-gradient-to-r from-yellow-900/30 to-orange-900/30 backdrop-blur-xl rounded-2xl p-6 border border-yellow-500/30 mb-8">
-        <h3 className="text-2xl font-bold mb-4 text-yellow-400">👑 Master Copy Information</h3>
-        <div className="space-y-4">
-          <div className="bg-black/30 p-4 rounded-lg">
-            <p className="text-sm text-gray-400 mb-2">Founder Wallet Address</p>
-            <p className="font-mono text-sm text-green-400">0x67BF9f428d92704C3Db3a08dC05Bc941A8647866</p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-4">
-            <div className="bg-black/30 p-4 rounded-lg">
-              <p className="text-sm text-gray-400 mb-2">The Truth Master Copy</p>
-              <p className="text-2xl font-bold text-yellow-400">#77</p>
-              <p className="text-xs text-gray-500 mt-1">Auto-minted on deploy</p>
-            </div>
-            <div className="bg-black/30 p-4 rounded-lg">
-              <p className="text-sm text-gray-400 mb-2">Bonus Gift Master Copy</p>
-              <p className="text-2xl font-bold text-yellow-400">#145000</p>
-              <p className="text-xs text-gray-500 mt-1">Auto-minted on deploy</p>
-            </div>
-            <div className="bg-black/30 p-4 rounded-lg">
-              <p className="text-sm text-gray-400 mb-2">Part Three Master Copy</p>
-              <p className="text-2xl font-bold text-yellow-400">#444</p>
-              <p className="text-xs text-gray-500 mt-1">Auto-minted on deploy</p>
-            </div>
-          </div>
-          <div className="bg-blue-900/30 p-4 rounded-lg">
-            <p className="text-sm text-blue-300">ℹ️ Master copies are automatically minted to the founder wallet during contract deployment. No additional minting step required.</p>
-          </div>
-        </div>
-      </div>
 
       {/* Deployed Contracts Status */}
       <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10">
