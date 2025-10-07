@@ -1,8 +1,48 @@
 
 import React, { useState } from 'react';
+import { useTruth } from '../context/TruthContext';
 
 const Deploy = () => {
+  const { walletConnected, requestDeploymentSignature } = useTruth();
   const [selectedContract, setSelectedContract] = useState(null);
+  const [deploying, setDeploying] = useState(false);
+
+  const handleDeploy = async () => {
+    if (!walletConnected) {
+      alert('Please connect your wallet first');
+      return;
+    }
+
+    if (!selectedContract) {
+      alert('Please select a contract to deploy');
+      return;
+    }
+
+    try {
+      setDeploying(true);
+      
+      const contractData = {
+        contract: selectedContract,
+        name: contracts[selectedContract].name,
+        supply: contracts[selectedContract].supply,
+        price: contracts[selectedContract].price
+      };
+      
+      // Request deployment signature (Tier 3: Smart Contract Deployment)
+      const signature = await requestDeploymentSignature(contractData);
+      
+      if (signature) {
+        console.log('Deployment signature received:', signature);
+        alert('Deployment signature verified! In a production environment, this would deploy the contract to the blockchain.');
+        // Here you would call the actual deployment function
+      }
+    } catch (error) {
+      console.error('Deployment error:', error);
+      alert('Deployment was cancelled or failed');
+    } finally {
+      setDeploying(false);
+    }
+  };
 
   const contracts = {
     TheTruth: {
@@ -162,8 +202,12 @@ const Deploy = () => {
                 </div>
               </div>
               
-              <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 py-4 rounded-lg font-bold mt-6 transition-all">
-                Deploy with MetaMask
+              <button 
+                onClick={handleDeploy}
+                disabled={deploying || !walletConnected}
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 py-4 rounded-lg font-bold mt-6 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {deploying ? 'Deploying...' : walletConnected ? 'Deploy with MetaMask' : 'Connect Wallet First'}
               </button>
             </div>
 

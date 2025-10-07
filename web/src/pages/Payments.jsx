@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useTruth } from '../context/TruthContext';
 
 const Payments = () => {
-  const { walletConnected, walletAddress, truthBalance, creatorBalance, buyWithOnramp } = useTruth();
+  const { walletConnected, walletAddress, truthBalance, creatorBalance, buyWithOnramp, requestMintingSignature } = useTruth();
   const [showOnramp, setShowOnramp] = useState(false);
+  const [minting, setMinting] = useState(false);
 
   useEffect(() => {
     // Load Coinbase Pay SDK
@@ -17,6 +18,38 @@ const Payments = () => {
 
   const [activeTab, setActiveTab] = useState('nft-mint');
   const [account, setAccount] = useState(null);
+
+  const handleMint = async (nftName, price, paymentMethod = 'ETH') => {
+    if (!walletConnected) {
+      alert('Please connect your wallet first');
+      return;
+    }
+
+    try {
+      setMinting(true);
+      
+      const nftData = {
+        nft: nftName,
+        price: price,
+        paymentMethod: paymentMethod,
+        timestamp: new Date().toISOString()
+      };
+      
+      // Request minting signature (Tier 2: NFT Minting)
+      const signature = await requestMintingSignature(nftData);
+      
+      if (signature) {
+        console.log('Minting signature received:', signature);
+        alert(`Minting signature verified for ${nftName}! In a production environment, this would mint your NFT.`);
+        // Here you would call the actual minting function
+      }
+    } catch (error) {
+      console.error('Minting error:', error);
+      alert('Minting was cancelled or failed');
+    } finally {
+      setMinting(false);
+    }
+  };
 
   const connectWallet = async () => {
     if (typeof window.ethereum !== 'undefined') {
@@ -95,11 +128,19 @@ const Payments = () => {
               <p className="text-gray-300 mb-4">77 unique editions - Original collection</p>
               <div className="text-3xl font-bold text-green-400 mb-2">0.169 ETH</div>
               <div className="text-sm text-gray-400 mb-4">~$777 USD • Pay with TRUTH: 1000 tokens</div>
-              <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 py-3 rounded-lg font-semibold hover:shadow-lg transition-all mb-2">
-                Mint with ETH
+              <button 
+                onClick={() => handleMint('The Truth NFT', '0.169 ETH', 'ETH')}
+                disabled={minting || !walletConnected}
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 py-3 rounded-lg font-semibold hover:shadow-lg transition-all mb-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {minting ? 'Minting...' : 'Mint with ETH'}
               </button>
-              <button className="w-full bg-gradient-to-r from-yellow-600 to-orange-600 py-3 rounded-lg font-semibold hover:shadow-lg transition-all">
-                Mint with TRUTH
+              <button 
+                onClick={() => handleMint('The Truth NFT', '1000 TRUTH', 'TRUTH')}
+                disabled={minting || !walletConnected}
+                className="w-full bg-gradient-to-r from-yellow-600 to-orange-600 py-3 rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {minting ? 'Minting...' : 'Mint with TRUTH'}
               </button>
             </div>
 
@@ -118,11 +159,19 @@ const Payments = () => {
               <p className="text-gray-300 mb-4">145,000 editions - Community entry</p>
               <div className="text-3xl font-bold text-green-400 mb-2">0.039 ETH</div>
               <div className="text-sm text-gray-400 mb-4">~$145 USD • Pay with CREATOR: 5000 coins</div>
-              <button className="w-full bg-gradient-to-r from-green-600 to-emerald-600 py-3 rounded-lg font-semibold hover:shadow-lg transition-all mb-2">
-                Mint with ETH
+              <button 
+                onClick={() => handleMint('Bonus Gift NFT', '0.039 ETH', 'ETH')}
+                disabled={minting || !walletConnected}
+                className="w-full bg-gradient-to-r from-green-600 to-emerald-600 py-3 rounded-lg font-semibold hover:shadow-lg transition-all mb-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {minting ? 'Minting...' : 'Mint with ETH'}
               </button>
-              <button className="w-full bg-gradient-to-r from-orange-600 to-red-600 py-3 rounded-lg font-semibold hover:shadow-lg transition-all">
-                Mint with CREATOR
+              <button 
+                onClick={() => handleMint('Bonus Gift NFT', '5000 CREATOR', 'CREATOR')}
+                disabled={minting || !walletConnected}
+                className="w-full bg-gradient-to-r from-orange-600 to-red-600 py-3 rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {minting ? 'Minting...' : 'Mint with CREATOR'}
               </button>
             </div>
 
@@ -141,11 +190,19 @@ const Payments = () => {
               <p className="text-gray-300 mb-4">444 editions - Legal framework</p>
               <div className="text-3xl font-bold text-green-400 mb-2">0.478 ETH</div>
               <div className="text-sm text-gray-400 mb-4">~$1,777 USD • Pay with TRUTH: 2500 tokens</div>
-              <button className="w-full bg-gradient-to-r from-yellow-600 to-orange-600 py-3 rounded-lg font-semibold hover:shadow-lg transition-all mb-2">
-                Mint with ETH
+              <button 
+                onClick={() => handleMint('Part Three NFT', '0.478 ETH', 'ETH')}
+                disabled={minting || !walletConnected}
+                className="w-full bg-gradient-to-r from-yellow-600 to-orange-600 py-3 rounded-lg font-semibold hover:shadow-lg transition-all mb-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {minting ? 'Minting...' : 'Mint with ETH'}
               </button>
-              <button className="w-full bg-gradient-to-r from-yellow-600 to-orange-600 py-3 rounded-lg font-semibold hover:shadow-lg transition-all">
-                Mint with TRUTH
+              <button 
+                onClick={() => handleMint('Part Three NFT', '2500 TRUTH', 'TRUTH')}
+                disabled={minting || !walletConnected}
+                className="w-full bg-gradient-to-r from-yellow-600 to-orange-600 py-3 rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {minting ? 'Minting...' : 'Mint with TRUTH'}
               </button>
             </div>
           </div>
