@@ -158,12 +158,11 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Dev Server"
+args = "Server"
 
 [[workflows.workflow]]
-name = "Dev Server"
+name = "Server"
 author = "agent"
-mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
@@ -178,7 +177,7 @@ localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 5001
+localPort = 41133
 externalPort = 3000
 
 [agent]
