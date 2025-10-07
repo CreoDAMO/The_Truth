@@ -1,7 +1,31 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 
 const Social = () => {
+  const [shareMessage, setShareMessage] = useState("Just discovered The Truth NFT - where philosophy meets blockchain!");
+
+  const shareOnTwitter = () => {
+    const text = encodeURIComponent(shareMessage + " #TheTruthNFT #Web3Philosophy");
+    const url = encodeURIComponent(window.location.origin);
+    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank', 'width=550,height=420');
+  };
+
+  const shareOnFacebook = () => {
+    const url = encodeURIComponent(window.location.origin);
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'width=550,height=420');
+  };
+
+  const shareOnLinkedIn = () => {
+    const url = encodeURIComponent(window.location.origin);
+    const title = encodeURIComponent("The Truth NFT - Philosophy meets Blockchain");
+    const summary = encodeURIComponent(shareMessage);
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, '_blank', 'width=550,height=420');
+  };
+
+  const shareOnInstagram = () => {
+    alert('Instagram sharing works best via the mobile app. Copy this link to share: ' + window.location.origin);
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="text-center mb-12">
@@ -67,19 +91,19 @@ const Social = () => {
           </p>
 
           <div className="space-y-3 mb-6">
-            <button className="w-full bg-blue-600 hover:bg-blue-700 py-3 px-4 rounded-lg flex items-center gap-3 transition-all">
+            <button onClick={shareOnTwitter} className="w-full bg-blue-600 hover:bg-blue-700 py-3 px-4 rounded-lg flex items-center gap-3 transition-all">
               <span>🐦</span>
               Share on Twitter
             </button>
-            <button className="w-full bg-blue-700 hover:bg-blue-800 py-3 px-4 rounded-lg flex items-center gap-3 transition-all">
+            <button onClick={shareOnFacebook} className="w-full bg-blue-700 hover:bg-blue-800 py-3 px-4 rounded-lg flex items-center gap-3 transition-all">
               <span>📘</span>
               Share on Facebook
             </button>
-            <button className="w-full bg-blue-800 hover:bg-blue-900 py-3 px-4 rounded-lg flex items-center gap-3 transition-all">
+            <button onClick={shareOnLinkedIn} className="w-full bg-blue-800 hover:bg-blue-900 py-3 px-4 rounded-lg flex items-center gap-3 transition-all">
               <span>💼</span>
               Share on LinkedIn
             </button>
-            <button className="w-full bg-pink-600 hover:bg-pink-700 py-3 px-4 rounded-lg flex items-center gap-3 transition-all">
+            <button onClick={shareOnInstagram} className="w-full bg-pink-600 hover:bg-pink-700 py-3 px-4 rounded-lg flex items-center gap-3 transition-all">
               <span>📷</span>
               Share on Instagram
             </button>
@@ -91,7 +115,8 @@ const Social = () => {
               className="w-full bg-black/50 border border-purple-500/30 rounded-lg px-4 py-3 mb-3 text-white"
               rows={3}
               placeholder="Customize your share message..."
-              defaultValue="Just discovered The Truth NFT - where philosophy meets blockchain!"
+              value={shareMessage}
+              onChange={(e) => setShareMessage(e.target.value)}
             />
             <div className="text-xs text-gray-400">
               Preview: 🔮 The Truth NFT | Philosophy meets blockchain | Truth Score: 94.7%
