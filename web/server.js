@@ -116,6 +116,44 @@ app.get('/api/community', (req, res) => {
     });
 });
 
+app.get('/api/governance/proposals', (req, res) => {
+    // Mock proposals - in production, fetch from database/IPFS
+    const proposals = [
+        {
+            id: 1,
+            title: "Bonus Gift Collection Pricing",
+            description: "Should we reduce the Bonus Gift NFT price from 0.039 ETH to 0.025 ETH to increase accessibility?",
+            yesVotes: 67,
+            noVotes: 33,
+            totalVotes: 1247,
+            endDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
+            status: 'Active'
+        },
+        {
+            id: 2,
+            title: "Revenue Distribution",
+            description: "Allocate 15% of audiobook sales revenue to TRUTH token staking rewards?",
+            yesVotes: 82,
+            noVotes: 18,
+            totalVotes: 892,
+            endDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+            status: 'Active'
+        },
+        {
+            id: 3,
+            title: "New Collection Theme",
+            description: "Next philosophical NFT collection should focus on \"The Gap Between Knowledge and Wisdom\"",
+            yesVotes: 74,
+            noVotes: 26,
+            totalVotes: 2156,
+            endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+            status: 'Active'
+        }
+    ];
+
+    res.json(proposals);
+});
+
 // Health check endpoint
 app.get('/health', (req, res) => {
     res.json({ status: 'ok', message: 'The Truth NFT Server Running' });

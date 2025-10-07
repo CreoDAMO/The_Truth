@@ -145,7 +145,7 @@ const Community = () => {
       <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10">
         <h3 className="text-2xl font-bold mb-6 text-green-400">📱 Connect With Us</h3>
         <div className="grid md:grid-cols-3 gap-4">
-          <a href="https://twitter.com/TheTruthNFT" target="_blank" rel="noopener noreferrer"
+          <a href="https://x.com/CreoDAMO?t=XwyMPN5eMtBjf5sBq7fZUA&s=09" target="_blank" rel="noopener noreferrer"
              className="block bg-blue-600/20 hover:bg-blue-600/30 p-6 rounded-lg border border-blue-500/30 transition-all text-center">
             <div className="text-4xl mb-3">🐦</div>
             <div className="font-semibold">Twitter/X</div>
