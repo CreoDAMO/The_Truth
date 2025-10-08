@@ -5,12 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Truth NFT - Complete Web3 Creator Economy</title>
     <meta name="description" content="The Truth NFT ecosystem - where philosophy meets blockchain technology">
-  <script type="module" crossorigin src="/assets/index-CCWuzUJo.js"></script>
-  <link rel="modulepreload" crossorigin href="/assets/react-vendor-Bqglh5ML.js">
-  <link rel="modulepreload" crossorigin href="/assets/web3-vendor-Cp-Eso1m.js">
-  <link rel="stylesheet" crossorigin href="/assets/index-_qi-pmxH.css">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob: 'unsafe-inline' 'unsafe-eval'; connect-src 'self' https: wss: data:; img-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com;">
+  <script type="module" crossorigin src="/The_Truth/assets/main-d1uDEGKe.js"></script>
+  <link rel="stylesheet" crossorigin href="/The_Truth/assets/main-_qi-pmxH.css">
 </head>
 <body>
     <div id="root"></div>
+    <!-- Load dependencies from CDN for GitHub Pages compatibility -->
+    <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
+    <script src="https://unpkg.com/@coinbase/wallet-sdk@3.9.3/dist/index.umd.js"></script>
+    <script>
+      if ('serviceWorker' in navigator && window.location.protocol === 'https:') {
+        window.addEventListener('load', () => {
+          const swPath = '/The_Truth/sw.js';
+          navigator.serviceWorker.register(swPath, { scope: '/The_Truth/' })
+            .then(reg => console.log('SW registered:', reg))
+            .catch(err => console.warn('SW registration failed (non-critical):', err));
+        });
+      }
+    </script>
 </body>
 </html>
