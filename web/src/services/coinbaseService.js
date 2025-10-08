@@ -1,4 +1,3 @@
-
 import { CoinbaseWalletSDK } from '@coinbase/wallet-sdk';
 
 class CoinbaseService {
@@ -16,6 +15,11 @@ class CoinbaseService {
         throw new Error('Coinbase Wallet SDK not loaded');
       }
 
+      // Check if we're in a secure context (HTTPS or localhost)
+      if (!window.isSecureContext && window.location.protocol !== 'http:') {
+        throw new Error('Coinbase Wallet SDK requires a secure context (HTTPS)');
+      }
+
       this.sdk = new CoinbaseWalletSDK({
         appName: 'The Truth NFT',
         appLogoUrl: 'https://copper-active-hawk-266.mypinata.cloud/ipfs/bafybeidgadado5nyfxkua3mkiqbxsqkvrbqctkrqap7oghnkb77qo4steq',
@@ -24,13 +28,14 @@ class CoinbaseService {
         preference: {
           options: 'smartWalletOnly',
         },
+        diagnosticLogger: console,
       });
 
       this.provider = this.sdk.makeWeb3Provider({
         rpc: 'https://mainnet.base.org',
         chainId: 8453
       });
-      
+
       return this.provider;
     } catch (error) {
       console.error('Coinbase SDK initialization failed:', error);
@@ -46,29 +51,36 @@ class CoinbaseService {
 
   async connectWallet() {
     if (!this.provider) await this.initialize();
-    
-    const accounts = await this.provider.request({
+
+    // Prefer injected provider (MetaMask) over Coinbase Wallet
+    const providerToUse = window.ethereum || this.provider;
+
+    const accounts = await providerToUse.request({
       method: 'eth_requestAccounts'
     });
-    
+
     if (accounts[0]) {
       await this.loadWalletCapabilities(accounts[0]);
     }
-    
+
     return accounts[0];
   }
 
   async loadWalletCapabilities(address) {
     try {
-      this.capabilities = await this.provider.request({
+      const providerToUse = window.ethereum || this.provider;
+      this.capabilities = await providerToUse.request({
         method: 'wallet_getCapabilities',
         params: [address]
       });
-      
+
       console.log('Wallet Capabilities:', this.capabilities);
       return this.capabilities;
     } catch (error) {
       console.error('Failed to load wallet capabilities:', error);
+      // Provide a user-friendly error message
+      const errorMessage = error.message || 'Failed to load wallet capabilities. Please try again.';
+      alert(errorMessage);
       return null;
     }
   }
@@ -85,7 +97,7 @@ class CoinbaseService {
   async createSpendPermission({ token, allowance, period, durationSeconds }) {
     const account = await this.getConnectedAddress();
     const now = Math.floor(Date.now() / 1000);
-    
+
     const permission = {
       account,
       spender: account,
@@ -189,7 +201,7 @@ class CoinbaseService {
 
     const onrampInstance = window.CBPay.createWidget(options);
     onrampInstance.open();
-    
+
     return new Promise((resolve) => {
       onrampInstance.on('success', (event) => resolve(event));
     });
@@ -197,7 +209,7 @@ class CoinbaseService {
 
   async sendTransaction({ to, value, data }) {
     if (!this.provider) throw new Error('Provider not initialized');
-    
+
     const txHash = await this.provider.request({
       method: 'eth_sendTransaction',
       params: [{
@@ -207,18 +219,18 @@ class CoinbaseService {
         data: data || '0x'
       }]
     });
-    
+
     return txHash;
   }
 
   async getBalance(address) {
     if (!this.provider) await this.initialize();
-    
+
     const balance = await this.provider.request({
       method: 'eth_getBalance',
       params: [address, 'latest']
     });
-    
+
     return parseInt(balance, 16);
   }
 
@@ -226,11 +238,11 @@ class CoinbaseService {
     const accounts = await this.provider.request({
       method: 'eth_accounts'
     });
-    
+
     if (!accounts || accounts.length === 0) {
       throw new Error('No connected wallet');
     }
-    
+
     return accounts[0];
   }
 
@@ -290,7 +302,7 @@ class CoinbaseService {
 
   async personalSign(message) {
     const account = await this.getConnectedAddress();
-    
+
     return await this.provider.request({
       method: 'personal_sign',
       params: [message, account]

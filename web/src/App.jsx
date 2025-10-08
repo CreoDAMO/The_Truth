@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { TruthProvider } from './context/TruthContext';
@@ -17,7 +16,7 @@ import Deploy from './pages/Deploy';
 
 function App() {
   const basename = import.meta.env.MODE === 'production' ? '/The_Truth' : '/';
-  
+
   return (
     <ErrorBoundary>
       <BrowserRouter basename={basename}>
