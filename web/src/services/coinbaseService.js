@@ -10,22 +10,38 @@ class CoinbaseService {
   }
 
   async initialize() {
-    this.sdk = new CoinbaseWalletSDK({
-      appName: 'The Truth NFT',
-      appLogoUrl: 'https://copper-active-hawk-266.mypinata.cloud/ipfs/bafybeidgadado5nyfxkua3mkiqbxsqkvrbqctkrqap7oghnkb77qo4steq',
-      darkMode: true,
-      reloadOnDisconnect: false,
-      preference: {
-        options: 'smartWalletOnly',
-      },
-    });
+    try {
+      // Check if SDK is available
+      if (typeof CoinbaseWalletSDK === 'undefined') {
+        throw new Error('Coinbase Wallet SDK not loaded');
+      }
 
-    this.provider = this.sdk.makeWeb3Provider({
-      rpc: 'https://mainnet.base.org',
-      chainId: 8453
-    });
-    
-    return this.provider;
+      this.sdk = new CoinbaseWalletSDK({
+        appName: 'The Truth NFT',
+        appLogoUrl: 'https://copper-active-hawk-266.mypinata.cloud/ipfs/bafybeidgadado5nyfxkua3mkiqbxsqkvrbqctkrqap7oghnkb77qo4steq',
+        darkMode: true,
+        reloadOnDisconnect: false,
+        preference: {
+          options: 'smartWalletOnly',
+        },
+      });
+
+      this.provider = this.sdk.makeWeb3Provider({
+        rpc: 'https://mainnet.base.org',
+        chainId: 8453
+      });
+      
+      return this.provider;
+    } catch (error) {
+      console.error('Coinbase SDK initialization failed:', error);
+      // Fallback to window.ethereum if available
+      if (window.ethereum) {
+        console.log('Falling back to window.ethereum provider');
+        this.provider = window.ethereum;
+        return this.provider;
+      }
+      throw error;
+    }
   }
 
   async connectWallet() {
