@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { TruthProvider } from './context/TruthContext';
@@ -15,9 +16,11 @@ import Shop from './pages/Shop';
 import Deploy from './pages/Deploy';
 
 function App() {
+  const basename = import.meta.env.MODE === 'production' ? '/The_Truth' : '/';
+  
   return (
     <ErrorBoundary>
-      <BrowserRouter>
+      <BrowserRouter basename={basename}>
         <TruthProvider>
           <div className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-blue-900 text-white">
             <Navigation />

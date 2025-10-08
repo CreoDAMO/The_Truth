@@ -3,9 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import './index.css'
 
-// Register Service Worker for PWA (disabled for now to avoid conflicts)
-// Uncomment when service worker is properly configured
-/*
+// Register Service Worker for PWA
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     const swPath = import.meta.env.MODE === 'production' ? '/The_Truth/sw.js' : '/sw.js';
@@ -14,7 +12,6 @@ if ('serviceWorker' in navigator) {
       .catch(error => console.log('SW registration failed:', error));
   });
 }
-*/
 
 const rootElement = document.getElementById('root')
 if (rootElement) {

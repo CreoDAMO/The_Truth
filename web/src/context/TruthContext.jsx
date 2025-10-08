@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { ethers, BrowserProvider } from 'ethers';
+import { ethers } from 'ethers';
 import coinbaseService from '../services/coinbaseService';
 
 const TruthContext = createContext();
@@ -31,50 +31,47 @@ export const TruthProvider = ({ children }) => {
   });
 
   const connectWallet = async () => {
-    setLoading(true);
     try {
-      // Try Coinbase service first
-      let address;
-      try {
-        address = await coinbaseService.connectWallet();
-        setCoinbaseProvider(coinbaseService.provider);
-      } catch (coinbaseError) {
-        console.warn('Coinbase connection failed, trying direct wallet:', coinbaseError);
+      setLoading(true);
+      const provider = await coinbaseService.initialize();
+      const address = await coinbaseService.connectWallet();
 
-        // Fallback to direct MetaMask/window.ethereum
-        if (!window.ethereum) {
-          throw new Error('No Web3 wallet detected. Please install MetaMask or Coinbase Wallet.');
-        }
-
-        const accounts = await window.ethereum.request({
-          method: 'eth_requestAccounts'
-        });
-
-        if (!accounts || accounts.length === 0) {
-          throw new Error('No accounts found');
-        }
-
-        address = accounts[0];
-
-        // Create ethers provider from window.ethereum (ethers v6 syntax)
-        const ethersProvider = new BrowserProvider(window.ethereum);
-        setProvider(ethersProvider);
-        const ethSigner = await ethersProvider.getSigner();
-        setSigner(ethSigner);
-      }
+      // Store wallet connection in localStorage
+      localStorage.setItem('walletAddress', address);
+      localStorage.setItem('walletConnected', 'true');
 
       setWalletAddress(address);
       setWalletConnected(true);
-      localStorage.setItem('walletAddress', address);
+      setCoinbaseProvider(provider);
 
-      // Load balances
-      const currentProvider = coinbaseService.provider || provider;
-      if (currentProvider) {
-        await loadBalances(address, currentProvider);
+      // Request platform signature (Tier 1: Platform Connection)
+      if (!platformSignatureVerified) {
+        try {
+          const message = `Welcome to The Truth NFT Platform!\n\nBy signing this message, you confirm your connection to the platform.\n\nWallet: ${address}\nTimestamp: ${new Date().toISOString()}\n\nThis signature will NOT trigger any blockchain transactions.`;
+          
+          const signature = await coinbaseService.personalSign(message);
+          
+          if (signature) {
+            setPlatformSignatureVerified(true);
+            localStorage.setItem('platformSignatureVerified', 'true');
+            console.log('Platform signature verified successfully');
+          }
+        } catch (sigError) {
+          console.error('Signature declined:', sigError);
+          // Continue even if signature is declined - wallet is still connected
+        }
       }
+
+      // Get balances
+      const balance = await coinbaseService.getBalance(address);
+      setTruthBalance(balance.toString());
+
+      setCreatorBalance(0);
+      setNftCount(0);
+
     } catch (error) {
-      console.error('Failed to connect wallet:', error);
-      alert(`Failed to connect wallet: ${error.message}\n\nPlease make sure you have MetaMask or Coinbase Wallet installed.`);
+      console.error('Error connecting wallet:', error);
+      alert('Failed to connect wallet. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -113,8 +110,8 @@ export const TruthProvider = ({ children }) => {
         creatorContract.balanceOf(address)
       ]);
 
-      setTruthBalance(ethers.formatUnits(truthBal, 18));
-      setCreatorBalance(ethers.formatUnits(creatorBal, 18));
+      setTruthBalance(ethers.formatEther(truthBal));
+      setCreatorBalance(ethers.formatEther(creatorBal));
     } catch (error) {
       console.error('Failed to load balances:', error);
     }
@@ -125,7 +122,7 @@ export const TruthProvider = ({ children }) => {
     localStorage.removeItem('walletAddress');
     localStorage.removeItem('walletConnected');
     localStorage.removeItem('platformSignatureVerified');
-
+    
     setWalletConnected(false);
     setWalletAddress(null);
     setTruthBalance(0);
@@ -141,7 +138,7 @@ export const TruthProvider = ({ children }) => {
   const requestMintingSignature = async (nftData) => {
     try {
       const message = `Authorize NFT Minting\n\nYou are about to mint a new Truth NFT.\n\nNFT Details:\n${JSON.stringify(nftData, null, 2)}\n\nWallet: ${walletAddress}\nTimestamp: ${new Date().toISOString()}\n\nThis will trigger a blockchain transaction.`;
-
+      
       const signature = await coinbaseService.personalSign(message);
       return signature;
     } catch (error) {
@@ -154,7 +151,7 @@ export const TruthProvider = ({ children }) => {
   const requestDeploymentSignature = async (contractData) => {
     try {
       const message = `Authorize Smart Contract Deployment\n\nYou are about to deploy a smart contract.\n\nContract Details:\n${JSON.stringify(contractData, null, 2)}\n\nWallet: ${walletAddress}\nTimestamp: ${new Date().toISOString()}\n\nThis will trigger a blockchain transaction.`;
-
+      
       const signature = await coinbaseService.personalSign(message);
       return signature;
     } catch (error) {
@@ -168,18 +165,18 @@ export const TruthProvider = ({ children }) => {
     const restoreWallet = async () => {
       const savedAddress = localStorage.getItem('walletAddress');
       const savedConnected = localStorage.getItem('walletConnected');
-
+      
       if (savedAddress && savedConnected === 'true') {
         try {
           // Re-initialize provider without prompting user
           const provider = await coinbaseService.initialize();
           setCoinbaseProvider(provider);
-
+          
           // Check if still connected
           const currentAddress = await coinbaseService.getConnectedAddress();
           if (currentAddress && currentAddress.toLowerCase() === savedAddress.toLowerCase()) {
             console.log('Wallet connection restored:', currentAddress);
-
+            
             // Get balance
             const balance = await coinbaseService.getBalance(currentAddress);
             setTruthBalance(balance.toString());
@@ -194,7 +191,7 @@ export const TruthProvider = ({ children }) => {
         }
       }
     };
-
+    
     restoreWallet();
   }, []); // Run once on mount
 
