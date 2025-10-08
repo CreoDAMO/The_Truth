@@ -36,10 +36,9 @@ jobs:
       run: npm ci
 
     - name: Build React app with Vite
-      run: npx vite build
+      run: npm run build
       env:
         NODE_ENV: production
-        VITE_BASE_URL: https://creodamo.github.io/The_Truth/
 
     - name: Copy additional files to dist
       run: |
