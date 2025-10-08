@@ -23,7 +23,7 @@ export default defineConfig({
     }
   ],
   root: 'web',
-  base: process.env.NODE_ENV === 'production' ? '/The_Truth/' : '/',
+  base: '/',
   build: {
     outDir: '../dist',
     emptyOutDir: true,
