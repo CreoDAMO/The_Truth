@@ -14,12 +14,17 @@ class CoinbaseService {
       appName: 'The Truth NFT',
       appLogoUrl: 'https://copper-active-hawk-266.mypinata.cloud/ipfs/bafybeidgadado5nyfxkua3mkiqbxsqkvrbqctkrqap7oghnkb77qo4steq',
       darkMode: true,
+      reloadOnDisconnect: false,
       preference: {
         options: 'smartWalletOnly',
       },
     });
 
-    this.provider = this.sdk.makeWeb3Provider('https://mainnet.base.org', 8453);
+    this.provider = this.sdk.makeWeb3Provider({
+      rpc: 'https://mainnet.base.org',
+      chainId: 8453
+    });
+    
     return this.provider;
   }
 
