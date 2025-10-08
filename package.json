@@ -22,7 +22,7 @@
     "generate-metadata": "node scripts/generate_metadata.js",
     "start": "node --experimental-modules web/server.js",
     "dev": "node --experimental-modules web/server.js",
-    "build": "npm run compile && npm run generate-metadata",
+    "build": "NODE_ENV=production vite build",
     "build:static": "./build-static.sh",
     "update-contract": "node deployment/update-contract.js",
     "deploy:vercel": "./deployment/deploy-everywhere.sh vercel",
