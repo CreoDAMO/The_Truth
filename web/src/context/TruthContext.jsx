@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { ethers } from 'ethers';
+import { ethers, BrowserProvider } from 'ethers';
 import coinbaseService from '../services/coinbaseService';
 
 const TruthContext = createContext();
@@ -56,10 +56,11 @@ export const TruthProvider = ({ children }) => {
 
         address = accounts[0];
 
-        // Create ethers provider from window.ethereum
-        const ethersProvider = new ethers.providers.Web3Provider(window.ethereum);
+        // Create ethers provider from window.ethereum (ethers v6 syntax)
+        const ethersProvider = new BrowserProvider(window.ethereum);
         setProvider(ethersProvider);
-        setSigner(ethersProvider.getSigner());
+        const ethSigner = await ethersProvider.getSigner();
+        setSigner(ethSigner);
       }
 
       setWalletAddress(address);
@@ -112,8 +113,8 @@ export const TruthProvider = ({ children }) => {
         creatorContract.balanceOf(address)
       ]);
 
-      setTruthBalance(ethers.formatEther(truthBal));
-      setCreatorBalance(ethers.formatEther(creatorBal));
+      setTruthBalance(ethers.formatUnits(truthBal, 18));
+      setCreatorBalance(ethers.formatUnits(creatorBal, 18));
     } catch (error) {
       console.error('Failed to load balances:', error);
     }
