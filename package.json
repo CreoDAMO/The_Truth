@@ -63,7 +63,7 @@
     "react-router-dom": "^7.9.3",
     "stripe": "^14.25.0",
     "tailwindcss": "^4.1.14",
-    "vite": "^7.1.9"
+    "vite": "^7.1.11"
   },
   "type": "module"
 }
